@@ -12,7 +12,7 @@ Filter posts through multiple custom taxonomies
 
 Say you have two custom taxnomies defined: genre and artist.
 
-Currently, you can do the following queries on your site:
+Currently, you can do the following types of queries on your site:
 
 ?genre=jazz
 
