@@ -5,7 +5,7 @@ Version: 1.0
 Description: Filter posts through multiple custom taxonomies
 Author: scribu
 Author URI: http://scribu.net
-Plugin URI: http://scribu.net/wordpress/query-multiple-taxonomies
+Plugin URI: http://scribu.net/wordpress/query-multiple-taxonomies/
 */
 
 add_action('pre_get_posts', 'multiple_tax_fix');

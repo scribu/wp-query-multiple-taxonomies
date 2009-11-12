@@ -30,4 +30,4 @@ This plugin fixes that.
 
 = 1.0 =
 * initial release
-* [more info](http://scribu.net/wordpress/scb-framework/introducing-scbframework.html)
+* [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-0.html)
