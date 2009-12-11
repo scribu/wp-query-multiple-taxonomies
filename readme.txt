@@ -2,8 +2,8 @@
 Contributors: scribu
 Donate link: http://scribu.net/wordpress
 Tags: query
-Requires at least: 2.8
-Tested up to: 2.9-rare
+Requires at least: 2.9
+Tested up to: 2.9
 Stable tag: trunk
 
 Filter posts through multiple custom taxonomies
