@@ -26,12 +26,13 @@ WordPress will just ignore one of the parameters.
 
 This plugin fixes that.
 
+Sponsored by [Bill Nanson](http://www.burgundy-report.com/).
+
 == Changelog ==
 
 = 1.1 =
 * allow ?tax=foo,bar (OR) and tax=foo+bar (AND) queries
 * [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-1.html)
-
 
 = 1.0 =
 * initial release
