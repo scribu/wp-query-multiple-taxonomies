@@ -55,7 +55,7 @@ class QMT_Core {
 			self::$url = add_query_arg($qv, $value, self::$url);
 
 			foreach ( explode(' ', $value) as $slug )
-				$query[] = array($taxname, $slug);
+				$query[] = array($slug, $taxname);
 		}
 
 		if ( empty($query) )
@@ -75,9 +75,6 @@ class QMT_Core {
 		// do the same for $wp_query->query
 		$wp_query->query['term'] = $term;
 		$wp_query->query[$wp_query->query['taxonomy']] = $term;
-
-		// only work on the first query, so that query_posts() works normally
-		remove_action('parse_query', array(__CLASS__, __FUNCTION__));
 	}
 
 	private function find_posts($query) {
@@ -112,12 +109,17 @@ class QMT_Core {
 
 	private function get_objects($qv) {
 
-		list($tax, $term_slug) = $qv;
+		list($term_slug, $tax) = $qv;
 
 		if ( ! $term = get_term_by('slug', $term_slug, $tax) )
 			return false;
 
-		$ids = get_objects_in_term($term->term_id, $tax);
+		$terms = array($term) + get_term_children($term->term_id, $tax);
+
+		foreach ( $terms as $i => $term )
+			$terms[$i] = $term->term_id;
+
+		$ids = get_objects_in_term($terms, $tax);
 
 		if ( empty($ids) )
 			return false;
@@ -145,8 +147,8 @@ class QMT_Core {
 	}
 }
 
+// WP < 3.0
 if ( ! function_exists('get_taxonomies') ) :
-// http://core.trac.wordpress.org/ticket/12516/
 function get_taxonomies( $args = array(), $output = 'names' ) {
 	global $wp_taxonomies;
 
@@ -165,8 +167,8 @@ endif;
 
 function _qmt_init() {
 	include dirname(__FILE__) . '/scb/load.php';
-	include dirname(__FILE__) . '/widget.php';
-	include dirname(__FILE__) . '/debug.php';
+//	include dirname(__FILE__) . '/widget.php';
+//	include dirname(__FILE__) . '/debug.php';
 
 	// Load translations
 	load_plugin_textdomain('taxonomy-drill-down', '', basename(dirname(__FILE__)) . '/lang');
