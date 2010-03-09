@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Query Multiple Taxonomies
-Version: 1.1a2
+Version: 1.1a3
 Description: Filter posts through multiple custom taxonomies
 Author: scribu
 Author URI: http://scribu.net
@@ -9,6 +9,7 @@ Plugin URI: http://scribu.net/wordpress/query-multiple-taxonomies/
 */
 
 class QMT_Core {
+
 	private static $post_ids = array();
 	private static $actual_query = array();
 	private static $url = '';
@@ -64,17 +65,13 @@ class QMT_Core {
 		if ( ! self::find_posts($query) )
 			return $wp_query->set_404();
 
+		$paged = $wp_query->get('paged');
+		$wp_query->set_404();
+		$wp_query->set('paged', $paged);
+
+		$wp_query->is_404 = false;
+#		$wp_query->is_tax = true;
 		$wp_query->set('post__in', self::$post_ids);
-
-		// set query_vars so that WP thinks we're querying a single term
-		list($term) = explode(' ', $wp_query->get('term'));
-		$tax = $wp_query->get('taxonomy');
-		$wp_query->set('term', $term);
-		$wp_query->set($tax, $term);
-
-		// do the same for $wp_query->query
-		$wp_query->query['term'] = $term;
-		$wp_query->query[$wp_query->query['taxonomy']] = $term;
 	}
 
 	private function find_posts($query) {
@@ -114,10 +111,9 @@ class QMT_Core {
 		if ( ! $term = get_term_by('slug', $term_slug, $tax) )
 			return false;
 
-		$terms = array($term) + get_term_children($term->term_id, $tax);
-
-		foreach ( $terms as $i => $term )
-			$terms[$i] = $term->term_id;
+		$terms = array($term->term_id);
+		
+		$terms = array_merge($terms, get_term_children($term->term_id, $tax));
 
 		$ids = get_objects_in_term($terms, $tax);
 
@@ -145,7 +141,20 @@ class QMT_Core {
 
 		return get_terms($tax, array('include' => implode(',', $term_ids)));
 	}
+	
+	public function get_url($key, $value, $base = '') {
+		if ( empty($base) )
+			$base = self::$url;
+
+		if ( empty($value) )
+			return remove_query_arg($key, $base);
+
+		$value = trim(implode('+', $value), '+');
+
+		return add_query_arg($key, $value, $base);
+	}
 }
+
 
 // WP < 3.0
 if ( ! function_exists('get_taxonomies') ) :
@@ -167,8 +176,6 @@ endif;
 
 function _qmt_init() {
 	include dirname(__FILE__) . '/scb/load.php';
-//	include dirname(__FILE__) . '/widget.php';
-//	include dirname(__FILE__) . '/debug.php';
 
 	// Load translations
 	load_plugin_textdomain('taxonomy-drill-down', '', basename(dirname(__FILE__)) . '/lang');
