@@ -16,7 +16,10 @@ class QMT_Core {
 
 	function init() {
 		add_action('init', array(__CLASS__, 'builtin_tax_fix'));
-		add_action('parse_query', array(__CLASS__, 'multiple_tax_query'));
+
+		add_action('parse_query', array(__CLASS__, 'query'));
+		add_action('template_redirect', array(__CLASS__, 'template'));
+
 		remove_action('template_redirect', 'redirect_canonical');
 	}
 
@@ -39,7 +42,14 @@ class QMT_Core {
 				$taxobj->query_var = $tmp[$taxname];
 	}
 
-	function multiple_tax_query($wp_query) {
+	function template() {
+		if ( is_multitax() && $template = locate_template(array('multitax.php')) ) {
+			include $template;
+			die;
+		}
+	}
+
+	function query($wp_query) {
 		self::$url = get_bloginfo('url');
 
 		$post_type = apply_filters('qmt_post_type', 'post');
@@ -67,13 +77,20 @@ class QMT_Core {
 		if ( ! self::find_posts($query, $post_type) )
 			return $wp_query->set_404();
 
+
+		$is_feed = $wp_query->is_feed;
 		$paged = $wp_query->get('paged');
-		$wp_query->set_404();
+
+		$wp_query->init_query_flags();
+
+		$wp_query->is_feed = $is_feed;
 		$wp_query->set('paged', $paged);
 
-		$wp_query->is_404 = false;
-#		$wp_query->is_tax = true;
+		$wp_query->set('post_type', $post_type);
 		$wp_query->set('post__in', self::$post_ids);
+
+		$wp_query->is_multitax = true;
+		$wp_query->is_archive = true;
 	}
 
 	private function find_posts($query, $post_type) {
@@ -158,6 +175,11 @@ class QMT_Core {
 	}
 }
 
+function is_multitax() {
+	global $wp_query;
+
+	return $wp_query->is_multitax;
+}
 
 // WP < 3.0
 if ( ! function_exists('get_taxonomies') ) :
