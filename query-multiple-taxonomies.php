@@ -42,8 +42,10 @@ class QMT_Core {
 	function multiple_tax_query($wp_query) {
 		self::$url = get_bloginfo('url');
 
+		$post_type = apply_filters('qmt_post_type', 'post');
+
 		$query = array();
-		foreach ( get_object_taxonomies('post') as $taxname ) {
+		foreach ( get_object_taxonomies($post_type) as $taxname ) {
 			$taxobj = get_taxonomy($taxname);
 
 			if ( ! $qv = $taxobj->query_var )
@@ -62,7 +64,7 @@ class QMT_Core {
 		if ( empty($query) )
 			return;
 
-		if ( ! self::find_posts($query) )
+		if ( ! self::find_posts($query, $post_type) )
 			return $wp_query->set_404();
 
 		$paged = $wp_query->get('paged');
@@ -74,7 +76,7 @@ class QMT_Core {
 		$wp_query->set('post__in', self::$post_ids);
 	}
 
-	private function find_posts($query) {
+	private function find_posts($query, $post_type) {
 		global $wpdb;
 
 		// get an initial set of ids, to intersect with the others
@@ -89,9 +91,10 @@ class QMT_Core {
 		}
 
 		// select only published posts
+		$post_type = esc_sql($post_type);
 		$ids = $wpdb->get_col("
 			SELECT ID FROM $wpdb->posts 
-			WHERE post_type = 'post' 
+			WHERE post_type = '$post_type'
 			AND post_status = 'publish' 
 			AND ID IN (" . implode(',', $ids). ")
 		");
