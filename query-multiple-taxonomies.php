@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Query Multiple Taxonomies
-Version: 1.1a3
+Version: 1.1b
 Description: Filter posts through multiple custom taxonomies
 Author: scribu
 Author URI: http://scribu.net
@@ -178,7 +178,7 @@ class QMT_Core {
 function is_multitax() {
 	global $wp_query;
 
-	return $wp_query->is_multitax;
+	return @$wp_query->is_multitax;
 }
 
 // WP < 3.0
@@ -201,6 +201,7 @@ endif;
 
 function _qmt_init() {
 	include dirname(__FILE__) . '/scb/load.php';
+	include dirname(__FILE__) . '/widget.php';
 
 	// Load translations
 	load_plugin_textdomain('taxonomy-drill-down', '', basename(dirname(__FILE__)) . '/lang');

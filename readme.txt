@@ -1,12 +1,12 @@
 === Query Multiple Taxonomies ===
 Contributors: scribu
-Donate link: http://scribu.net/wordpress
-Tags: query
+Donate link: http://scribu.net/paypal
+Tags: query, widget, navigation, taxonomy
 Requires at least: 2.9
 Tested up to: 3.0
 Stable tag: 1.0
 
-Filter posts through multiple custom taxonomies
+Filter posts through multiple taxonomies
 
 == Description ==
 
@@ -22,16 +22,25 @@ But you can't do this:
 
 ?genre=jazz&artist=chet-baker
 
-WordPress will just ignore one of the parameters.
+WordPress will just ignore one of the parameters. This plugin fixes that.
 
-This plugin fixes that.
+It also comes with a drill-down navigation widget.
 
-Sponsored by [Bill Nanson](http://www.burgundy-report.com/).
+= Sponsors =
+* [Bill Nanson](http://burgundy-report.com)
+* [Matthew Porter](http://porterinnovative.com)
+
+== Frequently Asked Questions ==
+
+= How do I define a custom taxonomy? =
+
+Try the [Simple Taxonomies](http://wordpress.org/extend/plugins/simple-taxonomies) plugin.
 
 == Changelog ==
 
 = 1.1 =
-* allow ?tax=foo,bar (OR) and tax=foo+bar (AND) queries
+* allow ?tax=foo+bar (AND) queries
+* add taxonomy drill-down widget
 * [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-1.html)
 
 = 1.0 =
