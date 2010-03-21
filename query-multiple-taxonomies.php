@@ -107,6 +107,9 @@ class QMT_Core {
 			$ids = array_intersect($ids, $posts);
 		}
 
+		if ( empty($ids) )
+			return false;
+
 		// select only published posts
 		$post_type = esc_sql($post_type);
 		$ids = $wpdb->get_col("
