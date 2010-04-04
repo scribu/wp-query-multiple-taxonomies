@@ -225,8 +225,6 @@ function _qmt_init() {
 	include dirname(__FILE__) . '/template-tags.php';
 	include dirname(__FILE__) . '/widget.php';
 
-	include dirname(__FILE__) . '/debug.php';
-
 	// Load translations
 	load_plugin_textdomain('taxonomy-drill-down', '', basename(dirname(__FILE__)) . '/lang');
 
