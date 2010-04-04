@@ -20,7 +20,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			$instance = $this->defaults;
 
 		echo $this->input(array(
-			'title' => __('Title:', 'taxonomy-drill-down'),
+			'title' => __('Title:', 'query-multiple-taxonomies'),
 			'name' => 'title',
 			'type' => 'text',
 		), $instance);
@@ -39,7 +39,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			'type' => 'select',
 			'name' => 'taxonomy',
 			'values' => $taxonomies,
-			'desc' => __('Taxonomy:', 'taxonomy-drill-down'),
+			'desc' => __('Taxonomy:', 'query-multiple-taxonomies'),
 		), $instance);
 	}
 
@@ -50,7 +50,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		echo $before_widget;
 
 		if ( empty($taxonomy) ) {
-			echo html('p', __('No taxonomy selected.', 'taxonomy-drill-down'));
+			echo html('p', __('No taxonomy selected.', 'query-multiple-taxonomies'));
 		}
 		else {
 			if ( empty($title) )
@@ -114,7 +114,7 @@ class QMT_Term_Walker extends Walker_Category {
 		$term_name = esc_attr($term->name);
 		$link = '<a href="' . get_term_link($term, $this->taxonomy) . '" ';
 		if ( $use_desc_for_title == 0 || empty($term->description) )
-			$link .= 'title="' . sprintf(__( 'View all posts filed under %s' ), $term_name) . '"';
+			$link .= 'title="' . sprintf(__( 'View all posts filed under %s', ), $term_name) . '"';
 		else
 			$link .= 'title="' . esc_attr( strip_tags( $term->description ) ) . '"';
 		$link .= '>';
