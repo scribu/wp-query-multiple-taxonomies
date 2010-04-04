@@ -1,10 +1,10 @@
 === Query Multiple Taxonomies ===
 Contributors: scribu
 Donate link: http://scribu.net/paypal
-Tags: query, widget, navigation, taxonomy
+Tags: drill-down, query, widget, navigation, taxonomy
 Requires at least: 2.9
 Tested up to: 3.0
-Stable tag: 1.0
+Stable tag: trunk
 
 Filter posts through multiple taxonomies
 
@@ -30,15 +30,24 @@ It also comes with a drill-down navigation widget.
 * [Bill Nanson](http://burgundy-report.com)
 * [Matthew Porter](http://porterinnovative.com)
 
+
 == Screenshots ==
 
 1. Drill-down navigation widgets
+
 
 == Frequently Asked Questions ==
 
 = How do I define a custom taxonomy? =
 
 Try the [Simple Taxonomies](http://wordpress.org/extend/plugins/simple-taxonomies) plugin.
+
+= How can I customize the display? =
+
+Firstly, you have the `is_multitax()` conditional tag, that works similarly to `is_tax()`.
+
+Secondly, you can create a `multitax.php` template file in your theme.
+
 
 == Changelog ==
 

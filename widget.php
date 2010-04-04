@@ -101,7 +101,7 @@ class QMT_Term_Walker extends Walker_Category {
 
 	function __construct($taxonomy) {
 		$this->taxonomy = $taxonomy;
-		$this->qv = get_taxonomy($this->taxonomy)->query_var;
+		$this->qv = get_taxonomy($taxonomy)->query_var;
 
 		$this->query = QMT_Core::get_actual_query();
 
