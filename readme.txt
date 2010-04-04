@@ -14,13 +14,13 @@ Say you have two custom taxnomies defined: genre and artist.
 
 Currently, you can do the following types of queries on your site:
 
-?genre=jazz
+`?genre=jazz`
 
-?genre=jazz&cat=1
+`?genre=jazz&cat=1`
 
 But you can't do this:
 
-?genre=jazz&artist=chet-baker
+`?genre=jazz&artist=chet-baker`
 
 WordPress will just ignore one of the parameters. This plugin fixes that.
 

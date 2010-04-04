@@ -18,7 +18,9 @@ class QMT_Core {
 		add_action('init', array(__CLASS__, 'builtin_tax_fix'));
 
 		add_action('parse_query', array(__CLASS__, 'query'));
+		
 		add_action('template_redirect', array(__CLASS__, 'template'));
+		add_filter('wp_title', array(__CLASS__, 'set_title'), 10, 3);
 
 		remove_action('template_redirect', 'redirect_canonical');
 	}
@@ -31,6 +33,34 @@ class QMT_Core {
 		return self::$url;
 	}
 
+	function template() {
+		if ( is_multitax() && $template = locate_template(array('multitax.php')) ) {
+			include $template;
+			die;
+		}
+	}
+
+	function set_title($title, $sep, $seplocation = '') {
+		$newtitle[] = self::get_title();
+		$newtitle[] = " $sep ";
+
+		if ( ! empty($title) )
+			$newtitle[] = $title;
+
+		if ( 'right' != $seplocation )
+			$newtitle = array_reverse($newtitle);
+
+		return implode('', $newtitle);
+	}
+
+	function get_title() {
+		$title = array();
+		foreach ( self::$actual_query as $tax => $value )
+			$title[] .= get_taxonomy($tax)->label . ': ' . str_replace(' ', '+', $value);
+
+		return implode('; ', $title);
+	}
+
 	function builtin_tax_fix() {
 		$tmp = array(
 			'post_tag' => 'tag',
@@ -40,13 +70,6 @@ class QMT_Core {
 		foreach ( get_taxonomies(array('_builtin' => true), 'object') as $taxname => $taxobj )
 			if ( isset($tmp[$taxname]) )
 				$taxobj->query_var = $tmp[$taxname];
-	}
-
-	function template() {
-		if ( is_multitax() && $template = locate_template(array('multitax.php')) ) {
-			include $template;
-			die;
-		}
 	}
 
 	function query($wp_query) {

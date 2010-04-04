@@ -114,7 +114,7 @@ class QMT_Term_Walker extends Walker_Category {
 		$term_name = esc_attr($term->name);
 		$link = '<a href="' . get_term_link($term, $this->taxonomy) . '" ';
 		if ( $use_desc_for_title == 0 || empty($term->description) )
-			$link .= 'title="' . sprintf(__( 'View all posts filed under %s', ), $term_name) . '"';
+			$link .= 'title="' . sprintf(__( 'View all posts filed under %s', 'query-multiple-taxonomies'), $term_name) . '"';
 		else
 			$link .= 'title="' . esc_attr( strip_tags( $term->description ) ) . '"';
 		$link .= '>';
