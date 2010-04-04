@@ -30,6 +30,10 @@ It also comes with a drill-down navigation widget.
 * [Bill Nanson](http://burgundy-report.com)
 * [Matthew Porter](http://porterinnovative.com)
 
+== Screenshots ==
+
+1. Drill-down navigation widgets
+
 == Frequently Asked Questions ==
 
 = How do I define a custom taxonomy? =
