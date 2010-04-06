@@ -51,6 +51,9 @@ Secondly, you can create a `multitax.php` template file in your theme.
 
 == Changelog ==
 
+= 1.1.1 =
+* better title generation
+
 = 1.1 =
 * allow ?tax=foo+bar (AND) queries
 * add taxonomy drill-down widget

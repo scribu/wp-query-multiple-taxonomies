@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Query Multiple Taxonomies
-Version: 1.1
+Version: 1.1.1a
 Description: Filter posts through multiple custom taxonomies
 Author: scribu
 Author URI: http://scribu.net
@@ -41,6 +41,9 @@ class QMT_Core {
 	}
 
 	function set_title($title, $sep, $seplocation = '') {
+		if ( !is_multitax() )
+			return $title;
+
 		$newtitle[] = self::get_title();
 		$newtitle[] = " $sep ";
 
@@ -55,8 +58,15 @@ class QMT_Core {
 
 	function get_title() {
 		$title = array();
-		foreach ( self::$actual_query as $tax => $value )
-			$title[] .= get_taxonomy($tax)->label . ': ' . str_replace(' ', '+', $value);
+		foreach ( self::$actual_query as $tax => $value ) {
+			$key = get_taxonomy($tax)->label;
+			$value = explode('+', $value);
+			foreach ( $value as &$slug )
+				$slug = get_term_by('slug', $slug, $tax)->name;
+			$value = implode('+', $value);
+
+			$title[] .= "$key: $value";
+		}
 
 		return implode('; ', $title);
 	}
