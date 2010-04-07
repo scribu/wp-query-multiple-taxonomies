@@ -53,6 +53,7 @@ Secondly, you can create a `multitax.php` template file in your theme.
 
 = 1.1.1 =
 * better title generation
+* add ro_RO l10n
 
 = 1.1 =
 * allow ?tax=foo+bar (AND) queries
