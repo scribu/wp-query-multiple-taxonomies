@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Query Multiple Taxonomies
-Version: 1.1.1
+Version: 1.1.2a
 Description: Filter posts through multiple custom taxonomies
 Author: scribu
 Author URI: http://scribu.net
@@ -34,7 +34,17 @@ class QMT_Core {
 	}
 
 	function template() {
-		if ( is_multitax() && $template = locate_template(array('multitax.php')) ) {
+		global $wp_query;
+
+		$wp_query->is_archive = true;
+
+		if ( count(self::$actual_query) > 1 )
+			$wp_query->is_multitax = true;
+		else
+			$wp_query->is_tax = true;
+		// todo: set queried object
+
+		if ( $wp_query->is_multitax && $template = locate_template(array('multitax.php')) ) {
 			include $template;
 			die;
 		}
@@ -121,9 +131,6 @@ class QMT_Core {
 
 		$wp_query->set('post_type', $post_type);
 		$wp_query->set('post__in', self::$post_ids);
-
-		$wp_query->is_multitax = true;
-		$wp_query->is_archive = true;
 	}
 
 	private function find_posts($query, $post_type) {
