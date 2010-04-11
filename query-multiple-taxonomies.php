@@ -42,7 +42,7 @@ class QMT_Core {
 			$wp_query->is_multitax = true;
 		else
 			$wp_query->is_tax = true;
-		// todo: set queried object
+		// TODO: set queried object
 
 		if ( $wp_query->is_multitax && $template = locate_template(array('multitax.php')) ) {
 			include $template;
