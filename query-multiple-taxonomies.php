@@ -38,9 +38,11 @@ class QMT_Core {
 
 		$wp_query->is_archive = true;
 
+		$wp_query->is_multitax = false;
+
 		if ( count(self::$actual_query) > 1 )
 			$wp_query->is_multitax = true;
-		else
+		elseif ( count(self::$actual_query) == 1 )
 			$wp_query->is_tax = true;
 		// TODO: set queried object
 
@@ -201,6 +203,9 @@ class QMT_Core {
 		", $tax);
 
 		$term_ids = $wpdb->get_col($query);
+
+		if ( empty($term_ids) )
+			return array();
 
 		return get_terms($tax, array('include' => implode(',', $term_ids)));
 	}
