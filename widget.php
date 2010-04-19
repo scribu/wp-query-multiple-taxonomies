@@ -47,6 +47,11 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		extract($args);
 		extract(wp_parse_args($instance, $this->defaults));
 
+		$list = qmt_walk_terms($taxonomy);
+
+		if ( empty($list) )
+			return;
+
 		echo $before_widget;
 
 		if ( empty($taxonomy) ) {
@@ -66,7 +71,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			if ( ! empty($title) )
 				echo $before_title . $title . $after_title;
 
-			echo html('ul', qmt_walk_terms($taxonomy));
+			echo html('ul', $list);
 		}
 
 		echo $after_widget;
@@ -90,6 +95,7 @@ function qmt_walk_terms($taxonomy, $args = '') {
 	return $walker->walk($terms, 0, $args);
 }
 
+
 class QMT_Term_Walker extends Walker_Category {
 
 	public $tree_type = 'term';
@@ -111,33 +117,20 @@ class QMT_Term_Walker extends Walker_Category {
 	function start_el(&$output, $term, $depth, $args) {
 		extract($args);
 
-		$term_name = esc_attr($term->name);
-		$link = '<a href="' . get_term_link($term, $this->taxonomy) . '" ';
-		if ( $use_desc_for_title == 0 || empty($term->description) )
-			$link .= 'title="' . sprintf(__( 'View all posts filed under %s', 'query-multiple-taxonomies'), $term_name) . '"';
+		if ( !$use_desc_for_title || empty($term->description) )
+			$title = sprintf(__( 'View all posts filed under %s', 'query-multiple-taxonomies'), esc_attr($term->name));
 		else
-			$link .= 'title="' . esc_attr( strip_tags( $term->description ) ) . '"';
-		$link .= '>';
-		$link .= $term_name . '</a>';
+			$title = esc_attr(strip_tags($term->description));
 
-		if ( $args['addremove'] ) {
-			$tmp = $this->selected_terms;
-			$i = array_search($term->slug, $tmp);
-			if ( false !== $i ) {
-				unset($tmp[$i]);
+		$link = html("a href='" . get_term_link($term, $this->taxonomy) . "' title='$title'", $term->name);
 
-				$new_url = QMT_Core::get_url($this->qv, $tmp);
-				$link .= ' ' . html("a class='remove-term' href='$new_url'", '(-)');
-			}
-			else {
-				$tmp[] = $term->slug;
+		if ( isset($addremove) && $addremove )
+			$link .= $this->get_addremove_link($term);
 
-				$new_url = QMT_Core::get_url($this->qv, $tmp);
-				$link .= ' ' . html("a class='add-term' href='$new_url'", '(+)');
-			}
-		}
+		if ( isset($show_count) && $show_count )
+			$link .= ' (' . intval($term->count) . ')';
 
-		if ( 'list' == $args['style'] ) {
+		if ( 'list' == $style ) {
 			$output .= "\t<li";
 			$class = 'term-item term-item-'.$term->term_id;
 			if ( in_array($term->slug, $this->selected_terms) )
@@ -149,6 +142,26 @@ class QMT_Term_Walker extends Walker_Category {
 		} else {
 			$output .= "\t$link<br />\n";
 		}
+	}
+
+	private function get_addremove_link($term) {
+		$tmp = $this->selected_terms;
+		$i = array_search($term->slug, $tmp);
+
+		if ( false !== $i ) {
+			unset($tmp[$i]);
+
+			$new_url = QMT_Core::get_url($this->qv, $tmp);
+			$out = html("a class='remove-term' href='$new_url'", '(-)');
+		}
+		else {
+			$tmp[] = $term->slug;
+
+			$new_url = QMT_Core::get_url($this->qv, $tmp);
+			$out = html("a class='add-term' href='$new_url'", '(+)');
+		}
+
+		return ' ' . $out;
 	}
 }
 

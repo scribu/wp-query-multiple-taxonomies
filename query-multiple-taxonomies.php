@@ -34,9 +34,7 @@ class QMT_Core {
 	}
 
 	function template() {
-		global $wp_query;
-
-		if ( $wp_query->is_multitax && $template = locate_template(array('multitax.php')) ) {
+		if ( is_multitax() && $template = locate_template(array('multitax.php')) ) {
 			include $template;
 			die;
 		}
@@ -62,9 +60,13 @@ class QMT_Core {
 		$title = array();
 		foreach ( self::$actual_query as $tax => $value ) {
 			$key = get_taxonomy($tax)->label;
+
+			// attempt to replace slug with name
 			$value = explode('+', $value);
-			foreach ( $value as &$slug )
-				$slug = get_term_by('slug', $slug, $tax)->name;
+			foreach ( $value as &$slug ) {
+				if ( $term = get_term_by('slug', $slug, $tax) )
+					$slug = $term->name;
+			}
 			$value = implode('+', $value);
 
 			$title[] .= "$key: $value";
