@@ -40,11 +40,12 @@ class QMT_Core {
 
 		$wp_query->is_multitax = false;
 
-		if ( count(self::$actual_query) > 1 )
+#		if ( count(self::$actual_query) > 1 )
 			$wp_query->is_multitax = true;
-		elseif ( count(self::$actual_query) == 1 )
-			$wp_query->is_tax = true;
+#		elseif ( count(self::$actual_query) == 1 )
+#			$wp_query->is_tax = true;
 		// TODO: set queried object
+		// TODO: take into account qmt_post_type
 
 		if ( $wp_query->is_multitax && $template = locate_template(array('multitax.php')) ) {
 			include $template;
