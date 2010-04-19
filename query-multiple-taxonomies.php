@@ -186,20 +186,26 @@ class QMT_Core {
 
 		global $wpdb;
 
-		$query = $wpdb->prepare("
-			SELECT DISTINCT term_id
+		$terms = $wpdb->get_results($wpdb->prepare("
+			SELECT term_id, COUNT(*) as count
 			FROM $wpdb->term_relationships
 			JOIN $wpdb->term_taxonomy USING (term_taxonomy_id)
 			WHERE taxonomy = %s
 			AND object_id IN (" . implode(',', self::$post_ids) . ")
-		", $tax);
+			GROUP BY term_taxonomy_id
+		", $tax));
 
-		$term_ids = $wpdb->get_col($query);
-
-		if ( empty($term_ids) )
+		if ( empty($terms) )
 			return array();
 
-		return get_terms($tax, array('include' => implode(',', $term_ids)));
+		$terms = scbUtil::objects_to_assoc($terms, 'term_id', 'count');
+
+		$term_list = get_terms($tax, array('include' => implode(',', array_keys($terms))));
+
+		foreach ( $term_list as $term )
+			$term->count = $terms[$term->term_id];
+
+		return $term_list;
 	}
 	
 	public function get_url($key, $value, $base = '') {
