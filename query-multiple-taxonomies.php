@@ -36,17 +36,6 @@ class QMT_Core {
 	function template() {
 		global $wp_query;
 
-		$wp_query->is_archive = true;
-
-		$wp_query->is_multitax = false;
-
-#		if ( count(self::$actual_query) > 1 )
-			$wp_query->is_multitax = true;
-#		elseif ( count(self::$actual_query) == 1 )
-#			$wp_query->is_tax = true;
-		// TODO: set queried object
-		// TODO: take into account qmt_post_type
-
 		if ( $wp_query->is_multitax && $template = locate_template(array('multitax.php')) ) {
 			include $template;
 			die;
@@ -123,6 +112,8 @@ class QMT_Core {
 		if ( ! self::find_posts($query, $post_type) )
 			return $wp_query->set_404();
 
+		$wp_query->is_archive = true;
+		$wp_query->is_multitax = true;
 
 		$is_feed = $wp_query->is_feed;
 		$paged = $wp_query->get('paged');
