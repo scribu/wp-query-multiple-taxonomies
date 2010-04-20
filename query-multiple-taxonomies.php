@@ -189,9 +189,10 @@ class QMT_Core {
 		global $wpdb;
 
 		$terms = $wpdb->get_results($wpdb->prepare("
-			SELECT term_id, COUNT(*) as count
+			SELECT *, COUNT(*) as count
 			FROM $wpdb->term_relationships
 			JOIN $wpdb->term_taxonomy USING (term_taxonomy_id)
+			JOIN $wpdb->terms USING (term_id)
 			WHERE taxonomy = %s
 			AND object_id IN (" . implode(',', self::$post_ids) . ")
 			GROUP BY term_taxonomy_id
@@ -200,14 +201,7 @@ class QMT_Core {
 		if ( empty($terms) )
 			return array();
 
-		$terms = scbUtil::objects_to_assoc($terms, 'term_id', 'count');
-
-		$term_list = get_terms($tax, array('include' => implode(',', array_keys($terms))));
-
-		foreach ( $term_list as $term )
-			$term->count = $terms[$term->term_id];
-
-		return $term_list;
+		return $terms;
 	}
 	
 	public function get_url($key, $value, $base = '') {
