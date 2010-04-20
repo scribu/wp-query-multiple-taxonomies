@@ -68,10 +68,13 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 				$title .= ' ' . html("a class='clear-taxonomy' href='$new_url'", '(-)');
 			}
 
+			$out = '';
 			if ( ! empty($title) )
-				echo $before_title . $title . $after_title;
+				$out .= $before_title . $title . $after_title;
 
-			echo html('ul', $list);
+			$out .= html("ul class='term-list'", $list);
+
+			echo html("div id='term-list-$taxonomy'", $out);
 		}
 
 		echo $after_widget;
@@ -151,13 +154,13 @@ class QMT_Term_Walker extends Walker_Category {
 		if ( false !== $i ) {
 			unset($tmp[$i]);
 
-			$new_url = QMT_Core::get_url($this->qv, $tmp);
+			$new_url = esc_url(QMT_Core::get_url($this->qv, $tmp));
 			$out = html("a class='remove-term' href='$new_url'", '(-)');
 		}
 		else {
 			$tmp[] = $term->slug;
 
-			$new_url = QMT_Core::get_url($this->qv, $tmp);
+			$new_url = esc_url(QMT_Core::get_url($this->qv, $tmp));
 			$out = html("a class='add-term' href='$new_url'", '(+)');
 		}
 
