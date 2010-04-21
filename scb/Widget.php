@@ -13,7 +13,7 @@ abstract class scbWidget extends WP_Widget {
 		add_action('widgets_init', array(__CLASS__, '_scb_register'));
 
 		// for auto-uninstall
-		if ( $file && $base )
+		if ( $file && $base && class_exists('scbOptions') )
 			new scbOptions("widget_$base", $file);
 	}
 

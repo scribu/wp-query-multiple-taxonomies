@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Query Multiple Taxonomies
-Version: 1.2a
+Version: 1.2a2
 Description: Filter posts through multiple custom taxonomies
 Author: scribu
 Author URI: http://scribu.net
@@ -87,6 +87,8 @@ class QMT_Core {
 	}
 
 	function query($wp_query) {
+		global $wpdb;
+
 		self::$url = get_bloginfo('url');
 
 		$post_type = apply_filters('qmt_post_type', 'post');
@@ -104,14 +106,19 @@ class QMT_Core {
 			self::$actual_query[$taxname] = $value;
 			self::$url = add_query_arg($qv, $value, self::$url);
 
-			foreach ( explode(' ', $value) as $slug )
-				$query[] = array($slug, $taxname);
+			foreach ( explode(' ', $value) as $value )
+				$query[] = wp_tax($taxname, $value, 'slug');
 		}
 
 		if ( empty($query) )
 			return;
 
-		if ( ! self::find_posts($query, $post_type) )
+		// maybe filter the post ids later, using $wp_query?
+		$query[] = "object_id IN (SELECT ID FROM $wpdb->posts WHERE post_type = '$post_type' AND post_status = 'publish')";
+
+		self::$post_ids = $wpdb->get_col(wp_tax_query(wp_tax_group('AND', $query)));
+
+		if ( empty(self::$post_ids) )
 			return $wp_query->set_404();
 
 		$wp_query->is_archive = true;
@@ -127,59 +134,6 @@ class QMT_Core {
 
 		$wp_query->set('post_type', $post_type);
 		$wp_query->set('post__in', self::$post_ids);
-	}
-
-	private function find_posts($query, $post_type) {
-		global $wpdb;
-
-		// get an initial set of ids, to intersect with the others
-		if ( ! $ids = self::get_objects(array_shift($query)) )
-			return false;
-
-		foreach ( $query as $qv ) {
-			if ( ! $posts = self::get_objects($qv) )
-				return false;
-
-			$ids = array_intersect($ids, $posts);
-		}
-
-		if ( empty($ids) )
-			return false;
-
-		// select only published posts
-		$post_type = esc_sql($post_type);
-		$ids = $wpdb->get_col("
-			SELECT ID FROM $wpdb->posts 
-			WHERE post_type = '$post_type'
-			AND post_status = 'publish' 
-			AND ID IN (" . implode(',', $ids). ")
-		");
-
-		if ( empty($ids) )
-			return false;
-
-		self::$post_ids = $ids;
-
-		return true;
-	}
-
-	private function get_objects($qv) {
-
-		list($term_slug, $tax) = $qv;
-
-		if ( ! $term = get_term_by('slug', $term_slug, $tax) )
-			return false;
-
-		$terms = array($term->term_id);
-		
-		$terms = array_merge($terms, get_term_children($term->term_id, $tax));
-
-		$ids = get_objects_in_term($terms, $tax);
-
-		if ( empty($ids) )
-			return false;
-
-		return $ids;
 	}
 
 	function get_terms($tax) {
@@ -234,10 +188,10 @@ function get_taxonomies( $args = array(), $output = 'names' ) {
 }
 endif;
 
-
 function _qmt_init() {
 	include dirname(__FILE__) . '/scb/load.php';
 
+	include dirname(__FILE__) . '/tax-api.php';
 	include dirname(__FILE__) . '/template-tags.php';
 	include dirname(__FILE__) . '/widget.php';
 
