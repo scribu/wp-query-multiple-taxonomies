@@ -38,6 +38,12 @@ It also comes with a drill-down navigation widget.
 
 == Frequently Asked Questions ==
 
+= Error on activation: "Parse error: syntax error, unexpected T_CLASS..." =
+
+Make sure your host is running PHP 5. Add this line to wp-config.php to check:
+
+`var_dump(PHP_VERSION);`
+
 = How do I define a custom taxonomy? =
 
 Try the [Simple Taxonomies](http://wordpress.org/extend/plugins/simple-taxonomies) plugin.
