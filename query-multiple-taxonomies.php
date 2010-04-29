@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Query Multiple Taxonomies
-Version: 1.2a2
+Version: 1.2a3
 Description: Filter posts through multiple custom taxonomies
 Author: scribu
 Author URI: http://scribu.net
@@ -26,54 +26,15 @@ class QMT_Core {
 		remove_action('template_redirect', 'redirect_canonical');
 	}
 
-	function get_actual_query() {
+
+//_____Query_____
+
+
+	function get_actual_query($tax = '') {
+		if ( !empty($tax) )
+			return @self::$actual_query[$tax];
+
 		return self::$actual_query;
-	}
-
-	function get_canonical_url() {
-		return self::$url;
-	}
-
-	function template() {
-		if ( is_multitax() && $template = locate_template(array('multitax.php')) ) {
-			include $template;
-			die;
-		}
-	}
-
-	function set_title($title, $sep, $seplocation = '') {
-		if ( !is_multitax() )
-			return $title;
-
-		$newtitle[] = self::get_title();
-		$newtitle[] = " $sep ";
-
-		if ( ! empty($title) )
-			$newtitle[] = $title;
-
-		if ( 'right' != $seplocation )
-			$newtitle = array_reverse($newtitle);
-
-		return implode('', $newtitle);
-	}
-
-	function get_title() {
-		$title = array();
-		foreach ( self::$actual_query as $tax => $value ) {
-			$key = get_taxonomy($tax)->label;
-
-			// attempt to replace slug with name
-			$value = explode('+', $value);
-			foreach ( $value as &$slug ) {
-				if ( $term = get_term_by('slug', $slug, $tax) )
-					$slug = $term->name;
-			}
-			$value = implode('+', $value);
-
-			$title[] .= "$key: $value";
-		}
-
-		return implode('; ', $title);
 	}
 
 	function builtin_tax_fix() {
@@ -92,8 +53,6 @@ class QMT_Core {
 	function query($wp_query) {
 		global $wpdb;
 
-		self::$url = get_bloginfo('url');
-
 		$query = array();
 		foreach ( get_object_taxonomies(self::$post_type) as $taxname ) {
 			$taxobj = get_taxonomy($taxname);
@@ -105,7 +64,6 @@ class QMT_Core {
 				continue;
 
 			self::$actual_query[$taxname] = $value;
-			self::$url = add_query_arg($qv, $value, self::$url);
 
 			foreach ( explode(' ', $value) as $value )
 				$query[] = wp_tax($taxname, $value, 'slug');
@@ -158,10 +116,21 @@ class QMT_Core {
 
 		return $terms;
 	}
-	
+
+
+//_____URLs_____
+
+
+	function get_canonical_url() {
+		if ( empty(self::$url) )
+			self::$url = add_query_arg(self::$actual_query, get_bloginfo('url'));
+
+		return self::$url;
+	}
+
 	public function get_url($key, $value, $base = '') {
 		if ( empty($base) )
-			$base = self::$url;
+			$base = self::get_canonical_url();
 
 		if ( empty($value) )
 			return remove_query_arg($key, $base);
@@ -169,6 +138,52 @@ class QMT_Core {
 		$value = trim(implode('+', $value), '+');
 
 		return add_query_arg($key, $value, $base);
+	}
+
+
+//_____Theme integration_____
+
+
+	function template() {
+		if ( is_multitax() && $template = locate_template(array('multitax.php')) ) {
+			include $template;
+			die;
+		}
+	}
+
+	function set_title($title, $sep, $seplocation = '') {
+		if ( !is_multitax() )
+			return $title;
+
+		$newtitle[] = self::get_title();
+		$newtitle[] = " $sep ";
+
+		if ( ! empty($title) )
+			$newtitle[] = $title;
+
+		if ( 'right' != $seplocation )
+			$newtitle = array_reverse($newtitle);
+
+		return implode('', $newtitle);
+	}
+
+	function get_title() {
+		$title = array();
+		foreach ( self::$actual_query as $tax => $value ) {
+			$key = get_taxonomy($tax)->label;
+
+			// attempt to replace slug with name
+			$value = explode('+', $value);
+			foreach ( $value as &$slug ) {
+				if ( $term = get_term_by('slug', $slug, $tax) )
+					$slug = $term->name;
+			}
+			$value = implode('+', $value);
+
+			$title[] .= "$key: $value";
+		}
+
+		return implode('; ', $title);
 	}
 }
 
