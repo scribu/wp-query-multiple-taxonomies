@@ -28,7 +28,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		$out = '';
 
 		$taxonomies = array();
-		foreach ( get_object_taxonomies('post') as $taxonomy ) {
+		foreach ( get_object_taxonomies(QMT_Core::$post_type) as $taxonomy ) {
 			$tax = get_taxonomy($taxonomy);
 
 			if ( ! empty($tax->label) )

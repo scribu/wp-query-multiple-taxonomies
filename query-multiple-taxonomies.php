@@ -9,6 +9,7 @@ Plugin URI: http://scribu.net/wordpress/query-multiple-taxonomies/
 */
 
 class QMT_Core {
+	public static $post_type;
 
 	private static $post_ids = array();
 	private static $actual_query = array();
@@ -76,6 +77,8 @@ class QMT_Core {
 	}
 
 	function builtin_tax_fix() {
+		self::$post_type = apply_filters('qmt_post_type', 'post');
+
 		$tmp = array(
 			'post_tag' => 'tag',
 			'category' => 'category_name'
@@ -91,10 +94,8 @@ class QMT_Core {
 
 		self::$url = get_bloginfo('url');
 
-		$post_type = apply_filters('qmt_post_type', 'post');
-
 		$query = array();
-		foreach ( get_object_taxonomies($post_type) as $taxname ) {
+		foreach ( get_object_taxonomies(self::$post_type) as $taxname ) {
 			$taxobj = get_taxonomy($taxname);
 
 			if ( ! $qv = $taxobj->query_var )
