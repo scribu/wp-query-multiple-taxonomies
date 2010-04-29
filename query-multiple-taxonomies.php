@@ -73,7 +73,7 @@ class QMT_Core {
 			return;
 
 		// maybe filter the post ids later, using $wp_query?
-		$query[] = "object_id IN (SELECT ID FROM $wpdb->posts WHERE post_type = '$post_type' AND post_status = 'publish')";
+		$query[] = "object_id IN (SELECT ID FROM $wpdb->posts WHERE post_type = '" . self::$post_type . "' AND post_status = 'publish')";
 
 		self::$post_ids = $wpdb->get_col(wp_tax_query(wp_tax_group('AND', $query)));
 
@@ -91,7 +91,7 @@ class QMT_Core {
 		$wp_query->is_feed = $is_feed;
 		$wp_query->set('paged', $paged);
 
-		$wp_query->set('post_type', $post_type);
+		$wp_query->set('post_type', self::$post_type);
 		$wp_query->set('post__in', self::$post_ids);
 	}
 
