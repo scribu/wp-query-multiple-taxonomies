@@ -9,8 +9,6 @@ Plugin URI: http://scribu.net/wordpress/query-multiple-taxonomies/
 */
 
 class QMT_Core {
-	public static $post_type;
-
 	private static $post_ids = array();
 	private static $actual_query = array();
 
@@ -28,6 +26,9 @@ class QMT_Core {
 
 //_____Query_____
 
+	function get_post_type() {
+		return apply_filters('qmt_post_type', 'post');
+	}
 
 	function get_actual_query($tax = '') {
 		if ( !empty($tax) )
@@ -37,8 +38,6 @@ class QMT_Core {
 	}
 
 	function builtin_tax_fix() {
-		self::$post_type = apply_filters('qmt_post_type', 'post');
-
 		$tmp = array(
 			'post_tag' => 'tag',
 			'category' => 'category_name'
@@ -52,8 +51,10 @@ class QMT_Core {
 	function query($wp_query) {
 		global $wpdb;
 
+		$post_type = self::get_post_type();
+
 		$query = array();
-		foreach ( get_object_taxonomies(self::$post_type) as $taxname ) {
+		foreach ( get_object_taxonomies($post_type) as $taxname ) {
 			$taxobj = get_taxonomy($taxname);
 
 			if ( ! $qv = $taxobj->query_var )
@@ -72,7 +73,7 @@ class QMT_Core {
 			return;
 
 		// maybe filter the post ids later, using $wp_query?
-		$query[] = "object_id IN (SELECT ID FROM $wpdb->posts WHERE post_type = '" . self::$post_type . "' AND post_status = 'publish')";
+		$query[] = "object_id IN (SELECT ID FROM $wpdb->posts WHERE post_type = '$post_type' AND post_status = 'publish')";
 
 		self::$post_ids = $wpdb->get_col(wp_tax_query(wp_tax_group('AND', $query)));
 
@@ -90,7 +91,7 @@ class QMT_Core {
 		$wp_query->is_feed = $is_feed;
 		$wp_query->set('paged', $paged);
 
-		$wp_query->set('post_type', self::$post_type);
+		$wp_query->set('post_type', $post_type);
 		$wp_query->set('post__in', self::$post_ids);
 	}
 
@@ -145,7 +146,7 @@ class QMT_Core {
 
 		$url = add_query_arg($query, $base);
 
-		return apply_filters('qmt_url', $url, $key, $value, $base);
+		return apply_filters('qmt_url', $url, $query, $base);
 	}
 
 
