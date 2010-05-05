@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Query Multiple Taxonomies
-Version: 1.2a3
+Version: 1.2-alpha4
 Description: Filter posts through multiple custom taxonomies
 Author: scribu
 Author URI: http://scribu.net
@@ -13,7 +13,6 @@ class QMT_Core {
 
 	private static $post_ids = array();
 	private static $actual_query = array();
-	private static $url = '';
 
 	function init() {
 		add_action('init', array(__CLASS__, 'builtin_tax_fix'));
@@ -63,7 +62,7 @@ class QMT_Core {
 			if ( ! $value = $wp_query->get($qv) )
 				continue;
 
-			self::$actual_query[$taxname] = $value;
+			self::$actual_query[$taxname] = str_replace(' ', '+', $value);
 
 			foreach ( explode(' ', $value) as $value )
 				$query[] = wp_tax($taxname, $value, 'slug');
@@ -120,24 +119,33 @@ class QMT_Core {
 
 //_____URLs_____
 
+	private static $base;
+
+	function get_base_url() {
+		if ( empty(self::$base) )
+			self::$base = apply_filters('qmt_base_url', get_bloginfo('url'));
+
+		return self::$base;
+	}
 
 	function get_canonical_url() {
-		if ( empty(self::$url) )
-			self::$url = add_query_arg(self::$actual_query, get_bloginfo('url'));
-
-		return self::$url;
+		return add_query_arg(self::$actual_query, self::get_base_url());
 	}
 
 	public function get_url($key, $value, $base = '') {
 		if ( empty($base) )
-			$base = self::get_canonical_url();
+			$base = self::get_base_url();
+
+		$query = self::$actual_query;
 
 		if ( empty($value) )
-			return remove_query_arg($key, $base);
+			unset($query[$key]);
+		else
+			$query[$key] = trim(implode('+', $value), '+');
 
-		$value = trim(implode('+', $value), '+');
+		$url = add_query_arg($query, $base);
 
-		return add_query_arg($key, $value, $base);
+		return apply_filters('qmt_url', $url, $key, $value, $base);
 	}
 
 

@@ -112,7 +112,7 @@ class QMT_Term_Walker extends Walker_Category {
 		$this->taxonomy = $taxonomy;
 		$this->qv = get_taxonomy($taxonomy)->query_var;
 
-		$this->selected_terms = explode(' ', QMT_Core::get_actual_query($taxonomy));
+		$this->selected_terms = explode('+', QMT_Core::get_actual_query($taxonomy));
 	}
 
 	function start_el(&$output, $term, $depth, $args) {
