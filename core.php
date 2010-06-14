@@ -59,7 +59,7 @@ class QMT_Core {
 			self::$actual_query[$taxname] = str_replace(' ', '+', $value);
 
 			foreach ( explode(' ', $value) as $value )
-				$query[] = wp_tax($taxname, $value, 'slug');
+				$query[] = wp_tax($taxname, explode(',', $value), 'slug');
 		}
 
 		if ( empty($query) )
