@@ -82,7 +82,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 }
 
 function qmt_walk_terms($taxonomy, $args = '') {
-	if ( !is_taxonomy($taxonomy) ) {
+	if ( !taxonomy_exists($taxonomy) ) {
 		trigger_error("Invalid taxonomy '$taxonomy'", E_USER_WARNING);
 		return '';
 	}
