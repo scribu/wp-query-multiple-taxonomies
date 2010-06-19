@@ -56,6 +56,8 @@ class QMT_Core {
 			if ( ! $value = $wp_query->get($qv) )
 				continue;
 
+			$value = end(explode('/', $value));
+
 			self::$actual_query[$taxname] = str_replace(' ', '+', $value);
 
 			foreach ( explode(' ', $value) as $value )
@@ -194,21 +196,4 @@ class QMT_Core {
 		return implode('; ', $title);
 	}
 }
-
-// WP < 3.0
-if ( ! function_exists('get_taxonomies') ) :
-function get_taxonomies( $args = array(), $output = 'names' ) {
-	global $wp_taxonomies;
-
-	$taxonomies = array();
-	foreach ( (array) $wp_taxonomies as $taxname => $taxobj )
-		if ( empty($args) || array_intersect_assoc((array) $taxobj, $args) )
-			$taxonomies[$taxname] = $taxobj;
-
-	if ( 'names' == $output )
-		return array_keys($taxonomies);
-
-	return $taxonomies;
-}
-endif;
 
