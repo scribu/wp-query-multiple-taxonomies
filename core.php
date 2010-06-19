@@ -113,35 +113,41 @@ class QMT_Core {
 
 //_____URLs_____
 
-	private static $base;
 
-	function get_base_url() {
-		if ( empty(self::$base) )
-			self::$base = apply_filters('qmt_base_url', get_bloginfo('url'));
-
-		return self::$base;
-	}
-
-	function get_canonical_url() {
-		return add_query_arg(self::$actual_query, self::get_base_url());
-	}
-
-	public function get_url($key, $value, $base = '') {
-		if ( empty($base) )
-			$base = self::get_base_url();
-
+	public function get_url($taxonomy, $value) {
 		$query = self::$actual_query;
 
 		if ( empty($value) )
-			unset($query[$key]);
+			unset($query[$taxonomy]);
 		else
-			$query[$key] = trim(implode('+', $value), '+');
+			$query[$taxonomy] = trim(implode('+', $value), '+');
 
-		$url = add_query_arg($query, $base);
+		$url = self::get_canonical_url($query);
 
-		return apply_filters('qmt_url', $url, $query, $base);
+		return apply_filters('qmt_url', $url, $query);
 	}
 
+	public function get_canonical_url($query = array()) {
+		if ( empty($query) )
+			$query = self::$actual_query;
+
+		ksort($query);
+
+		$url = self::get_base_url();
+		foreach ( $query as $taxonomy => $value )
+			$url = add_query_arg(get_taxonomy($taxonomy)->query_var, $value, $url);
+
+		return $url;
+	}
+
+	private static $base_url;
+
+	public function get_base_url() {
+		if ( empty(self::$base_url) )
+			self::$base_url = apply_filters('qmt_base_url', site_url());
+
+		return self::$base_url;
+	}
 
 //_____Theme integration_____
 

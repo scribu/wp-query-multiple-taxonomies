@@ -115,7 +115,6 @@ class QMT_Term_Walker extends Walker_Category {
 
 	function __construct($taxonomy) {
 		$this->taxonomy = $taxonomy;
-		$this->qv = get_taxonomy($taxonomy)->query_var;
 
 		$this->selected_terms = explode('+', QMT_Core::get_actual_query($taxonomy));
 	}
@@ -157,13 +156,13 @@ class QMT_Term_Walker extends Walker_Category {
 		if ( false !== $i ) {
 			unset($tmp[$i]);
 
-			$new_url = esc_url(QMT_Core::get_url($this->qv, $tmp));
+			$new_url = esc_url(QMT_Core::get_url($this->taxonomy, $tmp));
 			$out = html("a class='remove-term' href='$new_url'", '(-)');
 		}
 		else {
 			$tmp[] = $term->slug;
 
-			$new_url = esc_url(QMT_Core::get_url($this->qv, $tmp));
+			$new_url = esc_url(QMT_Core::get_url($this->taxonomy, $tmp));
 			$out = html("a class='add-term' href='$new_url'", '(+)');
 		}
 
