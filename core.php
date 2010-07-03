@@ -80,7 +80,7 @@ class QMT_Core {
 		$wp_query->is_feed = $is_feed;
 		$wp_query->set( 'paged', $paged );
 
-//		$wp_query->set( 'post_type', 'any' );
+		$wp_query->set( 'post_type', 'any' );
 		$wp_query->set( 'post__in', self::$post_ids );
 	}
 

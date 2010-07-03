@@ -220,13 +220,13 @@ class QMT_Term_Walker extends Walker_Category {
 			unset( $tmp[$i] );
 
 			$new_url = esc_url( QMT_Core::get_url( $this->taxonomy, $tmp ) );
-			$out = html( "a class='remove-term' href='$new_url'", '( - )' );
+			$out = html( "a class='remove-term' href='$new_url'", '(-)' );
 		}
 		else {
 			$tmp[] = $term->slug;
 
 			$new_url = esc_url( QMT_Core::get_url( $this->taxonomy, $tmp ) );
-			$out = html( "a class='add-term' href='$new_url'", '( + )' );
+			$out = html( "a class='add-term' href='$new_url'", '(+)' );
 		}
 
 		return ' ' . $out;
