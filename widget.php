@@ -40,13 +40,6 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		$this->WP_Widget( 'taxonomy-drill-down', 'Taxonomy Drill-Down', $widget_ops );
 	}
 
-/*	
-	function update($new_instance, $old_instance) {
-		debug($new_instance, $old_instance);
-		die;
-	}
-/**/
-
 	function form( $instance ) {
 		if ( empty( $instance ) )
 			$instance = $this->defaults;
@@ -92,8 +85,6 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 <script type="text/javascript">
 jQuery(document).ready(function($){
 	var tax_lists = <?php echo json_encode(self::$tax_lists); ?>
-
-	jQuery('form').each(function() {this.reset()});	// temporary?
 
 	var generate_dropdown = function(ptype, $select) {
 

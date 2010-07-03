@@ -27,8 +27,10 @@ class QMT_Core {
 	}
 
 	function builtin_tax_fix() {
-		$tmp = array( 'post_tag' => 'tag',
-			'category' => 'category_name' );
+		$tmp = array( 
+			'post_tag' => 'tag',
+			'category' => 'category_name' 
+		);
 
 		foreach ( get_taxonomies( array( '_builtin' => true ), 'object' ) as $taxname => $taxobj )
 			if ( isset( $tmp[$taxname] ) )

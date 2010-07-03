@@ -213,7 +213,8 @@ abstract class scbAdminPage {
 	// the second argument is sent to submit_button()
 	$this->form_wrap( $content, array( 'text' => 'Save changes',
 		'name' => 'action',
-		'ajax' => true, ) );
+		'ajax' => true,
+	) );
 	*/
 	function form_wrap( $content, $submit_button = true ) {
 		if ( is_array( $submit_button ) ) {
@@ -359,7 +360,8 @@ abstract class scbAdminPage {
 		if ( empty( $this->args['page_title'] ) )
 			trigger_error( 'Page title cannot be empty', E_USER_WARNING );
 
-		$this->args = wp_parse_args( $this->args, array( 'toplevel' => '',
+		$this->args = wp_parse_args( $this->args, array( 
+			'toplevel' => '',
 			'icon' => '',
 			'parent' => 'options-general.php',
 			'capability' => 'manage_options',
@@ -367,7 +369,8 @@ abstract class scbAdminPage {
 			'page_slug' => '',
 			'nonce' => '',
 			'action_link' => __( 'Settings', $this->textdomain ),
-			'ajax_submit' => false, ) );
+			'ajax_submit' => false, 
+		) );
 
 		if ( empty( $this->args['page_slug'] ) )
 			$this->args['page_slug'] = sanitize_title_with_dashes( $this->args['menu_title'] );
