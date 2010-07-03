@@ -62,7 +62,7 @@ class QMT_Core {
 			return;
 
 		// maybe filter the post ids later, using $wp_query?
-		$query[] = "object_id IN ( SELECT ID FROM $wpdb->posts WHERE post_type = '$post_type' AND post_status = 'publish' )";
+		$query[] = "object_id IN ( SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' )";
 
 		self::$post_ids = $wpdb->get_col( wp_tax_query( wp_tax_group( 'AND', $query ) ) );
 
