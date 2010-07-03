@@ -20,6 +20,7 @@ function _qmt_init() {
 
 	QMT_Core::init();
 
+	Taxonomy_Drill_Down_Widget::init();
 	scbWidget::init('Taxonomy_Drill_Down_Widget', __FILE__, 'taxonomy-drill-down');
 }
 scb_init('_qmt_init');
