@@ -61,6 +61,13 @@ class QMT_Core {
 		if ( empty( $query ) )
 			return;
 
+		if ( 1 == count(self::$actual_query) ) {
+			$term = reset(self::$actual_query);
+			
+			if ( false === strpos($term, ',') && false === strpos($term, '+') )
+				return;
+		}
+
 		// maybe filter the post ids later, using $wp_query?
 		$query[] = "object_id IN ( SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' )";
 
