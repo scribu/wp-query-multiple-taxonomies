@@ -29,7 +29,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 	}
 
 	function Taxonomy_Drill_Down_Widget() {
-		$this->defaults = array( 
+		$this->defaults = array(
 			'title' => '',
 			'post_type' => 'post',
 			'taxonomy' => '',
@@ -44,10 +44,10 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		if ( empty( $instance ) )
 			$instance = $this->defaults;
 
-		echo $this->input( array( 
+		echo $this->input( array(
 			'title' => __( 'Title:', 'query-multiple-taxonomies' ),
 			'name'  => 'title',
-			'type'  => 'text', 
+			'type'  => 'text',
 		), $instance );
 
 		$out = '';
@@ -83,27 +83,27 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 ?>
 <script type="text/javascript">
-jQuery(document).ready(function($){
-	var tax_lists = <?php echo json_encode(self::$tax_lists); ?>
+jQuery( document ).ready( function( $ ){
+	var tax_lists = <?php echo json_encode( self::$tax_lists ); ?>
 
-	var generate_dropdown = function(ptype, $select) {
+	var generate_dropdown = function( ptype, $select ) {
 
-		$select.html(options);
+		$select.html( options );
 	};
 
-	jQuery(document).delegate('.qmt-post-type select', 'change', function() {
-		var $that = $(this);
+	jQuery( document ).delegate( '.qmt-post-type select', 'change', function() {
+		var $that = $( this );
 
-		var new_ptype = $that.find(':selected').val();
+		var new_ptype = $that.find( ':selected' ).val();
 
 		var options = '';
-		$.each(tax_lists[new_ptype], function(val, label) {
+		$.each( tax_lists[new_ptype], function( val, label ) {
 			options += '<option value="' + val + '">' + label + '</option>';
-		});
+		} );
 
-		$that.parents('.qmt-dropdowns').find('.qmt-taxonomies select').html(options);
-	});
-});
+		$that.parents( '.qmt-dropdowns' ).find( '.qmt-taxonomies select' ).html( options );
+	} );
+} );
 </script>
 <?php
 	}
@@ -130,7 +130,7 @@ jQuery(document).ready(function($){
 			$query = QMT_Core::get_actual_query();
 			if ( isset( $query[$taxonomy] ) ) {
 				$new_url = QMT_Core::get_url( $taxonomy, '' );
-				$title .= ' ' . html( "a class='clear-taxonomy' href='$new_url'", '( - )' );
+				$title .= ' ' . html( "a class='clear-taxonomy' href='$new_url'", '(-)' );
 			}
 
 			$out = '';

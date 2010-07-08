@@ -8,7 +8,7 @@ class QMT_Core {
 		add_action( 'init', array( __CLASS__, 'builtin_tax_fix' ) );
 
 		add_action( 'parse_query', array( __CLASS__, 'query' ) );
-		
+
 		add_action( 'template_redirect', array( __CLASS__, 'template' ) );
 		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3 );
 
@@ -27,9 +27,9 @@ class QMT_Core {
 	}
 
 	function builtin_tax_fix() {
-		$tmp = array( 
+		$tmp = array(
 			'post_tag' => 'tag',
-			'category' => 'category_name' 
+			'category' => 'category_name'
 		);
 
 		foreach ( get_taxonomies( array( '_builtin' => true ), 'object' ) as $taxname => $taxobj )
@@ -41,7 +41,7 @@ class QMT_Core {
 		global $wpdb;
 
 		$query = array();
-		foreach ( get_taxonomies( array('public' => true ) ) as $taxname ) {
+		foreach ( get_taxonomies( array( 'public' => true ) ) as $taxname ) {
 			$taxobj = get_taxonomy( $taxname );
 
 			if ( ! $qv = $taxobj->query_var )
@@ -61,10 +61,10 @@ class QMT_Core {
 		if ( empty( $query ) )
 			return;
 
-		if ( 1 == count(self::$actual_query) ) {
-			$term = reset(self::$actual_query);
-			
-			if ( false === strpos($term, ',') && false === strpos($term, '+') )
+		if ( 1 == count( self::$actual_query ) ) {
+			$term = reset( self::$actual_query );
+
+			if ( false === strpos( $term, ',' ) && false === strpos( $term, '+' ) )
 				return;
 		}
 
