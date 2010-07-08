@@ -8,11 +8,6 @@ class QMT_Core {
 		add_action( 'init', array( __CLASS__, 'builtin_tax_fix' ) );
 
 		add_action( 'parse_query', array( __CLASS__, 'query' ) );
-
-		add_action( 'template_redirect', array( __CLASS__, 'template' ) );
-		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3 );
-
-		remove_action( 'template_redirect', 'redirect_canonical' );
 	}
 
 
@@ -89,6 +84,12 @@ class QMT_Core {
 
 		$wp_query->set( 'post_type', 'any' );
 		$wp_query->set( 'post__in', self::$post_ids );
+
+
+		add_action( 'template_redirect', array( __CLASS__, 'template' ) );
+		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3 );
+
+		remove_action( 'template_redirect', 'redirect_canonical' );
 	}
 
 	function get_terms( $tax ) {
@@ -98,7 +99,7 @@ class QMT_Core {
 		global $wpdb;
 
 		$terms = $wpdb->get_results( $wpdb->prepare( "
-			SELECT *, COUNT( * ) as count
+			SELECT *, COUNT(*) as count
 			FROM $wpdb->term_relationships
 			JOIN $wpdb->term_taxonomy USING ( term_taxonomy_id )
 			JOIN $wpdb->terms USING ( term_id )
@@ -152,20 +153,18 @@ class QMT_Core {
 		return self::$base_url;
 	}
 
+
 //_____Theme integration_____
 
 
 	function template() {
-		if ( is_multitax() && $template = locate_template( array( 'multitax.php' ) ) ) {
+		if ( $template = locate_template( array( 'multitax.php' ) ) ) {
 			include $template;
 			die;
 		}
 	}
 
 	function set_title( $title, $sep, $seplocation = '' ) {
-		if ( !is_multitax() )
-			return $title;
-
 		$newtitle[] = self::get_title();
 		$newtitle[] = " $sep ";
 
