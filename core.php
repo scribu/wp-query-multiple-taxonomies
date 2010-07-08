@@ -57,9 +57,10 @@ class QMT_Core {
 			return;
 
 		if ( 1 == count( self::$actual_query ) ) {
+			$tax = key( self::$actual_query );
 			$term = reset( self::$actual_query );
 
-			if ( false === strpos( $term, ',' ) && false === strpos( $term, '+' ) )
+			if ( in_array( $tax, get_object_taxonomies( 'post' ) ) && false === strpos( $term, ',' ) && false === strpos( $term, '+' ) )
 				return;
 		}
 
@@ -85,7 +86,7 @@ class QMT_Core {
 		$wp_query->set( 'post_type', 'any' );
 		$wp_query->set( 'post__in', self::$post_ids );
 
-
+		// Theme integration
 		add_action( 'template_redirect', array( __CLASS__, 'template' ) );
 		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3 );
 
