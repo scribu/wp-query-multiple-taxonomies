@@ -2,7 +2,7 @@
 Contributors: scribu
 Donate link: http://scribu.net/paypal
 Tags: drill-down, query, widget, navigation, taxonomy
-Requires at least: 2.9
+Requires at least: 3.0
 Tested up to: 3.0
 Stable tag: 1.1.1
 
@@ -35,6 +35,8 @@ It also comes with a drill-down navigation widget.
 
 1. Drill-down navigation widgets
 
+2. Drill-down widgets in the admin
+
 
 == Frequently Asked Questions ==
 
@@ -56,6 +58,12 @@ Secondly, you can create a `multitax.php` template file in your theme.
 
 
 == Changelog ==
+
+= 1.2 =
+* fewer queries
+* custom post type support
+* load correct template for single category|tag|term archives
+* [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-2.html)
 
 = 1.1.1 =
 * better title generation
