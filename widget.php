@@ -141,9 +141,9 @@ jQuery( document ).ready( function( $ ){
 
 			echo html( "div id='term-list-$taxonomy'", $out );
 		}
-
-		echo $after_widget;
 	}
+
+	echo $after_widget;
 }
 
 function qmt_walk_terms( $taxonomy, $args = '' ) {
@@ -159,9 +159,11 @@ function qmt_walk_terms( $taxonomy, $args = '' ) {
 
 	$walker = new QMT_Term_Walker( $taxonomy );
 
-	$args = wp_parse_args( $args, array( 'style' => 'list',
+	$args = wp_parse_args( $args, array( 
+		'style' => 'list',
 		'use_desc_for_title' => false,
-		'addremove' => true, ) );
+		'addremove' => true, 
+	) );
 
 	return $walker->walk( $terms, 0, $args );
 }
