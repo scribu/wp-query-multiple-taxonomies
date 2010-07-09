@@ -52,6 +52,8 @@ class QMT_Core {
 		if ( empty( self::$actual_query ) )
 			return;
 
+		$wp_query->is_multitax = true;
+
 		if ( 1 == count( self::$actual_query ) ) {
 			$tax = key( self::$actual_query );
 			$term = reset( self::$actual_query );
@@ -66,7 +68,6 @@ class QMT_Core {
 			return $wp_query->set_404();
 
 		$wp_query->is_archive = true;
-		$wp_query->is_multitax = true;
 
 		$is_feed = $wp_query->is_feed;
 		$paged = $wp_query->get( 'paged' );

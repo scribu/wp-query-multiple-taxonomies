@@ -59,6 +59,10 @@ Secondly, you can create a `multitax.php` template file in your theme.
 
 == Changelog ==
 
+= 1.2.2 =
+* fixed fatal error
+* reverted is_multitax() to previous behaviour
+
 = 1.2.1 =
 * fixed issue when site url isn't the same as the wp url
 * fixed issue when doing a single taxonomy query
