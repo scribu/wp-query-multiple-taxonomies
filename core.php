@@ -1,7 +1,7 @@
 <?php
 
 class QMT_Core {
-	private static $post_ids = array();
+	private static $post_ids = null;
 	private static $actual_query = array();
 
 	function init() {
@@ -35,7 +35,6 @@ class QMT_Core {
 	function query( $wp_query ) {
 		global $wpdb;
 
-		$query = array();
 		foreach ( get_taxonomies( array( 'public' => true ) ) as $taxname ) {
 			$taxobj = get_taxonomy( $taxname );
 
@@ -48,12 +47,9 @@ class QMT_Core {
 			$value = end( explode( '/', $value ) );
 
 			self::$actual_query[$taxname] = str_replace( ' ', '+', $value );
-
-			foreach ( explode( ' ', $value ) as $value )
-				$query[] = wp_tax( $taxname, explode( ',', $value ), 'slug' );
 		}
 
-		if ( empty( $query ) )
+		if ( empty( self::$actual_query ) )
 			return;
 
 		if ( 1 == count( self::$actual_query ) ) {
@@ -64,10 +60,7 @@ class QMT_Core {
 				return;
 		}
 
-		// maybe filter the post ids later, using $wp_query?
-		$query[] = "object_id IN ( SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' )";
-
-		self::$post_ids = $wpdb->get_col( wp_tax_query( wp_tax_group( 'AND', $query ) ) );
+		self::set_post_ids();
 
 		if ( empty( self::$post_ids ) )
 			return $wp_query->set_404();
@@ -93,11 +86,35 @@ class QMT_Core {
 		remove_action( 'template_redirect', 'redirect_canonical' );
 	}
 
+	private static function set_post_ids() {
+		global $wpdb;
+
+		if ( !is_null( self::$post_ids ) )
+			return;
+
+		if ( empty( self::$actual_query ) )
+			self::$post_ids = array();
+
+		$query = array();
+		foreach ( self::$actual_query as $taxname => $value )
+			foreach ( explode( '+', $value ) as $value )
+				$query[] = wp_tax( $taxname, explode( ',', $value ), 'slug' );
+
+		$query[] = "object_id IN ( SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' )";
+
+		self::$post_ids = $wpdb->get_col( wp_tax_query( wp_tax_group( 'AND', $query ) ) );
+	}
+
 	function get_terms( $tax ) {
-		if ( empty( self::$post_ids ) )
+		global $wpdb;
+
+		if ( empty( self::$actual_query ) )
 			return get_terms( $tax );
 
-		global $wpdb;
+		self::set_post_ids();
+
+		if ( empty( self::$post_ids ) )
+			return array();
 
 		$terms = $wpdb->get_results( $wpdb->prepare( "
 			SELECT *, COUNT(*) as count
@@ -149,7 +166,7 @@ class QMT_Core {
 
 	public function get_base_url() {
 		if ( empty( self::$base_url ) )
-			self::$base_url = apply_filters( 'qmt_base_url', site_url() );
+			self::$base_url = apply_filters( 'qmt_base_url', get_bloginfo('url') );
 
 		return self::$base_url;
 	}

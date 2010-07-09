@@ -59,6 +59,10 @@ Secondly, you can create a `multitax.php` template file in your theme.
 
 == Changelog ==
 
+= 1.2.1 =
+* fixed issue when site url isn't the same as the wp url
+* fixed issue when doing a single taxonomy query
+
 = 1.2 =
 * fewer queries
 * custom post type support
