@@ -141,9 +141,9 @@ jQuery( document ).ready( function( $ ){
 
 			echo html( "div id='term-list-$taxonomy'", $out );
 		}
-	}
 
-	echo $after_widget;
+		echo $after_widget;
+	}
 }
 
 function qmt_walk_terms( $taxonomy, $args = '' ) {
