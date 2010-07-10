@@ -35,7 +35,7 @@ class QMT_Core {
 	function parse_query( $wp_query ) {
 		global $wpdb;
 
-		if ( is_admin() || $wp_query !== $GLOBALS['wp_query'] )
+		if ( $wp_query !== $GLOBALS['wp_query'] )
 			return;
 
 		foreach ( get_taxonomies( array( 'public' => true ) ) as $taxname ) {

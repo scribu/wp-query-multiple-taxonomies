@@ -18,7 +18,8 @@ function _qmt_init() {
 	require dirname( __FILE__ ) . '/template-tags.php';
 	require dirname( __FILE__ ) . '/widget.php';
 
-	QMT_Core::init();
+	if ( !is_admin() )
+		QMT_Core::init();
 
 	Taxonomy_Drill_Down_Widget::init();
 	scbWidget::init( 'Taxonomy_Drill_Down_Widget', __FILE__, 'taxonomy-drill-down' );
