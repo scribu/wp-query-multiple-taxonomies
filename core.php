@@ -7,7 +7,7 @@ class QMT_Core {
 	function init() {
 		add_action( 'init', array( __CLASS__, 'builtin_tax_fix' ) );
 
-		add_action( 'parse_query', array( __CLASS__, 'query' ) );
+		add_action( 'parse_query', array( __CLASS__, 'parse_query' ) );
 	}
 
 
@@ -32,7 +32,7 @@ class QMT_Core {
 				$taxobj->query_var = $tmp[$taxname];
 	}
 
-	function query( $wp_query ) {
+	function parse_query( $wp_query ) {
 		global $wpdb;
 
 		foreach ( get_taxonomies( array( 'public' => true ) ) as $taxname ) {
@@ -54,13 +54,8 @@ class QMT_Core {
 
 		$wp_query->is_multitax = true;
 
-		if ( 1 == count( self::$actual_query ) ) {
-			$tax = key( self::$actual_query );
-			$term = reset( self::$actual_query );
-
-			if ( in_array( $tax, get_object_taxonomies( 'post' ) ) && false === strpos( $term, ',' ) && false === strpos( $term, '+' ) )
-				return;
-		}
+		if ( self::is_regular_query() )
+			return;
 
 		self::set_post_ids();
 
@@ -77,7 +72,9 @@ class QMT_Core {
 		$wp_query->is_feed = $is_feed;
 		$wp_query->set( 'paged', $paged );
 
-		$wp_query->set( 'post_type', 'any' );
+		if ( !is_admin() || $wp_query !== $GLOBALS['wp_query'] )
+			$wp_query->set( 'post_type', 'any' );
+
 		$wp_query->set( 'post__in', self::$post_ids );
 
 		// Theme integration
@@ -85,6 +82,16 @@ class QMT_Core {
 		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3 );
 
 		remove_action( 'template_redirect', 'redirect_canonical' );
+	}
+
+	static function is_regular_query() {
+		if ( count( self::$actual_query ) > 1 )
+			return false;
+
+		$tax = key( self::$actual_query );
+		$term = reset( self::$actual_query );
+
+		return in_array( $tax, get_object_taxonomies( 'post' ) ) && false === strpos( $term, ',' ) && false === strpos( $term, '+' );
 	}
 
 	private static function set_post_ids() {
