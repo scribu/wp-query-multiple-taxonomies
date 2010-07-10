@@ -35,6 +35,9 @@ class QMT_Core {
 	function parse_query( $wp_query ) {
 		global $wpdb;
 
+		if ( is_admin() || $wp_query !== $GLOBALS['wp_query'] )
+			return;
+
 		foreach ( get_taxonomies( array( 'public' => true ) ) as $taxname ) {
 			$taxobj = get_taxonomy( $taxname );
 
@@ -72,9 +75,7 @@ class QMT_Core {
 		$wp_query->is_feed = $is_feed;
 		$wp_query->set( 'paged', $paged );
 
-		if ( !is_admin() || $wp_query !== $GLOBALS['wp_query'] )
-			$wp_query->set( 'post_type', 'any' );
-
+		$wp_query->set( 'post_type', 'any' );
 		$wp_query->set( 'post__in', self::$post_ids );
 
 		// Theme integration
