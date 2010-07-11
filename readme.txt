@@ -61,6 +61,7 @@ Secondly, you can create a `multitax.php` template file in your theme.
 
 = 1.2.3 =
 * fixed problems with custom menus
+* fixed a problem with categories
 
 = 1.2.2 =
 * fixed fatal error

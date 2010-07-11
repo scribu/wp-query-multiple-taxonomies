@@ -15,7 +15,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 		foreach ( get_post_types( array( 'public' => true ), 'objects' ) as $ptype_name => $ptype_obj ) {
 			foreach ( get_object_taxonomies( $ptype_name, 'objects' ) as $tax_name => $tax_obj )
-				if ( $tax_obj->query_var )
+				if ( QMT_Core::get_query_var( $tax_name ) )
 					$tax_lists[ $ptype_name ][ $tax_name ] = $tax_obj->label;
 
 			if ( isset( $tax_lists[ $ptype_name ] ) )
