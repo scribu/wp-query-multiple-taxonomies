@@ -15,7 +15,6 @@ function _qmt_init() {
 
 	require dirname( __FILE__ ) . '/core.php';
 	require dirname( __FILE__ ) . '/tax-api.php';
-	require dirname( __FILE__ ) . '/template-tags.php';
 	require dirname( __FILE__ ) . '/widget.php';
 
 	if ( !is_admin() )
