@@ -5,8 +5,6 @@ class QMT_Core {
 	private static $actual_query = array();
 
 	function init() {
-		add_action( 'init', array( __CLASS__, 'builtin_tax_fix' ) );
-
 		add_action( 'parse_query', array( __CLASS__, 'parse_query' ) );
 	}
 
@@ -21,17 +19,6 @@ class QMT_Core {
 		return self::$actual_query;
 	}
 
-	function builtin_tax_fix() {
-		$tmp = array(
-			'post_tag' => 'tag',
-			'category' => 'category_name'
-		);
-
-		foreach ( get_taxonomies( array( '_builtin' => true ), 'object' ) as $taxname => $taxobj )
-			if ( isset( $tmp[$taxname] ) )
-				$taxobj->query_var = $tmp[$taxname];
-	}
-
 	function parse_query( $wp_query ) {
 		global $wpdb;
 
@@ -39,9 +26,7 @@ class QMT_Core {
 			return;
 
 		foreach ( get_taxonomies( array( 'public' => true ) ) as $taxname ) {
-			$taxobj = get_taxonomy( $taxname );
-
-			if ( ! $qv = $taxobj->query_var )
+			if ( ! $qv = self::get_query_var($taxname) )
 				continue;
 
 			if ( ! $value = $wp_query->get( $qv ) )
@@ -83,6 +68,23 @@ class QMT_Core {
 		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3 );
 
 		remove_action( 'template_redirect', 'redirect_canonical' );
+	}
+
+	private static function get_query_var($taxname) {
+		$taxobj = get_taxonomy( $taxname );
+		
+		if ( $taxobj->query_var )
+			return $taxobj->query_var;
+
+		$tmp = array(
+			'post_tag' => 'tag',
+			'category' => 'category_name'
+		);
+
+		if ( isset( $tmp[$taxname] ) )
+			return $tmp[$taxname];
+		
+		return false;
 	}
 
 	static function is_regular_query() {
@@ -166,7 +168,7 @@ class QMT_Core {
 
 		$url = self::get_base_url();
 		foreach ( $query as $taxonomy => $value )
-			$url = add_query_arg( get_taxonomy( $taxonomy )->query_var, $value, $url );
+			$url = add_query_arg( self::get_query_var( $taxonomy ), $value, $url );
 
 		return $url;
 	}

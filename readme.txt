@@ -59,6 +59,9 @@ Secondly, you can create a `multitax.php` template file in your theme.
 
 == Changelog ==
 
+= 1.2.3 =
+* fixed problems with custom menus
+
 = 1.2.2 =
 * fixed fatal error
 * reverted is_multitax() to previous behaviour
