@@ -2,7 +2,7 @@
 
 class QMT_Core {
 	private static $post_ids = null;
-	private static $actual_query = array();
+	private static $query = array();
 
 	function init() {
 		add_action( 'parse_query', array( __CLASS__, 'parse_query' ) );
@@ -17,16 +17,27 @@ class QMT_Core {
 		return self::get_query($tax);
 	}
 
-	static function get_query( $tax = '' ) {
+	public static function get_query( $tax = '' ) {
 		if ( !empty( $tax ) )
-			return @self::$actual_query[ $tax ];
+			return @self::$query[ $tax ];
 
-		return self::$actual_query;
+		return self::$query;
 	}
 
-	static function set_query( $query ) {
+	public static function set_query( $query ) {
 		self::$post_ids = null;
-		self::$actual_query = array_filter( $query );
+		self::$query = array_filter( $query );
+	}
+
+	// Wether the current query can be handled natively by WordPress
+	public static function is_regular_query() {
+		if ( count( self::$query ) > 1 )
+			return false;
+
+		$tax = key( self::$query );
+		$term = reset( self::$query );
+
+		return in_array( $tax, get_object_taxonomies( 'post' ) ) && false === strpos( $term, ',' ) && false === strpos( $term, '+' );
 	}
 
 	static function parse_query( $wp_query ) {
@@ -50,7 +61,7 @@ class QMT_Core {
 
 		self::set_query( $query );
 
-		if ( empty( self::$actual_query ) )
+		if ( empty( self::$query ) )
 			return;
 
 		$wp_query->is_multitax = true;
@@ -83,7 +94,7 @@ class QMT_Core {
 		remove_action( 'template_redirect', 'redirect_canonical' );
 	}
 
-	static function get_query_var( $taxname ) {
+	public static function get_query_var( $taxname ) {
 		$taxobj = get_taxonomy( $taxname );
 		
 		if ( $taxobj->query_var )
@@ -100,27 +111,17 @@ class QMT_Core {
 		return false;
 	}
 
-	static function is_regular_query() {
-		if ( count( self::$actual_query ) > 1 )
-			return false;
-
-		$tax = key( self::$actual_query );
-		$term = reset( self::$actual_query );
-
-		return in_array( $tax, get_object_taxonomies( 'post' ) ) && false === strpos( $term, ',' ) && false === strpos( $term, '+' );
-	}
-
 	private static function set_post_ids() {
 		global $wpdb;
 
 		if ( !is_null( self::$post_ids ) )
 			return;
 
-		if ( empty( self::$actual_query ) )
+		if ( empty( self::$query ) )
 			self::$post_ids = array();
 
 		$query = array();
-		foreach ( self::$actual_query as $taxname => $value )
+		foreach ( self::$query as $taxname => $value )
 			foreach ( explode( '+', $value ) as $value )
 				$query[] = wp_tax( $taxname, explode( ',', $value ), 'slug' );
 
@@ -129,10 +130,10 @@ class QMT_Core {
 		self::$post_ids = $wpdb->get_col( wp_tax_query( wp_tax_group( 'AND', $query ) ) );
 	}
 
-	function get_terms( $tax ) {
+	public static function get_terms( $tax ) {
 		global $wpdb;
 
-		if ( empty( self::$actual_query ) )
+		if ( empty( self::$query ) )
 			return get_terms( $tax );
 
 		self::set_post_ids();
@@ -160,8 +161,8 @@ class QMT_Core {
 //_____URLs_____
 
 
-	public function get_url( $taxonomy, $value ) {
-		$query = self::$actual_query;
+	public static function get_url( $taxonomy, $value ) {
+		$query = self::$query;
 
 		if ( empty( $value ) )
 			unset( $query[ $taxonomy ] );
@@ -173,9 +174,9 @@ class QMT_Core {
 		return apply_filters( 'qmt_url', $url, $query );
 	}
 
-	public function get_canonical_url( $query = array() ) {
+	public static function get_canonical_url( $query = array() ) {
 		if ( empty( $query ) )
-			$query = self::$actual_query;
+			$query = self::$query;
 
 		ksort( $query );
 
@@ -188,7 +189,7 @@ class QMT_Core {
 
 	private static $base_url;
 
-	public function get_base_url() {
+	public static function get_base_url() {
 		if ( empty( self::$base_url ) )
 			self::$base_url = apply_filters( 'qmt_base_url', get_bloginfo('url') );
 
@@ -199,14 +200,14 @@ class QMT_Core {
 //_____Theme integration_____
 
 
-	function template() {
+	static function template() {
 		if ( $template = locate_template( array( 'multitax.php' ) ) ) {
 			include $template;
 			die;
 		}
 	}
 
-	function set_title( $title, $sep, $seplocation = '' ) {
+	static function set_title( $title, $sep, $seplocation = '' ) {
 		$newtitle[] = self::get_title();
 		$newtitle[] = " $sep ";
 
@@ -219,12 +220,11 @@ class QMT_Core {
 		return implode( '', $newtitle );
 	}
 
-	function get_title() {
+	public static function get_title() {
 		$title = array();
-		foreach ( self::$actual_query as $tax => $value ) {
+		foreach ( self::$query as $tax => $value ) {
 			$key = get_taxonomy( $tax )->label;
 
-			// attempt to replace slug with name
 			$value = explode( '+', $value );
 			foreach ( $value as &$slug ) {
 				if ( $term = get_term_by( 'slug', $slug, $tax ) )
@@ -237,5 +237,11 @@ class QMT_Core {
 
 		return implode( '; ', $title );
 	}
+}
+
+function is_multitax() {
+	global $wp_query;
+
+	return @$wp_query->is_multitax;
 }
 
