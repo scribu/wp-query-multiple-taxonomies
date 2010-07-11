@@ -12,21 +12,32 @@ class QMT_Core {
 //_____Query_____
 
 
-	function get_actual_query( $tax = '' ) {
+	// Deprecated
+	function get_actual_query( $tax ) {
+		return self::get_query($tax);
+	}
+
+	static function get_query( $tax = '' ) {
 		if ( !empty( $tax ) )
-			return @self::$actual_query[$tax];
+			return @self::$actual_query[ $tax ];
 
 		return self::$actual_query;
 	}
 
-	function parse_query( $wp_query ) {
+	static function set_query( $query ) {
+		self::$post_ids = null;
+		self::$actual_query = array_filter( $query );
+	}
+
+	static function parse_query( $wp_query ) {
 		global $wpdb;
 
 		if ( $wp_query !== $GLOBALS['wp_query'] )
 			return;
 
+		$query = array();
 		foreach ( get_taxonomies( array( 'public' => true ) ) as $taxname ) {
-			if ( ! $qv = self::get_query_var($taxname) )
+			if ( ! $qv = self::get_query_var( $taxname ) )
 				continue;
 
 			if ( ! $value = $wp_query->get( $qv ) )
@@ -34,8 +45,10 @@ class QMT_Core {
 
 			$value = end( explode( '/', $value ) );
 
-			self::$actual_query[$taxname] = str_replace( ' ', '+', $value );
+			$query[$taxname] = str_replace( ' ', '+', $value );
 		}
+
+		self::set_query( $query );
 
 		if ( empty( self::$actual_query ) )
 			return;
@@ -70,7 +83,7 @@ class QMT_Core {
 		remove_action( 'template_redirect', 'redirect_canonical' );
 	}
 
-	private static function get_query_var($taxname) {
+	static function get_query_var( $taxname ) {
 		$taxobj = get_taxonomy( $taxname );
 		
 		if ( $taxobj->query_var )
@@ -81,8 +94,8 @@ class QMT_Core {
 			'category' => 'category_name'
 		);
 
-		if ( isset( $tmp[$taxname] ) )
-			return $tmp[$taxname];
+		if ( isset( $tmp[ $taxname ] ) )
+			return $tmp[ $taxname ];
 		
 		return false;
 	}
@@ -151,9 +164,9 @@ class QMT_Core {
 		$query = self::$actual_query;
 
 		if ( empty( $value ) )
-			unset( $query[$taxonomy] );
+			unset( $query[ $taxonomy ] );
 		else
-			$query[$taxonomy] = trim( implode( '+', $value ), '+' );
+			$query[ $taxonomy ] = trim( implode( '+', $value ), '+' );
 
 		$url = self::get_canonical_url( $query );
 
