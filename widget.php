@@ -127,7 +127,7 @@ jQuery( document ).ready( function( $ ){
 				$title = get_taxonomy( $instance['taxonomy'] )->label;
 			$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
-			$query = QMT_Core::get_actual_query();
+			$query = QMT_Core::get_query();
 			if ( isset( $query[$taxonomy] ) ) {
 				$new_url = QMT_Core::get_url( $taxonomy, '' );
 				$title .= ' ' . html( "a class='clear-taxonomy' href='$new_url'", '(-)' );
@@ -181,7 +181,7 @@ class QMT_Term_Walker extends Walker_Category {
 	function __construct( $taxonomy ) {
 		$this->taxonomy = $taxonomy;
 
-		$this->selected_terms = explode( '+', QMT_Core::get_actual_query( $taxonomy ) );
+		$this->selected_terms = explode( '+', QMT_Core::get_query( $taxonomy ) );
 	}
 
 	function start_el( &$output, $term, $depth, $args ) {

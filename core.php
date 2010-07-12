@@ -13,8 +13,9 @@ class QMT_Core {
 
 
 	// Deprecated
-	function get_actual_query( $tax ) {
-		return self::get_query($tax);
+	function get_actual_query( $tax = '' ) {
+		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, '1.2.3', __CLASS__ . '::' . 'get_query()' );
+		return self::get_query( $tax );
 	}
 
 	public static function get_query( $tax = '' ) {
@@ -243,5 +244,9 @@ function is_multitax() {
 	global $wp_query;
 
 	return @$wp_query->is_multitax;
+}
+
+function qmt_get_query( $tax = '' ) {
+	return QMT_Core::get_query( $tax );
 }
 
