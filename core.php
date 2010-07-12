@@ -74,8 +74,6 @@ class QMT_Core {
 		if ( empty( self::$post_ids ) )
 			return $wp_query->set_404();
 
-		$wp_query->is_archive = true;
-
 		$is_feed = $wp_query->is_feed;
 		$paged = $wp_query->get( 'paged' );
 
@@ -86,6 +84,8 @@ class QMT_Core {
 
 		$wp_query->set( 'post_type', 'any' );
 		$wp_query->set( 'post__in', self::$post_ids );
+
+		$wp_query->is_archive = true;
 
 		// Theme integration
 		add_action( 'template_redirect', array( __CLASS__, 'template' ) );
