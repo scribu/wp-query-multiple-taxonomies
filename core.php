@@ -15,6 +15,7 @@ class QMT_Core {
 	// Deprecated
 	function get_actual_query( $tax = '' ) {
 		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, '1.2.3', __CLASS__ . '::' . 'get_query()' );
+
 		return self::get_query( $tax );
 	}
 
