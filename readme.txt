@@ -4,7 +4,7 @@ Donate link: http://scribu.net/paypal
 Tags: drill-down, query, widget, navigation, taxonomy
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 
 Filter posts through multiple taxonomies
 
