@@ -32,47 +32,53 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		$this->defaults = array(
 			'title' => '',
 			'post_type' => 'post',
-			'taxonomy' => '',
+			'taxonomies' => array(),
 		);
 
 		$widget_ops = array( 'description' => 'Display a drill-down navigation based on custom taxonomies', );
 
 		$this->WP_Widget( 'taxonomy-drill-down', 'Taxonomy Drill-Down', $widget_ops );
 	}
-
+	
 	function form( $instance ) {
 		if ( empty( $instance ) )
 			$instance = $this->defaults;
 
-		echo $this->input( array(
-			'title' => __( 'Title:', 'query-multiple-taxonomies' ),
-			'name'  => 'title',
-			'type'  => 'text',
-		), $instance );
-
-		$out = '';
-
-		echo
-		html( 'div class="qmt-dropdowns"',
-			 html( 'div class="qmt-post-type"',
-				$this->input( array(
-					'type'   => 'select',
-					'name'   => 'post_type',
-					'values' => self::$ptype_list,
-					'text'   => false,
-					'desc'   => __( 'Post Type:', 'query-multiple-taxonomies' ),
-				), $instance )
-			)
-			.html( 'div class="qmt-taxonomies"',
-				$this->input( array(
-					'type'   => 'select',
-					'name'   => 'taxonomy',
-					'values' => self::$tax_lists[$instance['post_type']],
-					'text'   => false,
-					'desc'   => __( 'Taxonomy:', 'query-multiple-taxonomies' ),
-				), $instance )
-			)
+		echo 
+		html( 'p',
+			$this->input( array(
+				'name'  => 'title',
+				'type'  => 'text',
+				'desc' => __( 'Title:', 'query-multiple-taxonomies' ),
+				'extra' => array( 'class' => 'widefat' )			
+			), $instance )
 		);
+
+		$out = 
+		html( 'p class="qmt-post-type"',
+			$this->input( array(
+				'type'   => 'select',
+				'name'   => 'post_type',
+				'values' => self::$ptype_list,
+				'text'   => false,
+				'desc'   => __( 'Post Type:', 'query-multiple-taxonomies' ),
+			), $instance )
+		);
+
+		$list = '';
+		foreach ( self::$tax_lists[$instance['post_type']] as $tax_name => $tax_label ) {
+			$list .= html( 'li', $this->input( array(
+				'type'   => 'checkbox',
+				'name'   => 'taxonomies[]',
+				'value' => $tax_name,
+				'checked' => in_array( $tax_name, $instance['taxonomies'] ),
+				'desc'   => $tax_label,
+			), $instance ) );
+		}
+
+		$out .= html( 'ul class="qmt-taxonomies"', $list );
+
+		echo html( 'div class="qmt-dropdowns"', $out );
 	}
 
 	function add_script() {
@@ -83,66 +89,64 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 ?>
 <script type="text/javascript">
-jQuery( document ).ready( function( $ ){
+jQuery(document).ready(function($) {
 	var tax_lists = <?php echo json_encode( self::$tax_lists ); ?>
 
-	var generate_dropdown = function( ptype, $select ) {
+	$(document).delegate('.qmt-post-type select', 'change', function() {
+		var $that = $(this),
+			new_ptype = $that.find(':selected').val(),
+			$list = $that.parents('.qmt-dropdowns').find('.qmt-taxonomies'),
+			checkbox_name = $list.find('input').attr('name');
 
-		$select.html( options );
-	};
-
-	jQuery( document ).delegate( '.qmt-post-type select', 'change', function() {
-		var $that = $( this );
-
-		var new_ptype = $that.find( ':selected' ).val();
-
-		var options = '';
-		$.each( tax_lists[new_ptype], function( val, label ) {
-			options += '<option value="' + val + '">' + label + '</option>';
-		} );
-
-		$that.parents( '.qmt-dropdowns' ).find( '.qmt-taxonomies select' ).html( options );
-	} );
-} );
+		$list.html('');
+		$.each(tax_lists[new_ptype], function(val, label) {
+			$list.append($('<li>')
+				.html($('<input>').attr({
+					'type': 'checkbox', 
+					'name': checkbox_name,
+					'value': val,
+					'checked': 'checked'
+				}))
+				.append(' ' + label)
+			);
+		});
+	});
+});
 </script>
 <?php
 	}
 
-	function widget( $args, $instance ) {
-		extract( $args );
-		extract( wp_parse_args( $instance, $this->defaults ) );
-
-		$list = qmt_walk_terms( $taxonomy );
-
-		if ( empty( $list ) )
-			return;
-
-		echo $before_widget;
-
-		if ( empty( $taxonomy ) ) {
-			echo html( 'p', __( 'No taxonomy selected.', 'query-multiple-taxonomies' ) );
+	function content( $instance ) {
+		extract( $instance );
+	
+		if ( empty( $taxonomies ) ) {
+			echo html( 'p', __( 'No taxonomies selected.', 'query-multiple-taxonomies' ) );
 		}
 		else {
-			if ( empty( $title ) )
-				$title = get_taxonomy( $instance['taxonomy'] )->label;
-			$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
-
 			$query = QMT_Core::get_query();
-			if ( isset( $query[$taxonomy] ) ) {
-				$new_url = QMT_Core::get_url( $taxonomy, '' );
-				$title .= ' ' . html( "a class='clear-taxonomy' href='$new_url'", '(-)' );
+
+			foreach ( $taxonomies as $taxonomy ) {
+				$list = qmt_walk_terms( $taxonomy );
+
+				if ( empty( $list ) )
+					continue;
+
+				$title = get_taxonomy( $taxonomy )->label;
+
+				if ( isset( $query[$taxonomy] ) ) {
+					$new_url = QMT_Core::get_url( $taxonomy, '' );
+					$title .= ' ' . html( "a class='clear-taxonomy' href='$new_url'", '(-)' );
+				}
+
+				$out = '';
+				if ( ! empty( $title ) )
+					$out .= html( 'h4', $title );
+
+				$out .= html( "ul class='term-list'", $list );
+
+				echo html( "div id='term-list-$taxonomy'", $out );
 			}
-
-			$out = '';
-			if ( ! empty( $title ) )
-				$out .= $before_title . $title . $after_title;
-
-			$out .= html( "ul class='term-list'", $list );
-
-			echo html( "div id='term-list-$taxonomy'", $out );
 		}
-
-		echo $after_widget;
 	}
 }
 
