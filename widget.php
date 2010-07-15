@@ -25,6 +25,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		self::$ptype_list = $ptype_list;
 		self::$tax_lists = $tax_lists;
 
+		add_action( 'admin_print_styles', array( __CLASS__, 'style' ), 11 );
 		add_action( 'admin_footer', array( __CLASS__, 'add_script' ), 11 );
 	}
 
@@ -33,6 +34,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			'title' => '',
 			'post_type' => 'post',
 			'taxonomies' => array(),
+			'mode' => 'lists',
 		);
 
 		$widget_ops = array( 'description' => 'Display a drill-down navigation based on custom taxonomies', );
@@ -40,6 +42,14 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		$this->WP_Widget( 'taxonomy-drill-down', 'Taxonomy Drill-Down', $widget_ops );
 	}
 	
+	function style() {
+?>
+<style type="text/css">
+.qmt-taxonomies { margin: -.5em 0 0 .5em }
+</style>
+<?php
+	}
+
 	function form( $instance ) {
 		if ( empty( $instance ) )
 			$instance = $this->defaults;
@@ -50,7 +60,19 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 				'name'  => 'title',
 				'type'  => 'text',
 				'desc' => __( 'Title:', 'query-multiple-taxonomies' ),
-				'extra' => array( 'class' => 'widefat' )			
+				'extra' => array( 'class' => 'widefat' )
+			), $instance )
+		);
+
+		echo
+		html( 'p',
+			$this->input( array(
+				'type'   => 'select',
+				'name'   => 'mode',
+				'values' => array( 'lists', 'dropdowns' ),
+				'text'   => false,
+				'desc'   => __( 'Mode:', 'query-multiple-taxonomies' ),
+				'extra' => array( 'class' => 'widefat' )
 			), $instance )
 		);
 
@@ -61,10 +83,12 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 				'name'   => 'post_type',
 				'values' => self::$ptype_list,
 				'text'   => false,
-				'desc'   => __( 'Post Type:', 'query-multiple-taxonomies' ),
+				'desc'   => __( 'Post type:', 'query-multiple-taxonomies' ),
+				'extra' => array( 'class' => 'widefat' )
 			), $instance )
 		);
 
+		$out .= html( 'p', __( 'Taxonomies:', 'query-multiple-taxonomies' ) );
 		$list = '';
 		foreach ( self::$tax_lists[$instance['post_type']] as $tax_name => $tax_label ) {
 			$list .= html( 'li', $this->input( array(
@@ -75,7 +99,6 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 				'desc'   => $tax_label,
 			), $instance ) );
 		}
-
 		$out .= html( 'ul class="qmt-taxonomies"', $list );
 
 		echo html( 'div class="qmt-dropdowns"', $out );
