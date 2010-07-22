@@ -2,6 +2,13 @@
 
 class Taxonomy_Drill_Down_Widget extends scbWidget {
 
+	protected $defaults = array(
+		'title' => '',
+		'post_type' => 'post',
+		'taxonomies' => array(),
+		'mode' => 'lists',
+	);
+
 	private static $ptype_list;
 	private static $tax_lists;
 
@@ -30,13 +37,6 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 	}
 
 	function Taxonomy_Drill_Down_Widget() {
-		$this->defaults = array(
-			'title' => '',
-			'post_type' => 'post',
-			'taxonomies' => array(),
-			'mode' => 'lists',
-		);
-
 		$widget_ops = array( 'description' => 'Display a drill-down navigation based on custom taxonomies', );
 
 		$this->WP_Widget( 'taxonomy-drill-down', 'Taxonomy Drill-Down', $widget_ops );
