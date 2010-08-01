@@ -84,7 +84,7 @@ class QMT_Core {
 		$wp_query->is_feed = $is_feed;
 		$wp_query->set( 'paged', $paged );
 
-		$wp_query->set( 'post_type', 'any' );
+		$wp_query->set( 'post_type', apply_filters( 'qmt_post_type', 'any', self::$query ) );
 		$wp_query->set( 'post__in', self::$post_ids );
 
 		$wp_query->is_archive = true;
@@ -241,12 +241,24 @@ class QMT_Core {
 	}
 }
 
+/**
+ * Wether multiple taxonomies are queried
+ *
+ * @return bool
+ */
 function is_multitax() {
 	global $wp_query;
 
 	return @$wp_query->is_multitax;
 }
 
+/**
+ * Get the list of selected terms
+ *
+ * @param string $tax a certain taxonomy
+ * 
+ * @return array( taxonomy => query )
+ */
 function qmt_get_query( $tax = '' ) {
 	return QMT_Core::get_query( $tax );
 }

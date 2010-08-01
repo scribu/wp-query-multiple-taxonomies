@@ -4,9 +4,9 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 	protected $defaults = array(
 		'title' => '',
+		'mode' => 'lists',
 		'post_type' => 'post',
 		'taxonomies' => array(),
-		'mode' => 'lists',
 	);
 
 	private static $ptype_list;
@@ -161,7 +161,8 @@ jQuery(document).ready(function($) {
 
 			$out .= 
 			html( 'li', 
-				get_taxonomy( $taxonomy )->label . ': ' . scbForms::input( array(
+				 get_taxonomy( $taxonomy )->label . ': ' 
+				.scbForms::input( array(
 					'type' => 'select',
 					'name' => $taxonomy,
 					'values' => scbUtil::objects_to_assoc( $terms, 'slug', 'name' ),
