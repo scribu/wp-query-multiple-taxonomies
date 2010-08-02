@@ -163,7 +163,7 @@ class QMT_Core {
 //_____URLs_____
 
 
-	public static function get_url( $taxonomy, $value ) {
+	public static function get_tax_url( $taxonomy, $value ) {
 		$query = self::$query;
 
 		if ( empty( $value ) )
@@ -171,31 +171,26 @@ class QMT_Core {
 		else
 			$query[ $taxonomy ] = trim( implode( '+', $value ), '+' );
 
-		$url = self::get_canonical_url( $query );
-
-		return apply_filters( 'qmt_url', $url, $query );
+		return self::get_url( $query );
 	}
 
-	public static function get_canonical_url( $query = array() ) {
-		if ( empty( $query ) )
-			$query = self::$query;
-
+	public static function get_url( $query = array() ) {
 		ksort( $query );
 
 		$url = self::get_base_url();
 		foreach ( $query as $taxonomy => $value )
 			$url = add_query_arg( self::get_query_var( $taxonomy ), $value, $url );
 
-		return $url;
+		return apply_filters( 'qmt_url', $url, $query );
 	}
 
-	private static $base_url;
-
 	public static function get_base_url() {
-		if ( empty( self::$base_url ) )
-			self::$base_url = apply_filters( 'qmt_base_url', get_bloginfo('url') );
+		static $base_url;
 
-		return self::$base_url;
+		if ( empty( $base_url ) )
+			$base_url = apply_filters( 'qmt_base_url', get_bloginfo('url') );
+
+		return $base_url;
 	}
 
 

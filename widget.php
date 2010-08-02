@@ -174,7 +174,7 @@ jQuery(document).ready(function($) {
 		echo html( 'form action="' . QMT_Core::get_base_url() . '" method="get"',
 			 html( 'ul', $out )
 			."<input type='submit' value='Submit' />\n"
-			.html_link( QMT_Core::get_base_url(), __( 'Reset', 'query-multiple-taxonomies' ) )
+			.html_link( apply_filters( 'qmt_reset_url', QMT_Core::get_base_url() ), __( 'Reset', 'query-multiple-taxonomies' ) )
 		);
 	}
 
@@ -190,7 +190,7 @@ jQuery(document).ready(function($) {
 			$title = get_taxonomy( $taxonomy )->label;
 
 			if ( isset( $query[$taxonomy] ) ) {
-				$new_url = QMT_Core::get_url( $taxonomy, '' );
+				$new_url = QMT_Core::get_tax_url( $taxonomy, '' );
 				$title .= ' ' . html( "a class='clear-taxonomy' href='$new_url'", '(-)' );
 			}
 
@@ -280,13 +280,13 @@ class QMT_Term_Walker extends Walker_Category {
 		if ( false !== $i ) {
 			unset( $tmp[$i] );
 
-			$new_url = esc_url( QMT_Core::get_url( $this->taxonomy, $tmp ) );
+			$new_url = esc_url( QMT_Core::get_tax_url( $this->taxonomy, $tmp ) );
 			$out = html( "a class='remove-term' href='$new_url'", '(-)' );
 		}
 		else {
 			$tmp[] = $term->slug;
 
-			$new_url = esc_url( QMT_Core::get_url( $this->taxonomy, $tmp ) );
+			$new_url = esc_url( QMT_Core::get_tax_url( $this->taxonomy, $tmp ) );
 			$out = html( "a class='add-term' href='$new_url'", '(+)' );
 		}
 
