@@ -5,7 +5,7 @@ class QMT_Core {
 	private static $query = array();
 
 	function init() {
-		add_action( 'parse_query', array( __CLASS__, 'parse_query' ) );
+		add_action( 'pre_get_posts', array( __CLASS__, 'pre_get_posts' ) );
 	}
 
 
@@ -35,10 +35,13 @@ class QMT_Core {
 		if ( 'post_tag' == $tax )
 			return true;
 
-		return in_array( $tax, get_object_taxonomies( 'post' ) ) && false === strpos( $term, ',' ) && false === strpos( $term, '+' );
+		return
+			in_array( $tax, get_object_taxonomies( 'post' ) ) && 
+			false === strpos( $term, ',' ) && 
+			false === strpos( $term, '+' );
 	}
 
-	static function parse_query( $wp_query ) {
+	static function pre_get_posts( $wp_query ) {
 		global $wpdb;
 
 		if ( $wp_query !== $GLOBALS['wp_query'] )
@@ -65,12 +68,15 @@ class QMT_Core {
 		if ( self::is_regular_query() )
 			return;
 
+		$wp_query->set( 'post_type', apply_filters( 'qmt_post_type', 'any', self::$query ) );
+
 		// Prevent normal taxonomy processing
-		$wp_query->is_tax = false;
 		foreach ( array( 'cat', 'category_name', 'tag' ) as $qv )
 			$wp_query->set( $qv, '' );
 
-		$wp_query->set( 'post_type', apply_filters( 'qmt_post_type', 'any', self::$query ) );
+		$wp_query->parse_query_vars();
+
+		$wp_query->is_tax = false;
 
 		add_filter( 'posts_where', array( __CLASS__, 'posts_where' ), 10, 2 );
 
