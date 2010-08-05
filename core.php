@@ -12,13 +12,6 @@ class QMT_Core {
 //_____Query_____
 
 
-	// Deprecated
-	function get_actual_query( $tax = '' ) {
-		_deprecated_function( __CLASS__ . '::' . __FUNCTION__, '1.2.3', __CLASS__ . '::' . 'get_query()' );
-
-		return self::get_query( $tax );
-	}
-
 	public static function get_query( $tax = '' ) {
 		if ( !empty( $tax ) )
 			return @self::$query[ $tax ];
@@ -66,28 +59,17 @@ class QMT_Core {
 		if ( empty( self::$query ) )
 			return;
 
-		$wp_query->is_multitax = true;
-
 		if ( self::is_regular_query() )
 			return;
 
-		self::set_post_ids();
-
-		if ( empty( self::$post_ids ) )
-			return $wp_query->set_404();
-
-		$is_feed = $wp_query->is_feed;
-		$paged = $wp_query->get( 'paged' );
-
-		$wp_query->init_query_flags();
-
-		$wp_query->is_feed = $is_feed;
-		$wp_query->set( 'paged', $paged );
+		// Prevent normal taxonomy processing
+		$wp_query->is_tax = false;
+		foreach ( array( 'cat', 'category_name', 'tag' ) as $qv )
+			$wp_query->set( $qv, '' );
 
 		$wp_query->set( 'post_type', apply_filters( 'qmt_post_type', 'any', self::$query ) );
-		$wp_query->set( 'post__in', self::$post_ids );
 
-		$wp_query->is_archive = true;
+		add_filter( 'posts_where', array( __CLASS__, 'posts_where' ), 10, 2 );
 
 		// Theme integration
 		add_action( 'template_redirect', array( __CLASS__, 'template' ) );
@@ -96,9 +78,22 @@ class QMT_Core {
 		remove_action( 'template_redirect', 'redirect_canonical' );
 	}
 
+	public function posts_where( $where, $wp_query ) {
+		global $wpdb;
+
+		self::set_post_ids();
+
+		if ( !empty( self::$post_ids ) )
+			$where .= " AND $wpdb->posts.ID IN ( " . implode( ', ', self::$post_ids ) . " ) ";
+		else
+			$where = " AND 0 = 1";
+
+		return $where;
+	}
+
 	public static function get_query_var( $taxname ) {
 		$taxobj = get_taxonomy( $taxname );
-		
+
 		if ( $taxobj->query_var )
 			return $taxobj->query_var;
 
@@ -109,7 +104,7 @@ class QMT_Core {
 
 		if ( isset( $tmp[ $taxname ] ) )
 			return $tmp[ $taxname ];
-		
+
 		return false;
 	}
 
@@ -144,7 +139,7 @@ class QMT_Core {
 			return array();
 
 		$terms = $wpdb->get_results( $wpdb->prepare( "
-			SELECT *, COUNT(*) as count
+			SELECT *, COUNT( * ) as count
 			FROM $wpdb->term_relationships
 			JOIN $wpdb->term_taxonomy USING ( term_taxonomy_id )
 			JOIN $wpdb->terms USING ( term_id )
@@ -188,7 +183,7 @@ class QMT_Core {
 		static $base_url;
 
 		if ( empty( $base_url ) )
-			$base_url = apply_filters( 'qmt_base_url', get_bloginfo('url') );
+			$base_url = apply_filters( 'qmt_base_url', get_bloginfo( 'url' ) );
 
 		return $base_url;
 	}
@@ -237,21 +232,10 @@ class QMT_Core {
 }
 
 /**
- * Wether multiple taxonomies are queried
- *
- * @return bool
- */
-function is_multitax() {
-	global $wp_query;
-
-	return @$wp_query->is_multitax;
-}
-
-/**
  * Get the list of selected terms
  *
  * @param string $tax a certain taxonomy
- * 
+ *
  * @return array( taxonomy => query )
  */
 function qmt_get_query( $tax = '' ) {
