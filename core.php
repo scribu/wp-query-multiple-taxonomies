@@ -32,6 +32,9 @@ class QMT_Core {
 		$tax = key( self::$query );
 		$term = reset( self::$query );
 
+		if ( 'post_tag' == $tax )
+			return true;
+
 		return in_array( $tax, get_object_taxonomies( 'post' ) ) && false === strpos( $term, ',' ) && false === strpos( $term, '+' );
 	}
 
@@ -229,6 +232,15 @@ class QMT_Core {
 
 		return implode( '; ', $title );
 	}
+}
+
+/**
+ * Wether multiple taxonomies are queried
+ *
+ * @return bool
+ */
+function is_multitax() {
+	return count( QMT_Core::get_query() ) > 1;
 }
 
 /**
