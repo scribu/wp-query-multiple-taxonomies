@@ -79,6 +79,9 @@ class QMT_Query {
 
 	// Wether the current query can be handled natively by WordPress
 	private function is_regular_query( $query ) {
+		if ( empty( $query ) )
+			return true;
+
 		if ( count( $query ) > 1 )
 			return false;
 
