@@ -147,18 +147,12 @@ class QMT_Terms {
 		if ( empty( self::$filtered_ids ) )
 			return array();
 
-		$terms = $wpdb->get_results( $wpdb->prepare( "
-			SELECT *, COUNT( * ) as count
-			FROM $wpdb->term_relationships
-			JOIN $wpdb->term_taxonomy USING ( term_taxonomy_id )
-			JOIN $wpdb->terms USING ( term_id )
-			WHERE taxonomy = %s
-			AND object_id IN ( " . implode( ',', self::$filtered_ids ) . " )
-			GROUP BY term_taxonomy_id
-		", $tax ) );
+		$raw_terms = wp_get_object_terms( self::$filtered_ids, $tax );
 
-		if ( empty( $terms ) )
-			return array();
+		// distinct terms
+		$terms = array();
+		foreach ( $raw_terms as $term )
+			$terms[ $term->term_id ] = $term;
 
 		return $terms;
 	}
