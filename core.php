@@ -30,7 +30,7 @@ class QMT_Query {
 			$wp_query->set( 'post_type', 'any' );
 
 		// Prevent normal taxonomy processing
-		foreach ( array( 'cat', 'category_name', 'tag' ) as $qv )
+		foreach ( array( 'category_name', 'tag' ) as $qv )
 			$wp_query->set( $qv, '' );
 
 		$wp_query->parse_query_vars();
