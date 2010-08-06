@@ -154,7 +154,7 @@ jQuery(document).ready(function($) {
 	private static function generate_dropdowns( $taxonomies ) {
 		$out = '';
 		foreach ( $taxonomies as $taxonomy ) {
-			$terms = QMT_Terms::get( $taxonomy );
+			$terms = qmt_get_terms( $taxonomy );
 
 			if ( empty( $terms ) )
 				continue;
@@ -211,7 +211,7 @@ function qmt_walk_terms( $taxonomy, $args = '' ) {
 		return '';
 	}
 
-	$terms = QMT_Terms::get( $taxonomy );
+	$terms = qmt_get_terms( $taxonomy );
 
 	if ( empty( $terms ) )
 		return '';

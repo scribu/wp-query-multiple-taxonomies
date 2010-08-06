@@ -125,6 +125,13 @@ class QMT_Query {
 }
 
 
+function qmt_get_terms( $tax ) {
+	if ( is_category() || is_tag() || is_tax() || is_multitax() )
+		return QMT_Terms::get( $tax );
+	else
+		return get_terms( $tax );
+}
+
 class QMT_Terms {
 
 	private static $filtered_ids;
@@ -161,7 +168,7 @@ class QMT_Terms {
 			return;
 
 		$args = array_merge( $wp_query->query, array(
-			'no_paging' => true,
+			'nopaging' => true,
 			'caller_get_posts' => true,
 			'cache_results' => false,
 		) );
