@@ -62,6 +62,7 @@ Secondly, you can create a `multitax.php` template file in your theme.
 = 1.3 =
 * multiple taxonomies per widget
 * introduced dropdowns mode
+* fixed a lot of internal errors
 
 = 1.2.3 =
 * fixed problems with custom menus
