@@ -22,7 +22,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 		foreach ( get_post_types( array( 'public' => true ), 'objects' ) as $ptype_name => $ptype_obj ) {
 			foreach ( get_object_taxonomies( $ptype_name, 'objects' ) as $tax_name => $tax_obj )
-				if ( QMT_Core::get_query_var( $tax_name ) )
+				if ( qmt_get_query_var( $tax_name ) )
 					$tax_lists[ $ptype_name ][ $tax_name ] = $tax_obj->label;
 
 			if ( isset( $tax_lists[ $ptype_name ] ) )
@@ -154,7 +154,7 @@ jQuery(document).ready(function($) {
 	private static function generate_dropdowns( $taxonomies ) {
 		$out = '';
 		foreach ( $taxonomies as $taxonomy ) {
-			$terms = QMT_Core::get_terms( $taxonomy );
+			$terms = QMT_Terms::get( $taxonomy );
 
 			if ( empty( $terms ) )
 				continue;
@@ -166,20 +166,20 @@ jQuery(document).ready(function($) {
 					'type' => 'select',
 					'name' => $taxonomy,
 					'values' => scbUtil::objects_to_assoc( $terms, 'slug', 'name' ),
-					'selected' => QMT_Core::get_query( $taxonomy ),
+					'selected' => QMT_Query::get( $taxonomy ),
 				) )
 			);
 		}
 
-		echo html( 'form action="' . QMT_Core::get_base_url() . '" method="get"',
+		echo html( 'form action="' . QMT_URL::get_base() . '" method="get"',
 			 html( 'ul', $out )
 			."<input type='submit' value='Submit' />\n"
-			.html_link( apply_filters( 'qmt_reset_url', QMT_Core::get_base_url() ), __( 'Reset', 'query-multiple-taxonomies' ) )
+			.html_link( apply_filters( 'qmt_reset_url', QMT_URL::get_base() ), __( 'Reset', 'query-multiple-taxonomies' ) )
 		);
 	}
 
 	private static function generate_lists( $taxonomies ) {
-		$query = QMT_Core::get_query();
+		$query = QMT_Query::get();
 
 		foreach ( $taxonomies as $taxonomy ) {
 			$list = qmt_walk_terms( $taxonomy );
@@ -190,7 +190,7 @@ jQuery(document).ready(function($) {
 			$title = get_taxonomy( $taxonomy )->label;
 
 			if ( isset( $query[$taxonomy] ) ) {
-				$new_url = QMT_Core::get_tax_url( $taxonomy, '' );
+				$new_url = QMT_URL::for_tax( $taxonomy, '' );
 				$title .= ' ' . html( "a class='clear-taxonomy' href='$new_url'", '(-)' );
 			}
 
@@ -211,7 +211,7 @@ function qmt_walk_terms( $taxonomy, $args = '' ) {
 		return '';
 	}
 
-	$terms = QMT_Core::get_terms( $taxonomy );
+	$terms = QMT_Terms::get( $taxonomy );
 
 	if ( empty( $terms ) )
 		return '';
@@ -240,7 +240,7 @@ class QMT_Term_Walker extends Walker_Category {
 	function __construct( $taxonomy ) {
 		$this->taxonomy = $taxonomy;
 
-		$this->selected_terms = explode( '+', QMT_Core::get_query( $taxonomy ) );
+		$this->selected_terms = explode( '+', QMT_Query::get( $taxonomy ) );
 	}
 
 	function start_el( &$output, $term, $depth, $args ) {
@@ -280,13 +280,13 @@ class QMT_Term_Walker extends Walker_Category {
 		if ( false !== $i ) {
 			unset( $tmp[$i] );
 
-			$new_url = esc_url( QMT_Core::get_tax_url( $this->taxonomy, $tmp ) );
+			$new_url = esc_url( QMT_URL::for_tax( $this->taxonomy, $tmp ) );
 			$out = html( "a class='remove-term' href='$new_url'", '(-)' );
 		}
 		else {
 			$tmp[] = $term->slug;
 
-			$new_url = esc_url( QMT_Core::get_tax_url( $this->taxonomy, $tmp ) );
+			$new_url = esc_url( QMT_URL::for_tax( $this->taxonomy, $tmp ) );
 			$out = html( "a class='add-term' href='$new_url'", '(+)' );
 		}
 

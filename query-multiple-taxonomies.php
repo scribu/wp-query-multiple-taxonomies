@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Query Multiple Taxonomies
-Version: 1.3-alpha2
+Version: 1.3-alpha3
 Description: Filter posts through multiple custom taxonomies
 Author: scribu
 Author URI: http://scribu.net
@@ -17,8 +17,10 @@ function _qmt_init() {
 	require dirname( __FILE__ ) . '/tax-api.php';
 	require dirname( __FILE__ ) . '/widget.php';
 
-	if ( !is_admin() )
-		QMT_Core::init();
+	if ( !is_admin() ) {
+		QMT_Query::init();
+		QMT_Template::init();
+	}
 
 	Taxonomy_Drill_Down_Widget::init();
 	scbWidget::init( 'Taxonomy_Drill_Down_Widget', __FILE__, 'taxonomy-drill-down' );
