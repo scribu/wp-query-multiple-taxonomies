@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Query Multiple Taxonomies
-Version: 1.3-alpha4
+Version: 1.3-alpha5
 Description: Filter posts through multiple custom taxonomies
 Author: scribu
 Author URI: http://scribu.net
