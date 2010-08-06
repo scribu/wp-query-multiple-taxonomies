@@ -19,7 +19,12 @@ class QMT_Query {
 	}
 
 	function pre_get_posts( $wp_query ) {
-		self::set_query( $wp_query );
+		$query = self::find_query( $wp_query );
+
+		if ( self::is_regular_query( $query ) )
+			return;
+
+		$wp_query->_qmt_query = $query;
 
 		// Set post type, only if not set explicitly
 		$wp_query->query = wp_parse_args( $wp_query->query );
@@ -53,7 +58,7 @@ class QMT_Query {
 		return $where;
 	}
 
-	private function set_query( $wp_query ) {
+	private function find_query( $wp_query ) {
 		$query = array();
 		foreach ( get_taxonomies( array( 'public' => true ) ) as $taxname ) {
 			if ( ! $qv = qmt_get_query_var( $taxname ) )
@@ -68,10 +73,7 @@ class QMT_Query {
 		}
 		$query = array_filter( $query );
 
-		if ( self::is_regular_query( $query ) )
-			return;
-
-		$wp_query->_qmt_query = $query;	
+		return $query;
 	}
 
 	// Wether the current query can be handled natively by WordPress
