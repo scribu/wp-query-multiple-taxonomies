@@ -6,10 +6,7 @@ class QMT_Query {
 		if ( !$wp_query )
 			$wp_query = $GLOBALS['wp_query'];
 
-		if ( !isset( $wp_query->_qmt_query ) )
-			return array();
-
-		$query = $wp_query->_qmt_query;
+		$query = @$wp_query->_qmt_query;
 
 		if ( !empty( $tax ) )
 			return @$query[ $tax ];

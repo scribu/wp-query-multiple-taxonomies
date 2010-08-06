@@ -166,7 +166,7 @@ jQuery(document).ready(function($) {
 					'type' => 'select',
 					'name' => $taxonomy,
 					'values' => scbUtil::objects_to_assoc( $terms, 'slug', 'name' ),
-					'selected' => QMT_Query::get( $taxonomy ),
+					'selected' => qmt_get_query( $taxonomy ),
 				) )
 			);
 		}
@@ -179,7 +179,7 @@ jQuery(document).ready(function($) {
 	}
 
 	private static function generate_lists( $taxonomies ) {
-		$query = QMT_Query::get();
+		$query = qmt_get_query();
 
 		foreach ( $taxonomies as $taxonomy ) {
 			$list = qmt_walk_terms( $taxonomy );
@@ -240,7 +240,7 @@ class QMT_Term_Walker extends Walker_Category {
 	function __construct( $taxonomy ) {
 		$this->taxonomy = $taxonomy;
 
-		$this->selected_terms = explode( '+', QMT_Query::get( $taxonomy ) );
+		$this->selected_terms = explode( '+', qmt_get_query( $taxonomy ) );
 	}
 
 	function start_el( &$output, $term, $depth, $args ) {
