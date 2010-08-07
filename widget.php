@@ -5,35 +5,15 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 	protected $defaults = array(
 		'title' => '',
 		'mode' => 'lists',
-		'post_type' => 'post',
 		'taxonomies' => array(),
 	);
-
-	private static $ptype_list;
-	private static $tax_lists;
 
 	static function init() {
 		add_action( 'load-widgets.php', array( __CLASS__, '_init' ) );
 	}
 
 	function _init() {
-		$ptype_list = array();
-		$tax_lists = array();
-
-		foreach ( get_post_types( array( 'public' => true ), 'objects' ) as $ptype_name => $ptype_obj ) {
-			foreach ( get_object_taxonomies( $ptype_name, 'objects' ) as $tax_name => $tax_obj )
-				if ( qmt_get_query_var( $tax_name ) )
-					$tax_lists[ $ptype_name ][ $tax_name ] = $tax_obj->label;
-
-			if ( isset( $tax_lists[ $ptype_name ] ) )
-				$ptype_list[ $ptype_name ] = $ptype_obj->label;
-		}
-
-		self::$ptype_list = $ptype_list;
-		self::$tax_lists = $tax_lists;
-
 		add_action( 'admin_print_styles', array( __CLASS__, 'add_style' ), 11 );
-		add_action( 'admin_footer', array( __CLASS__, 'add_script' ), 11 );
 	}
 
 	function Taxonomy_Drill_Down_Widget() {
@@ -79,67 +59,28 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			), $instance )
 		);
 
-		$out = 
-		html( 'p class="qmt-post-type"',
-			$this->input( array(
-				'type'   => 'select',
-				'name'   => 'post_type',
-				'values' => self::$ptype_list,
-				'text'   => false,
-				'desc'   => __( 'Post type:', 'query-multiple-taxonomies' ),
-				'extra' => array( 'class' => 'widefat' )
-			), $instance )
-		);
+		echo html( 'p', __( 'Taxonomies:', 'query-multiple-taxonomies' ) );
 
-		$out .= html( 'p', __( 'Taxonomies:', 'query-multiple-taxonomies' ) );
+
+		$tax_list = array();
+		foreach ( get_taxonomies( array( 'public' => true ), 'objects' ) as $tax_name => $tax_obj )
+			if ( qmt_get_query_var( $tax_name ) )
+				$tax_list[ $tax_name ] = $tax_obj;
+
 		$list = '';
-		foreach ( self::$tax_lists[$instance['post_type']] as $tax_name => $tax_label ) {
+		foreach ( $tax_list as $tax_name => $tax_obj ) {
+			$ptypes = implode( ', ', $tax_obj->object_type );
+			$ptypes = __( 'Post types:', 'query-multiple-taxonomies' ) . ' ' . $ptypes;
+
 			$list .= html( 'li', $this->input( array(
 				'type'   => 'checkbox',
 				'name'   => 'taxonomies[]',
 				'value' => $tax_name,
-				'checked' => in_array( $tax_name, (array) $instance['taxonomies'] ),
-				'desc'   => $tax_label,
+				'checked' => in_array( $tax_name, (array) @$instance['taxonomies'] ),
+				'desc'   => html( 'span', array( 'title' => $ptypes ), $tax_obj->label ),
 			), $instance ) );
 		}
-		$out .= html( 'ul class="qmt-taxonomies"', $list );
-
-		echo html( 'div class="qmt-dropdowns"', $out );
-	}
-
-	function add_script() {
-		global $pagenow;
-
-		if ( 'widgets.php' != $pagenow )
-			return;
-
-?>
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-	var tax_lists = <?php echo json_encode( self::$tax_lists ); ?>
-
-	$(document).delegate('.qmt-post-type select', 'change', function() {
-		var $that = $(this),
-			new_ptype = $that.find(':selected').val(),
-			$list = $that.parents('.qmt-dropdowns').find('.qmt-taxonomies'),
-			checkbox_name = $list.find('input').attr('name');
-
-		$list.html('');
-		$.each(tax_lists[new_ptype], function(val, label) {
-			$list.append($('<li>')
-				.html($('<input>').attr({
-					'type': 'checkbox', 
-					'name': checkbox_name,
-					'value': val,
-					'checked': 'checked'
-				}))
-				.append(' ' + label)
-			);
-		});
-	});
-});
-</script>
-<?php
+		echo html( 'ul class="qmt-taxonomies"', $list );
 	}
 
 	function content( $instance ) {
@@ -170,6 +111,9 @@ jQuery(document).ready(function($) {
 				) )
 			);
 		}
+
+		if ( empty( $out ) )
+			return;
 
 		echo html( 'form action="' . QMT_URL::get_base() . '" method="get"',
 			 html( 'ul', $out )

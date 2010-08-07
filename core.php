@@ -16,15 +16,14 @@ class QMT_Query {
 
 	function init() {
 		add_action( 'pre_get_posts', array( __CLASS__, 'pre_get_posts' ), 9 );
+		add_filter( 'posts_where', array( __CLASS__, 'posts_where' ), 10, 2 );
 	}
 
 	function pre_get_posts( $wp_query ) {
-		$query = self::find_query( $wp_query );
+		self::find_query( $wp_query );
 
-		if ( self::is_regular_query( $query ) )
+		if ( $wp_query->_qmt_is_reqular )
 			return;
-
-		$wp_query->_qmt_query = $query;
 
 		// Set post type, only if not set explicitly
 		$wp_query->query = wp_parse_args( $wp_query->query );
@@ -38,24 +37,6 @@ class QMT_Query {
 		$wp_query->parse_query_vars();
 
 		$wp_query->is_tax = false;
-
-		add_filter( 'posts_where', array( __CLASS__, 'posts_where' ), 10, 2 );
-	}
-
-	function posts_where( $where, $wp_query ) {
-		global $wpdb;
-
-		if ( empty( $wp_query->_qmt_query ) )
-			return $where;
-
-		$post_ids = self::get_post_ids( $wp_query );
-
-		if ( !empty( $post_ids ) )
-			$where .= " AND $wpdb->posts.ID IN ( " . implode( ', ', $post_ids ) . " )";
-		else
-			$where = " AND 0 = 1";
-
-		return $where;
 	}
 
 	private function find_query( $wp_query ) {
@@ -73,7 +54,8 @@ class QMT_Query {
 		}
 		$query = array_filter( $query );
 
-		return $query;
+		$wp_query->_qmt_query = $query;
+		$wp_query->_qmt_is_reqular = self::is_regular_query( $query );
 	}
 
 	// Wether the current query can be handled natively by WordPress
@@ -96,14 +78,24 @@ class QMT_Query {
 			false === strpos( $term, '+' );
 	}
 
-	private function get_post_ids( $wp_query = null ) {
+	function posts_where( $where, $wp_query ) {
 		global $wpdb;
 
-		if ( !$wp_query )
-			$wp_query = $GLOBALS['wp_query'];
+		if ( $wp_query->_qmt_is_reqular )
+			return $where;
 
-		if ( empty( $wp_query->_qmt_query ) )
-			return;
+		$post_ids = self::get_post_ids( $wp_query );
+
+		if ( !empty( $post_ids ) )
+			$where .= " AND $wpdb->posts.ID IN ( " . implode( ', ', $post_ids ) . " )";
+		else
+			$where = " AND 0 = 1";
+
+		return $where;
+	}
+
+	private function get_post_ids( $wp_query ) {
+		global $wpdb;
 
 		ksort( $wp_query->_qmt_query );
 		$cache_key = serialize( $wp_query->_qmt_query );
@@ -128,7 +120,7 @@ class QMT_Query {
 
 
 function qmt_get_terms( $tax ) {
-	if ( is_category() || is_tag() || is_tax() || is_multitax() )
+	if ( is_archive() )
 		return QMT_Terms::get( $tax );
 	else
 		return get_terms( $tax );
