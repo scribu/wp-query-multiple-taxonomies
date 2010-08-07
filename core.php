@@ -6,7 +6,7 @@ class QMT_Query {
 		if ( !$wp_query )
 			$wp_query = $GLOBALS['wp_query'];
 
-		$query = @$wp_query->_qmt_query;
+		$query = (array) @$wp_query->_qmt_query;
 
 		if ( !empty( $tax ) )
 			return @$query[ $tax ];
@@ -229,14 +229,14 @@ class QMT_Template {
 	}
 
 	static function template() {
-		if ( !is_multitax() )
+		if ( !qmt_get_query() )
 			return;
 
 		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3 );
 
 		remove_action( 'template_redirect', 'redirect_canonical' );
 
-		if ( $template = locate_template( array( 'multitax.php' ) ) ) {
+		if ( $template = locate_template( array( 'taxonomy.php' ) ) ) {
 			include $template;
 			die;
 		}
@@ -277,11 +277,18 @@ class QMT_Template {
 
 /**
  * Wether multiple taxonomies are queried
+ * @param array $taxonomies A list of taxonomies to check for (AND).
  *
  * @return bool
  */
-function is_multitax() {
-	return count( qmt_get_query() ) > 1;
+function is_multitax( $taxonomies = array() ) {
+	$queried = array_keys( qmt_get_query() );
+	$count = count( $taxonomies );
+
+	if ( !$count )
+		return count( $queried ) > 1;
+
+	return count( array_intersect( $queried, $taxonomies) ) == $count;
 }
 
 /**

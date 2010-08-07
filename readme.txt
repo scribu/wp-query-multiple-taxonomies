@@ -52,10 +52,13 @@ Try the [Simple Taxonomies](http://wordpress.org/extend/plugins/simple-taxonomie
 
 = How can I customize the display? =
 
-Firstly, you have the `is_multitax()` conditional tag, that works similarly to `is_tax()`.
+The template hierarchy for multitax queries is taxonomy.php -> archive.php -> index.php.
 
-Secondly, you can create a `multitax.php` template file in your theme.
+If you need to get specific, you can use the `is_multitax()` conditional tag, which works similarly to `is_tax()`:
 
+`is_multitax()` -> true if more than one taxonomy was queried
+
+`is_multitax( array('tax_a', 'tax_b') )` -> true if both tax_a and tax_b were queried
 
 == Changelog ==
 
