@@ -98,7 +98,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 				'type'   => 'checkbox',
 				'name'   => 'taxonomies[]',
 				'value' => $tax_name,
-				'checked' => in_array( $tax_name, $instance['taxonomies'] ),
+				'checked' => in_array( $tax_name, (array) $instance['taxonomies'] ),
 				'desc'   => $tax_label,
 			), $instance ) );
 		}
