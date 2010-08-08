@@ -190,30 +190,18 @@ class QMT_Term_Walker extends Walker_Category {
 	function start_el( &$output, $term, $depth, $args ) {
 		extract( $args );
 
-		if ( isset( $addremove ) && $addremove )
-			$link = $this->get_addremove_link( $term );
+		$class = 'term-item term-item-' . $term->term_id;
+		if ( in_array( $term->slug, $this->selected_terms ) )
+			$class .= 'current-term';
 
-		if ( isset( $show_count ) && $show_count )
-			$link .= ' ( ' . intval( $term->count ) . ' )';
-
-		if ( 'list' == $style ) {
-			$output .= "\t<li";
-			$class = 'term-item term-item-'.$term->term_id;
-			if ( in_array( $term->slug, $this->selected_terms ) )
-				$class .=  ' current-term';
-//			elseif ( $term->term_id == $_current_term->parent )
-//				$class .=  ' current-term-parent';
-			$output .=  ' class="'.$class.'"';
-			$output .= ">$link\n";
-		} else {
-			$output .= "\t$link<br />\n";
-		}
+		$output .= "\t<li class='$class'>" . $this->get_addremove_link( $term ) . "</li>\n";
 	}
 
 	private function get_addremove_link( $term ) {
 		$tmp = $this->selected_terms;
+		$i = array_search( $term->slug, $tmp );
 
-		if ( false === array_search( $term->slug, $tmp ) ) {
+		if ( false === $i ) {
 			$tmp[] = $term->slug;
 			$new_url = esc_url( QMT_URL::for_tax( $this->taxonomy, $tmp ) );
 
