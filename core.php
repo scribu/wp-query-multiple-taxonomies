@@ -221,7 +221,9 @@ class QMT_Template {
 	}
 
 	static function template() {
-		if ( !qmt_get_query() )
+		global $wp_query;
+
+		if ( $wp_query->_qmt_is_reqular )
 			return;
 
 		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3 );
