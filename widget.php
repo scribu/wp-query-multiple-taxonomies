@@ -135,7 +135,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 			if ( isset( $query[$taxonomy] ) ) {
 				$new_url = QMT_URL::for_tax( $taxonomy, '' );
-				$title .= ' ' . html( "a class='clear-taxonomy' href='$new_url'", '(-)' );
+				$title .= ' ' . html( 'a', array( 'href' => $new_url, 'title' => __( 'Remove all terms in group', 'query-multiple-taxonomies' ) ), '(-)' );
 			}
 
 			$out = '';
@@ -190,15 +190,8 @@ class QMT_Term_Walker extends Walker_Category {
 	function start_el( &$output, $term, $depth, $args ) {
 		extract( $args );
 
-		if ( !$use_desc_for_title || empty( $term->description ) )
-			$title = sprintf( __( 'View all posts filed under %s', 'query-multiple-taxonomies' ), esc_attr( $term->name ) );
-		else
-			$title = esc_attr( strip_tags( $term->description ) );
-
-		$link = html( "a href='" . get_term_link( $term, $this->taxonomy ) . "' title='$title'", $term->name );
-
 		if ( isset( $addremove ) && $addremove )
-			$link .= $this->get_addremove_link( $term );
+			$link = $this->get_addremove_link( $term );
 
 		if ( isset( $show_count ) && $show_count )
 			$link .= ' ( ' . intval( $term->count ) . ' )';
@@ -221,20 +214,26 @@ class QMT_Term_Walker extends Walker_Category {
 		$tmp = $this->selected_terms;
 		$i = array_search( $term->slug, $tmp );
 
-		if ( false !== $i ) {
-			unset( $tmp[$i] );
-
+		if ( false === $i ) {
+			// Add
+			$tmp[] = $term->slug;
 			$new_url = esc_url( QMT_URL::for_tax( $this->taxonomy, $tmp ) );
-			$out = html( "a class='remove-term' href='$new_url'", '(-)' );
+
+			$out = html( 'a', array( 'href' => $new_url, 'title' =>  __( 'Add term', 'query-multiple-taxonomies' ) ), $term->name );
+			$out = apply_filters( 'qmt_add_term_link', $out, $new_url, $term );
 		}
 		else {
-			$tmp[] = $term->slug;
-
+			// Remove
+			unset( $tmp[$i] );
 			$new_url = esc_url( QMT_URL::for_tax( $this->taxonomy, $tmp ) );
-			$out = html( "a class='add-term' href='$new_url'", '(+)' );
+
+			$out  = $term->name;
+			$out .= ' ';
+			$out .= html( 'a', array( 'href' => $new_url, 'title' => __( 'Remove term', 'query-multiple-taxonomies' ) ) , '(-)' );
+			$out = apply_filters( 'qmt_remove_term_link', $out, $new_url, $term );
 		}
 
-		return ' ' . $out;
+		return $out;
 	}
 }
 
