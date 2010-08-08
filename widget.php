@@ -132,15 +132,16 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 				continue;
 
 			$title = get_taxonomy( $taxonomy )->label;
-
 			if ( isset( $query[$taxonomy] ) ) {
-				$new_url = QMT_URL::for_tax( $taxonomy, '' );
-				$title .= ' ' . html( 'a', array( 'href' => $new_url, 'title' => __( 'Remove all terms in group', 'query-multiple-taxonomies' ) ), '(-)' );
+				$title .= ' ' . html( 'a', array( 
+					'href' => QMT_URL::for_tax( $taxonomy, '' ), 
+					'title' => __( 'Remove all terms in group', 'query-multiple-taxonomies' ) )
+				, '(-)' );
 			}
+			$title = html( 'h4', $title );
+			$title = apply_filters( 'qmt_term_list_title', $title, $taxonomy, $query );
 
-			$out = '';
-			if ( ! empty( $title ) )
-				$out .= html( 'h4', $title );
+			$out = $title;
 
 			$out .= html( "ul class='term-list'", $list );
 
