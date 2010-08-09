@@ -115,7 +115,8 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		if ( empty( $out ) )
 			return;
 
-		echo html( 'form action="' . QMT_URL::get_base() . '" method="get"',
+		echo 
+		html( 'form action="' . QMT_URL::get_base() . '" method="get"',
 			 html( 'ul', $out )
 			."<input type='submit' value='Submit' />\n"
 			.html_link( apply_filters( 'qmt_reset_url', QMT_URL::get_base() ), __( 'Reset', 'query-multiple-taxonomies' ) )
@@ -195,7 +196,7 @@ class QMT_Term_Walker extends Walker_Category {
 		if ( in_array( $term->slug, $this->selected_terms ) )
 			$class .= 'current-term';
 
-		$output .= "\t<li class='$class'>" . $this->get_addremove_link( $term ) . "</li>\n";
+		$output .= "\t<li class='$class'>" . $this->get_addremove_link( $term ) . "\n";
 	}
 
 	private function get_addremove_link( $term ) {
