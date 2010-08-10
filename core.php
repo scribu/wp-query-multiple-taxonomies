@@ -73,7 +73,6 @@ class QMT_Query {
 			return true;
 
 		return
-			in_array( $tax, get_object_taxonomies( 'post' ) ) &&
 			false === strpos( $term, ',' ) &&
 			false === strpos( $term, '+' );
 	}
