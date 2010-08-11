@@ -69,8 +69,9 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 		$list = '';
 		foreach ( $tax_list as $tax_name => $tax_obj ) {
-			$ptypes = implode( ', ', $tax_obj->object_type );
-			$ptypes = __( 'Post types:', 'query-multiple-taxonomies' ) . ' ' . $ptypes;
+			$ptypes = sprintf( _n( 'Post type: %s', 'Post types: %s', count( $tax_obj->object_type ), 'query-multiple-taxonomies' ),
+				implode( ', ', $tax_obj->object_type )
+			);
 
 			$list .= 
 			html( 'li', array( 'title' => $ptypes ), $this->input( array(
