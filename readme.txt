@@ -4,7 +4,7 @@ Donate link: http://scribu.net/paypal
 Tags: drill-down, query, widget, navigation, taxonomy
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: 1.2.3
+Stable tag: 1.3
 
 Filter posts through multiple taxonomies
 
@@ -65,8 +65,8 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 = 1.3 =
 * multiple taxonomies per widget
 * introduced dropdowns mode
-* fixed a lot of internal errors
 * is_multitax() accepts a list of taxonomies to check
+* fixed a lot of query errors
 * [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-3.html)
 
 = 1.2.3 =
