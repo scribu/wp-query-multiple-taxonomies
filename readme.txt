@@ -66,6 +66,8 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 * multiple taxonomies per widget
 * introduced dropdowns mode
 * fixed a lot of internal errors
+* is_multitax() accepts a list of taxonomies to check
+* [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-3.html)
 
 = 1.2.3 =
 * fixed problems with custom menus

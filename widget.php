@@ -72,12 +72,13 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			$ptypes = implode( ', ', $tax_obj->object_type );
 			$ptypes = __( 'Post types:', 'query-multiple-taxonomies' ) . ' ' . $ptypes;
 
-			$list .= html( 'li', $this->input( array(
+			$list .= 
+			html( 'li', array( 'title' => $ptypes ), $this->input( array(
 				'type'   => 'checkbox',
 				'name'   => 'taxonomies[]',
 				'value' => $tax_name,
 				'checked' => in_array( $tax_name, (array) @$instance['taxonomies'] ),
-				'desc'   => html( 'span', array( 'title' => $ptypes ), $tax_obj->label ),
+				'desc'   => $tax_obj->label,
 			), $instance ) );
 		}
 		echo html( 'ul class="qmt-taxonomies"', $list );
@@ -115,11 +116,13 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		if ( empty( $out ) )
 			return;
 
+		$reset_url = apply_filters( 'qmt_reset_url', QMT_URL::get_base() );
+
 		echo 
 		html( 'form action="' . QMT_URL::get_base() . '" method="get"',
 			 html( 'ul', $out )
 			."<input type='submit' value='Submit' />\n"
-			.html_link( apply_filters( 'qmt_reset_url', QMT_URL::get_base() ), __( 'Reset', 'query-multiple-taxonomies' ) )
+			.html_link( $reset_url, __( 'Reset', 'query-multiple-taxonomies' ) )
 		);
 	}
 
