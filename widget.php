@@ -138,9 +138,9 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 			$title = get_taxonomy( $taxonomy )->label;
 			if ( isset( $query[$taxonomy] ) ) {
-				$title .= ' ' . html( 'a', array( 
-					'href' => QMT_URL::for_tax( $taxonomy, '' ), 
-					'title' => __( 'Remove all terms in group', 'query-multiple-taxonomies' ) )
+				$title .= ' ' . html( 'a', array(
+					'href' => QMT_URL::for_tax( $taxonomy, '' ),
+					'title' => __( 'Remove selected terms in group', 'query-multiple-taxonomies' ) )
 				, '(-)' );
 			}
 			$title = html( 'h4', $title );
@@ -213,7 +213,8 @@ class QMT_Term_Walker extends Walker_Category {
 
 			$title = __( 'Add term', 'query-multiple-taxonomies' );
 
-			$link = "<a href='$new_url' title='$title'>$term->name</a>";
+			$link = "<a class='add-term' href='$new_url' title='$title'>$term->name (+)</a>";
+
 			$link = apply_filters( 'qmt_add_term_link', $link, $new_url, $term );
 		} else {
 			unset( $tmp[$i] );
@@ -221,7 +222,8 @@ class QMT_Term_Walker extends Walker_Category {
 
 			$title = __( 'Remove term', 'query-multiple-taxonomies' );
 
-			$link = "$term->name <a href='$new_url' title='$title'>(-)</a>";
+			$link = "<a class='remove-term' href='$new_url' title='$title'>$term->name (-)</a>";
+
 			$link = apply_filters( 'qmt_remove_term_link', $link, $new_url, $term );
 		}
 
