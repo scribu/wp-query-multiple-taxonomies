@@ -154,6 +154,8 @@ class QMT_Terms {
 		if ( isset( self::$filtered_ids ) )
 			return;
 
+		$wp_query->query = wp_parse_args( $wp_query->query );
+
 		$args = array_merge( $wp_query->query, array(
 			'nopaging' => true,
 			'caller_get_posts' => true,
