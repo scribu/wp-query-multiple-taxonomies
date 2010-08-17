@@ -63,8 +63,8 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 
 		$tax_list = array();
-		foreach ( get_taxonomies( array( 'public' => true ), 'objects' ) as $tax_name => $tax_obj )
-			if ( qmt_get_query_var( $tax_name ) )
+		foreach ( get_taxonomies( array(), 'objects' ) as $tax_name => $tax_obj )
+			if ( $tax_obj->public && qmt_get_query_var( $tax_name ) )
 				$tax_list[ $tax_name ] = $tax_obj;
 
 		$list = '';
