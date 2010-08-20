@@ -12,7 +12,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		add_action( 'load-widgets.php', array( __CLASS__, '_init' ) );
 	}
 
-	function _init() {
+	static function _init() {
 		add_action( 'admin_print_styles', array( __CLASS__, 'add_style' ), 11 );
 	}
 
@@ -51,6 +51,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 				'name'   => 'mode',
 				'values' => array( 
 					'lists' => __( 'lists', 'query-multiple-taxonomies' ),
+//					'checkboxes' => __( 'checkboxes', 'query-multiple-taxonomies' ),
 					'dropdowns' => __( 'dropdowns', 'query-multiple-taxonomies' ),
 				),
 				'text'   => false,
@@ -63,7 +64,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 
 		$tax_list = array();
-		foreach ( get_taxonomies( array(), 'objects' ) as $tax_name => $tax_obj )
+		foreach ( get_taxonomies( '', 'objects' ) as $tax_name => $tax_obj )
 			if ( $tax_obj->public && qmt_get_query_var( $tax_name ) )
 				$tax_list[ $tax_name ] = $tax_obj;
 
@@ -88,48 +89,21 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 	function content( $instance ) {
 		extract( $instance );
 	
-		if ( empty( $taxonomies ) )
-			echo html( 'p', __( 'No taxonomies selected!', 'query-multiple-taxonomies' ) );
-		else
-			call_user_func( array( __CLASS__, "generate_$mode" ), $taxonomies );
-	}
-
-	private static function generate_dropdowns( $taxonomies ) {
-		$out = '';
-		foreach ( $taxonomies as $taxonomy ) {
-			$terms = qmt_get_terms( $taxonomy );
-
-			if ( empty( $terms ) )
-				continue;
-
-			$out .= 
-			html( 'li', 
-				 get_taxonomy( $taxonomy )->label . ': ' 
-				.scbForms::input( array(
-					'type' => 'select',
-					'name' => $taxonomy,
-					'values' => scbUtil::objects_to_assoc( $terms, 'slug', 'name' ),
-					'selected' => qmt_get_query( $taxonomy ),
-				) )
+		if ( empty( $taxonomies ) ) {
+			echo
+			html( 'p', __( 'No taxonomies selected!', 'query-multiple-taxonomies' ) );
+		} else {
+			echo
+			html( "div class='taxonomy-drilldown-$mode'",
+				call_user_func( array( __CLASS__, "generate_$mode" ), $taxonomies )
 			);
 		}
-
-		if ( empty( $out ) )
-			return;
-
-		$reset_url = apply_filters( 'qmt_reset_url', QMT_URL::get_base() );
-
-		echo 
-		html( 'form action="' . QMT_URL::get_base() . '" method="get"',
-			 html( 'ul', $out )
-			."<input type='submit' value='Submit' />\n"
-			.html_link( $reset_url, __( 'Reset', 'query-multiple-taxonomies' ) )
-		);
 	}
 
-	private static function generate_lists( $taxonomies ) {
+	private function generate_lists( $taxonomies ) {
 		$query = qmt_get_query();
 
+		$out = '';
 		foreach ( $taxonomies as $taxonomy ) {
 			$list = qmt_walk_terms( $taxonomy );
 
@@ -146,12 +120,88 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			$title = html( 'h4', $title );
 			$title = apply_filters( 'qmt_term_list_title', $title, $taxonomy, $query );
 
-			$out = $title;
-
-			$out .= html( "ul class='term-list'", $list );
-
-			echo html( "div id='term-list-$taxonomy'", $out );
+			$out .=
+			html( "div id='term-list-$taxonomy'",
+				 $title
+				.html( "ul class='term-list'", $list )
+			);
 		}
+		
+		return $out;
+	}
+
+	private function generate_checkboxes( $taxonomies ) {
+		$query = qmt_get_query();
+
+		$out = '';
+		foreach ( $taxonomies as $taxonomy ) {
+			$terms = qmt_get_terms( $taxonomy );
+
+			if ( empty( $terms ) )
+				continue;
+
+			$title = html( 'h4', get_taxonomy( $taxonomy )->label );
+			$title = apply_filters( 'qmt_term_list_title', $title, $taxonomy, $query );
+
+			$list = '';
+			foreach ( $terms as $term ) {
+				$list .=
+				html( 'li', scbForms::input( array(
+					'type' => 'checkbox',
+					'name' => $taxonomy . '[and][]',
+					'value' => $term->slug,
+					'desc' => $term->name,
+					'checked' => in_array( $term->slug, (array) @$query[ $taxonomy ] )
+				)));
+			}
+
+			$out .=
+			html( "div id='term-list-$taxonomy'",
+				 $title
+				.html( "ul class='term-list'", $list )
+			);
+		}
+
+		return $this->make_form( $out );
+	}
+
+	private function generate_dropdowns( $taxonomies ) {
+		$out = '';
+		foreach ( $taxonomies as $taxonomy ) {
+			$terms = qmt_get_terms( $taxonomy );
+
+			if ( empty( $terms ) )
+				continue;
+
+			$out .= 
+			html( 'li', 
+				html( 'select', array( 'name' => qmt_get_query_var( $taxonomy ) ),
+					 get_taxonomy( $taxonomy )->label . ': ' 
+					.walk_category_dropdown_tree( $terms, 0, array(
+						'selected' => qmt_get_query( $taxonomy ),
+						'show_count' => false,
+						'show_last_update' => false,
+						'hierarchical' => true,
+					) )
+				)
+			);
+		}
+
+		return $this->make_form( html('ul', $out) );
+	}
+
+	private function make_form( $out ) {
+		if ( empty( $out ) )
+			return '';
+
+		$reset_url = apply_filters( 'qmt_reset_url', QMT_URL::get_base() );
+
+		return 
+		html( 'form action="' . QMT_URL::get_base() . '" method="get"',
+			 $out
+			."<input type='submit' value='Submit' />\n"
+			.html_link( $reset_url, __( 'Reset', 'query-multiple-taxonomies' ) )
+		);	
 	}
 }
 

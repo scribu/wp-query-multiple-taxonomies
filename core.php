@@ -2,7 +2,7 @@
 
 class QMT_Query {
 
-	public static function get( $tax = '', $wp_query = null ) {
+	public function get( $tax = '', $wp_query = null ) {
 		if ( !$wp_query )
 			$wp_query = $GLOBALS['wp_query'];
 
@@ -48,9 +48,21 @@ class QMT_Query {
 			if ( ! $value = $wp_query->get( $qv ) )
 				continue;
 
-			$value = end( explode( '/', $value ) );
+			// Trac: #14330
+			if ( 'Array' == $value )
+				$value = $_REQUEST[	$qv ];
 
-			$query[$taxname] = str_replace( ' ', '+', $value );
+			if ( !is_array( $value ) ) {
+				$value = end( explode( '/', $value ) );
+				$value = str_replace( ' ', '+', $value );
+
+				if ( false !== strpos($value, '+') )
+					$value = array('and' => explode('+', $value));
+				elseif ( false !== strpos($value, ',') )
+					$value = array('or' => explode(',', $value));
+			}
+
+			$query[$taxname] = $value;
 		}
 		$query = array_filter( $query );
 
@@ -72,9 +84,7 @@ class QMT_Query {
 		if ( 'post_tag' == $tax )
 			return true;
 
-		return
-			false === strpos( $term, ',' ) &&
-			false === strpos( $term, '+' );
+		return !is_array( $term );
 	}
 
 	function posts_where( $where, $wp_query ) {
@@ -105,11 +115,24 @@ class QMT_Query {
 			return $post_ids;
 
 		$query = array();
-		foreach ( $wp_query->_qmt_query as $taxname => $value )
-			foreach ( explode( '+', $value ) as $value )
-				$query[] = wp_tax( $taxname, explode( ',', $value ), 'slug' );
+		foreach ( $wp_query->_qmt_query as $taxname => $value ) {
+			if ( is_array( $value ) ) {
+				if ( isset( $value['and'] ) ) {
+					foreach ( $value['and'] as $slug ) {
+						$query[] = wp_tax( $taxname, $slug, 'slug' );
+					}
+				}
+				if ( isset( $value['or'] ) ) {
+					$query[] = wp_tax( $taxname, $value['or'], 'slug' );
+				}
+			}
+			else {
+				$query[] = wp_tax( $taxname, $value, 'slug' );
+			}
+		}
 
 		$post_ids = $wpdb->get_col( wp_tax_query( wp_tax_group( 'AND', $query ) ) );
+		debug_lq();
 
 		wp_cache_add( $cache_key, $post_ids, 'qmt_post_ids' );
 
@@ -130,7 +153,7 @@ class QMT_Terms {
 	private static $filtered_ids;
 
 	// Get a list of all the terms attached to all the posts in the current query
-	public static function get( $tax ) {
+	public function get( $tax ) {
 		global $wp_query, $wpdb;
 
 		self::set_filtered_ids();
@@ -148,7 +171,7 @@ class QMT_Terms {
 		return $terms;
 	}
 
-	private static function set_filtered_ids() {
+	private function set_filtered_ids() {
 		global $wp_query;
 
 		if ( isset( self::$filtered_ids ) )
@@ -175,7 +198,7 @@ class QMT_Terms {
 		self::$filtered_ids = $posts;
 	}
 
-	static function posts_fields( $fields ) {
+	function posts_fields( $fields ) {
 		return 'ID';
 	}
 }
@@ -183,7 +206,7 @@ class QMT_Terms {
 
 class QMT_URL {
 
-	public static function for_tax( $taxonomy, $value ) {
+	public function for_tax( $taxonomy, $value ) {
 		$query = qmt_get_query();
 
 		if ( empty( $value ) )
@@ -194,7 +217,7 @@ class QMT_URL {
 		return self::get( $query );
 	}
 
-	public static function get( $query = array() ) {
+	public function get( $query = array() ) {
 		ksort( $query );
 
 		$url = self::get_base();
@@ -204,7 +227,7 @@ class QMT_URL {
 		return apply_filters( 'qmt_url', $url, $query );
 	}
 
-	public static function get_base() {
+	public function get_base() {
 		static $base_url;
 
 		if ( empty( $base_url ) )
@@ -221,7 +244,7 @@ class QMT_Template {
 		add_action( 'template_redirect', array( __CLASS__, 'template' ), 9 );
 	}
 
-	static function template() {
+	function template() {
 		global $wp_query;
 
 		if ( $wp_query->_qmt_is_reqular )
@@ -237,7 +260,7 @@ class QMT_Template {
 		}
 	}
 
-	static function set_title( $title, $sep, $seplocation = '' ) {
+	function set_title( $title, $sep, $seplocation = '' ) {
 		$newtitle[] = self::get_title();
 		$newtitle[] = " $sep ";
 
@@ -250,17 +273,19 @@ class QMT_Template {
 		return implode( '', $newtitle );
 	}
 
-	public static function get_title() {
+	public function get_title() {
 		$title = array();
 		foreach ( qmt_get_query() as $tax => $value ) {
 			$key = get_taxonomy( $tax )->label;
 
-			$value = explode( '+', $value );
-			foreach ( $value as &$slug ) {
-				if ( $term = get_term_by( 'slug', $slug, $tax ) )
-					$slug = $term->name;
+			if ( is_array( $value ) ) {
+				extract( $value );
+
+				if ( isset( $or ) )
+					$value = implode( ',', $or );
+				elseif ( isset( $and ) )
+					$value = implode( '+', $and );
 			}
-			$value = implode( '+', $value );
 
 			$title[] .= "$key: $value";
 		}
