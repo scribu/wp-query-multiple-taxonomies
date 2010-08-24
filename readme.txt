@@ -62,6 +62,9 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 
 == Changelog ==
 
+= 1.4 =
+* dropdowns displays hierarchical taxonomies correctly
+
 = 1.3 =
 * multiple taxonomies per widget
 * introduced dropdowns mode

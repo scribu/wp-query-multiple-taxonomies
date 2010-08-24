@@ -175,13 +175,15 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 			$out .= 
 			html( 'li', 
-				html( 'select', array( 'name' => qmt_get_query_var( $taxonomy ) ),
-					 get_taxonomy( $taxonomy )->label . ': ' 
+				 get_taxonomy( $taxonomy )->label . ': ' 
+				.html( 'select', array( 'name' => qmt_get_query_var( $taxonomy ) ),
+					'<option></option>'
 					.walk_category_dropdown_tree( $terms, 0, array(
 						'selected' => qmt_get_query( $taxonomy ),
 						'show_count' => false,
 						'show_last_update' => false,
 						'hierarchical' => true,
+						'walker' => new QMT_Dropdown_Walker
 					) )
 				)
 			);
@@ -216,7 +218,7 @@ function qmt_walk_terms( $taxonomy, $args = '' ) {
 	if ( empty( $terms ) )
 		return '';
 
-	$walker = new QMT_Term_Walker( $taxonomy );
+	$walker = new QMT_List_Walker( $taxonomy );
 
 	$args = wp_parse_args( $args, array( 
 		'style' => 'list',
@@ -228,14 +230,12 @@ function qmt_walk_terms( $taxonomy, $args = '' ) {
 }
 
 
-class QMT_Term_Walker extends Walker_Category {
+class QMT_List_Walker extends Walker_Category {
 
 	public $tree_type = 'term';
 
 	private $taxonomy;
-	private $query;
-
-	public $selected_terms = array();
+	private $selected_terms = array();
 
 	function __construct( $taxonomy ) {
 		$this->taxonomy = $taxonomy;
@@ -278,6 +278,27 @@ class QMT_Term_Walker extends Walker_Category {
 		}
 
 		return $link;
+	}
+}
+
+class QMT_Dropdown_Walker extends Walker_CategoryDropdown {
+
+	function start_el(&$output, $category, $depth, $args) {
+		$pad = str_repeat('&nbsp;', $depth * 3);
+
+		$cat_name = apply_filters('list_cats', $category->name, $category);
+		$output .= "\t<option class=\"level-$depth\" value=\"".$category->slug."\"";
+		if ( $category->slug == $args['selected'] )
+			$output .= ' selected="selected"';
+		$output .= '>';
+		$output .= $pad.$cat_name;
+		if ( $args['show_count'] )
+			$output .= '&nbsp;&nbsp;('. $category->count .')';
+		if ( $args['show_last_update'] ) {
+			$format = 'Y-m-d';
+			$output .= '&nbsp;&nbsp;' . gmdate($format, $category->last_update_timestamp);
+		}
+		$output .= "</option>\n";
 	}
 }
 

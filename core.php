@@ -132,7 +132,6 @@ class QMT_Query {
 		}
 
 		$post_ids = $wpdb->get_col( wp_tax_query( wp_tax_group( 'AND', $query ) ) );
-		debug_lq();
 
 		wp_cache_add( $cache_key, $post_ids, 'qmt_post_ids' );
 
