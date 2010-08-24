@@ -126,7 +126,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 				.html( "ul class='term-list'", $list )
 			);
 		}
-		
+
 		return $out;
 	}
 
@@ -196,14 +196,12 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		if ( empty( $out ) )
 			return '';
 
-		$reset_url = apply_filters( 'qmt_reset_url', QMT_URL::get_base() );
-
-		return 
+		return
 		html( 'form action="' . QMT_URL::get_base() . '" method="get"',
 			 $out
 			."<input type='submit' value='Submit' />\n"
-			.html_link( $reset_url, __( 'Reset', 'query-multiple-taxonomies' ) )
-		);	
+			.html_link( QMT_URL::get(), __( 'Reset', 'query-multiple-taxonomies' ) )
+		);
 	}
 }
 

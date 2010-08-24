@@ -217,9 +217,13 @@ class QMT_URL {
 	}
 
 	public function get( $query = array() ) {
+		$url = self::get_base();
+
+		if ( empty($query) )
+			return apply_filters( 'qmt_reset_url', $url );
+
 		ksort( $query );
 
-		$url = self::get_base();
 		foreach ( $query as $taxonomy => $value )
 			$url = add_query_arg( qmt_get_query_var( $taxonomy ), $value, $url );
 
