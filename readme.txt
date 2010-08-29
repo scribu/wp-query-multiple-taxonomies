@@ -30,6 +30,7 @@ It also comes with a drill-down navigation widget.
 * [Bill Nanson](http://burgundy-report.com)
 * [Matthew Porter](http://porterinnovative.com)
 
+Links: [Plugin News](http://scribu.net/wordpress/query-multiple-taxonomies) | [Author's Site](http://scribu.net)
 
 == Screenshots ==
 

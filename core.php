@@ -50,7 +50,7 @@ class QMT_Query {
 
 			// Trac: #14330
 			if ( 'Array' == $value )
-				$value = $_REQUEST[	$qv ];
+				$value = $_REQUEST[ $qv ];
 
 			if ( !is_array( $value ) ) {
 				$value = end( explode( '/', $value ) );
