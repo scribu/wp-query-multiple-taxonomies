@@ -258,7 +258,7 @@ class QMT_Template {
 		remove_action( 'template_redirect', 'redirect_canonical' );
 
 		if ( $template = locate_template( array( 'taxonomy.php' ) ) ) {
-			include $template;
+			load_template( $template );
 			die;
 		}
 	}
