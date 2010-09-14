@@ -1,145 +1,5 @@
 <?php
 
-class QMT_Query {
-
-	public function get( $tax = '', $wp_query = null ) {
-		if ( !$wp_query )
-			$wp_query = $GLOBALS['wp_query'];
-
-		$query = (array) @$wp_query->_qmt_query;
-
-		if ( !empty( $tax ) )
-			return @$query[ $tax ];
-
-		return $query;
-	}
-
-	function init() {
-		add_action( 'pre_get_posts', array( __CLASS__, 'pre_get_posts' ), 9 );
-		add_filter( 'posts_where', array( __CLASS__, 'posts_where' ), 10, 2 );
-	}
-
-	function pre_get_posts( $wp_query ) {
-		self::find_query( $wp_query );
-
-		if ( $wp_query->_qmt_is_reqular )
-			return;
-
-		// Set post type, only if not set explicitly
-		$wp_query->query = wp_parse_args( $wp_query->query );
-		if ( !isset( $wp_query->query['post_type'] ) )
-			$wp_query->set( 'post_type', 'any' );
-
-		// Prevent normal taxonomy processing
-		foreach ( array( 'category_name', 'tag' ) as $qv )
-			$wp_query->set( $qv, '' );
-
-		$wp_query->parse_query_vars();
-
-		$wp_query->is_tax = false;
-	}
-
-	private function find_query( $wp_query ) {
-		$query = array();
-		foreach ( get_taxonomies( array( 'public' => true ) ) as $taxname ) {
-			if ( ! $qv = qmt_get_query_var( $taxname ) )
-				continue;
-
-			if ( ! $value = $wp_query->get( $qv ) )
-				continue;
-
-			// Trac: #14330
-			if ( 'Array' == $value )
-				$value = $_REQUEST[ $qv ];
-
-			if ( !is_array( $value ) ) {
-				$value = end( explode( '/', $value ) );
-				$value = str_replace( ' ', '+', $value );
-
-				if ( false !== strpos($value, '+') )
-					$value = array('and' => explode('+', $value));
-				elseif ( false !== strpos($value, ',') )
-					$value = array('or' => explode(',', $value));
-			}
-
-			$query[$taxname] = $value;
-		}
-		$query = array_filter( $query );
-
-		$wp_query->_qmt_query = $query;
-		$wp_query->_qmt_is_reqular = self::is_regular_query( $query );
-	}
-
-	// Wether the current query can be handled natively by WordPress
-	private function is_regular_query( $query ) {
-		if ( empty( $query ) )
-			return true;
-
-		if ( count( $query ) > 1 )
-			return false;
-
-		$tax = key( $query );
-		$term = reset( $query );
-
-		if ( 'post_tag' == $tax )
-			return true;
-
-		return !is_array( $term );
-	}
-
-	function posts_where( $where, $wp_query ) {
-		global $wpdb;
-
-		if ( $wp_query->_qmt_is_reqular )
-			return $where;
-
-		$post_ids = self::get_post_ids( $wp_query );
-
-		if ( !empty( $post_ids ) )
-			$where .= " AND $wpdb->posts.ID IN ( " . implode( ', ', $post_ids ) . " )";
-		else
-			$where = " AND 0 = 1";
-
-		return $where;
-	}
-
-	private function get_post_ids( $wp_query ) {
-		global $wpdb;
-
-		ksort( $wp_query->_qmt_query );
-		$cache_key = serialize( $wp_query->_qmt_query );
-
-		$post_ids = wp_cache_get( $cache_key, 'qmt_post_ids' );
-
-		if ( is_array( $post_ids ) )
-			return $post_ids;
-
-		$query = array();
-		foreach ( $wp_query->_qmt_query as $taxname => $value ) {
-			if ( is_array( $value ) ) {
-				if ( isset( $value['and'] ) ) {
-					foreach ( $value['and'] as $slug ) {
-						$query[] = wp_tax( $taxname, $slug, 'slug' );
-					}
-				}
-				if ( isset( $value['or'] ) ) {
-					$query[] = wp_tax( $taxname, $value['or'], 'slug' );
-				}
-			}
-			else {
-				$query[] = wp_tax( $taxname, $value, 'slug' );
-			}
-		}
-
-		$post_ids = $wpdb->get_col( wp_tax_query( wp_tax_group( 'AND', $query ) ) );
-
-		wp_cache_add( $cache_key, $post_ids, 'qmt_post_ids' );
-
-		return $post_ids;
-	}
-}
-
-
 function qmt_get_terms( $tax ) {
 	if ( is_archive() )
 		return QMT_Terms::get( $tax );
@@ -180,7 +40,8 @@ class QMT_Terms {
 
 		$args = array_merge( $wp_query->query, array(
 			'nopaging' => true,
-			'caller_get_posts' => true,
+			'no_found_rows' => true,
+			'ignore_sticky_post' => true,
 			'cache_results' => false,
 		) );
 
@@ -240,64 +101,6 @@ class QMT_URL {
 	}
 }
 
-
-class QMT_Template {
-
-	function init() {
-		add_action( 'template_redirect', array( __CLASS__, 'template' ), 9 );
-	}
-
-	function template() {
-		global $wp_query;
-
-		if ( $wp_query->_qmt_is_reqular )
-			return;
-
-		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3 );
-
-		remove_action( 'template_redirect', 'redirect_canonical' );
-
-		if ( $template = locate_template( array( 'taxonomy.php' ) ) ) {
-			load_template( $template );
-			die;
-		}
-	}
-
-	function set_title( $title, $sep, $seplocation = '' ) {
-		$newtitle[] = self::get_title();
-		$newtitle[] = " $sep ";
-
-		if ( !empty( $title ) )
-			$newtitle[] = $title;
-
-		if ( 'right' != $seplocation )
-			$newtitle = array_reverse( $newtitle );
-
-		return implode( '', $newtitle );
-	}
-
-	public function get_title() {
-		$title = array();
-		foreach ( qmt_get_query() as $tax => $value ) {
-			$key = get_taxonomy( $tax )->label;
-
-			if ( is_array( $value ) ) {
-				extract( $value );
-
-				if ( isset( $or ) )
-					$value = implode( ',', $or );
-				elseif ( isset( $and ) )
-					$value = implode( '+', $and );
-			}
-
-			$title[] .= "$key: $value";
-		}
-
-		return implode( '; ', $title );
-	}
-}
-
-
 /**
  * Wether multiple taxonomies are queried
  * @param array $taxonomies A list of taxonomies to check for (AND).
@@ -322,7 +125,31 @@ function is_multitax( $taxonomies = array() ) {
  * @return array( taxonomy => query )
  */
 function qmt_get_query( $taxname = '' ) {
-	return QMT_Query::get( $taxname );
+	global $wp_query;
+
+	$qmt_query = array();
+
+	foreach ( $wp_query->tax_query as $tax_query ) {
+		if ( 'IN' != $tax_query['operator'] )
+			continue;
+
+		if ( 'slug' != $tax_query['field'] )
+			continue;
+
+		$qmt_query[ $tax_query['taxonomy'] ][] = implode( ',', $tax_query['terms'] );
+	}
+
+	foreach ( $qmt_query as &$value )
+		$value = implode( '+', $value );
+
+	if ( $taxname ) {
+		if ( isset( $qmt_query[ $taxname ] ) )
+			return $qmt_query[ $taxname ];
+		
+		return false;
+	}
+
+	return $qmt_query;
 }
 
 /**

@@ -1,30 +1,18 @@
-=== Query Multiple Taxonomies ===
+=== Taxonomy Drill-Down ===
 Contributors: scribu
 Donate link: http://scribu.net/paypal
 Tags: drill-down, query, widget, navigation, taxonomy
-Requires at least: 3.0
-Tested up to: 3.0
+Requires at least: 3.1-alpha
+Tested up to: 3.1-alpha
 Stable tag: 1.3
 
 Filter posts through multiple taxonomies
 
 == Description ==
 
-Say you have two custom taxnomies defined: genre and artist.
+This plugin lets you do faceted search using multiple custom taxonomies.
 
-Currently, you can do the following types of queries on your site:
-
-`?genre=jazz`
-
-`?genre=jazz&cat=1`
-
-But you can't do this:
-
-`?genre=jazz&artist=chet-baker`
-
-WordPress will just ignore one of the parameters. This plugin fixes that.
-
-It also comes with a drill-down navigation widget.
+It has a drill-down widget with multiple display modes.
 
 = Sponsors =
 * [Bill Nanson](http://burgundy-report.com)
@@ -35,9 +23,7 @@ Links: [Plugin News](http://scribu.net/wordpress/query-multiple-taxonomies) | [A
 == Screenshots ==
 
 1. Drill-down navigation widgets
-
 2. Drill-down widgets in the admin
-
 
 == Frequently Asked Questions ==
 
@@ -63,8 +49,10 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 
 == Changelog ==
 
-= 1.3.1 =
+= 1.4 =
+* WordPress 3.1 compatibility (native taxonomy handling)
 * dropdowns displays hierarchical taxonomies correctly
+* [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-4.html)
 
 = 1.3 =
 * multiple taxonomies per widget
