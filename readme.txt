@@ -37,6 +37,20 @@ Make sure your host is running PHP 5. Add this line to wp-config.php to check:
 
 Try the [Simple Taxonomies](http://wordpress.org/extend/plugins/simple-taxonomies) plugin.
 
+= Can I display the drilldown in a template instead of using the widget? =
+
+You can use [the_widget()](http://codex.wordpress.org/Function_Reference/the_widget), like so:
+
+`
+the_widget('Taxonomy_Drill_Down_Widget', array(
+	'title' => '',
+	'mode' => 'dropdowns',
+	'taxonomies' => array( 'post_tag', 'color' ) // list of taxonomy names
+));
+`
+
+'mode' can be one of 'lists' or 'dropdowns'
+
 = How can I customize the display? =
 
 The template hierarchy for multitax queries is taxonomy.php -> archive.php -> index.php.
