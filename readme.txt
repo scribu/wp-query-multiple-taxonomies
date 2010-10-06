@@ -68,6 +68,10 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 * dropdowns displays hierarchical taxonomies correctly
 * [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-4.html)
 
+= 1.3.1 =
+* dropdowns displays hierarchical taxonomies correctly
+* various bugfixes
+
 = 1.3 =
 * multiple taxonomies per widget
 * introduced dropdowns mode
