@@ -86,7 +86,7 @@ class QMT_URL {
 		ksort( $query );
 
 		foreach ( $query as $taxonomy => $value )
-			$url = add_query_arg( qmt_get_query_var( $taxonomy ), $value, $url );
+			$url = add_query_arg( get_taxonomy( $taxonomy )->query_var, $value, $url );
 
 		return apply_filters( 'qmt_url', $url, $query );
 	}
@@ -150,25 +150,5 @@ function qmt_get_query( $taxname = '' ) {
 	}
 
 	return $qmt_query;
-}
-
-/**
- * Get the query var, even for built-in taxonomies
- */
-function qmt_get_query_var( $taxname ) {
-	$taxobj = get_taxonomy( $taxname );
-
-	if ( $taxobj->query_var )
-		return $taxobj->query_var;
-
-	$tmp = array(
-		'post_tag' => 'tag',
-		'category' => 'category_name'
-	);
-
-	if ( isset( $tmp[ $taxname ] ) )
-		return $tmp[ $taxname ];
-
-	return false;
 }
 

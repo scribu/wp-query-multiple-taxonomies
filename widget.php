@@ -65,7 +65,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 		$tax_list = array();
 		foreach ( get_taxonomies( '', 'objects' ) as $tax_name => $tax_obj )
-			if ( $tax_obj->public && qmt_get_query_var( $tax_name ) )
+			if ( $tax_obj->public && $tax_obj->query_var )
 				$tax_list[ $tax_name ] = $tax_obj;
 
 		$list = '';
@@ -176,7 +176,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			$out .= 
 			html( 'li', 
 				 get_taxonomy( $taxonomy )->label . ': ' 
-				.html( 'select', array( 'name' => qmt_get_query_var( $taxonomy ) ),
+				.html( 'select', array( 'name' => get_taxonomy( $taxonomy )->query_var ),
 					'<option></option>'
 					.walk_category_dropdown_tree( $terms, 0, array(
 						'selected' => qmt_get_query( $taxonomy ),
