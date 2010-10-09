@@ -125,11 +125,9 @@ function is_multitax( $taxonomies = array() ) {
  * @return array( taxonomy => query )
  */
 function qmt_get_query( $taxname = '' ) {
-	global $wp_query;
-
 	$qmt_query = array();
 
-	foreach ( $wp_query->tax_query as $tax_query ) {
+	foreach ( get_query_var('tax_query') as $tax_query ) {
 		if ( 'IN' != $tax_query['operator'] )
 			continue;
 
