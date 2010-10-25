@@ -173,12 +173,17 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			if ( empty( $terms ) )
 				continue;
 
-			$out .= 
-			html( 'li', 
-				 get_taxonomy( $taxonomy )->label . ': ' 
-				.html( 'select', array( 'name' => get_taxonomy( $taxonomy )->query_var ),
-					'<option></option>'
-					.walk_category_dropdown_tree( $terms, 0, array(
+			$name = get_taxonomy( $taxonomy )->query_var;
+
+			$out .=
+			html( 'li',
+				html( 'label', array( 'for' => $name ), 
+					get_taxonomy( $taxonomy )->label . ':' 
+				),
+				' ',
+				html( 'select', array( 'name' => $name ),
+					'<option></option>',
+					walk_category_dropdown_tree( $terms, 0, array(
 						'selected' => qmt_get_query( $taxonomy ),
 						'show_count' => false,
 						'show_last_update' => false,
