@@ -101,6 +101,29 @@ class QMT_URL {
 	}
 }
 
+class QMT_Template {
+
+	public function get_title() {
+		$title = array();
+		foreach ( qmt_get_query() as $tax => $value ) {
+			$key = get_taxonomy( $tax )->label;
+
+			if ( is_array( $value ) ) {
+				extract( $value );
+
+				if ( isset( $or ) )
+					$value = implode( ',', $or );
+				elseif ( isset( $and ) )
+					$value = implode( '+', $and );
+			}
+
+			$title[] .= "$key: $value";
+		}
+
+		return implode( '; ', $title );
+	}
+}
+
 /**
  * Wether multiple taxonomies are queried
  * @param array $taxonomies A list of taxonomies to check for (AND).

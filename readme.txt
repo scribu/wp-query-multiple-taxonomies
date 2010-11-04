@@ -37,7 +37,7 @@ Make sure your host is running PHP 5. Add this line to wp-config.php to check:
 
 Try the [Simple Taxonomies](http://wordpress.org/extend/plugins/simple-taxonomies) plugin.
 
-= Can I display the drilldown in a template instead of using the widget? =
+= Is there a template tag I can use instead of widgets? =
 
 You can use [the_widget()](http://codex.wordpress.org/Function_Reference/the_widget), like so:
 

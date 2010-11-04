@@ -202,10 +202,10 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			return '';
 
 		return
-		html( 'form action="' . QMT_URL::get_base() . '" method="get"',
-			 $out
-			."<input type='submit' value='Submit' />\n"
-			.html_link( QMT_URL::get(), __( 'Reset', 'query-multiple-taxonomies' ) )
+		html( 'form', array( 'action' => QMT_URL::get_base(), 'method' => 'get' ),
+			$out,
+			"<input type='submit' value='Submit' />\n",
+			html_link( QMT_URL::get(), __( 'Reset', 'query-multiple-taxonomies' ) )
 		);
 	}
 }
@@ -289,7 +289,7 @@ class QMT_Dropdown_Walker extends Walker_CategoryDropdown {
 	function start_el(&$output, $category, $depth, $args) {
 		$pad = str_repeat('&nbsp;', $depth * 3);
 
-		$cat_name = apply_filters('list_cats', $category->name, $category);
+		$cat_name = apply_filters( 'list_cats', $category->name, $category );
 		$output .= "\t<option class=\"level-$depth\" value=\"".$category->slug."\"";
 		if ( $category->slug == $args['selected'] )
 			$output .= ' selected="selected"';
