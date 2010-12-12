@@ -152,7 +152,10 @@ function qmt_get_query( $taxname = '' ) {
 
 	$qmt_query = array();
 
-	foreach ( $wp_query->tax_query as $tax_query ) {
+	if ( is_null( $wp_query->tax_query ) )
+		return $qmt_query;
+
+	foreach ( $wp_query->tax_query->queries as $tax_query ) {
 		if ( 'IN' != $tax_query['operator'] )
 			continue;
 
