@@ -251,7 +251,7 @@ class QMT_List_Walker extends Walker_Category {
 
 		$class = 'term-item term-item-' . $term->term_id;
 		if ( in_array( $term->slug, $this->selected_terms ) )
-			$class .= 'current-term';
+			$class .= ' current-term';
 
 		$output .= "\t<li class='$class'>" . $this->get_addremove_link( $term ) . "\n";
 	}
