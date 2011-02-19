@@ -88,7 +88,11 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 	function content( $instance ) {
 		extract( $instance );
-	
+
+		$query = qmt_get_query();
+		$common = array_intersect( $taxonomies, array_keys( $query ) );
+		$this->all_terms = empty( $common );
+
 		if ( empty( $taxonomies ) ) {
 			echo
 			html( 'p', __( 'No taxonomies selected!', 'query-multiple-taxonomies' ) );
@@ -100,12 +104,19 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		}
 	}
 
+	private function get_terms( $tax ) {
+		if ( $this->all_terms )
+			return get_terms( $tax );
+		else
+			return QMT_Terms::get( $tax );
+	}
+
 	private function generate_lists( $taxonomies ) {
 		$query = qmt_get_query();
 
 		$out = '';
 		foreach ( $taxonomies as $taxonomy ) {
-			$list = qmt_walk_terms( $taxonomy );
+			$list = qmt_walk_terms( $taxonomy, $this->get_terms( $taxonomy ) );
 
 			if ( empty( $list ) )
 				continue;
@@ -137,7 +148,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 		$out = '';
 		foreach ( $taxonomies as $taxonomy ) {
-			$terms = qmt_get_terms( $taxonomy );
+			$terms = $this->get_terms( $taxonomy );
 
 			if ( empty( $terms ) )
 				continue;
@@ -170,7 +181,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 	private function generate_dropdowns( $taxonomies ) {
 		$out = '';
 		foreach ( $taxonomies as $taxonomy ) {
-			$terms = qmt_get_terms( $taxonomy );
+			$terms = $this->get_terms( $taxonomy );
 
 			if ( empty( $terms ) )
 				continue;
@@ -219,13 +230,11 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 	}
 }
 
-function qmt_walk_terms( $taxonomy, $args = '' ) {
+function qmt_walk_terms( $taxonomy, $terms, $args = '' ) {
 	if ( !taxonomy_exists( $taxonomy ) ) {
 		trigger_error( "Invalid taxonomy '$taxonomy'", E_USER_WARNING );
 		return '';
 	}
-
-	$terms = qmt_get_terms( $taxonomy );
 
 	if ( empty( $terms ) )
 		return '';

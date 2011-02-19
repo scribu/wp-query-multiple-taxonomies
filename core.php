@@ -1,12 +1,5 @@
 <?php
 
-function qmt_get_terms( $tax ) {
-	if ( is_archive() )
-		return QMT_Terms::get( $tax );
-	else
-		return get_terms( $tax );
-}
-
 class QMT_Terms {
 
 	private static $filtered_ids;
@@ -176,5 +169,13 @@ function qmt_get_query( $taxname = '' ) {
 	}
 
 	return $qmt_query;
+}
+
+// Deprecated
+function qmt_get_terms( $tax ) {
+	if ( is_archive() )
+		return QMT_Terms::get( $tax );
+	else
+		return get_terms( $tax );
 }
 
