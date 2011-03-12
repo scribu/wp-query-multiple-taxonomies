@@ -79,7 +79,7 @@ jQuery(function($){
 
 		echo html( 'p', __( 'Taxonomies:', 'query-multiple-taxonomies' ) );
 
-		$selected_taxonomies = (array) @$instance['taxonomies'];
+		$selected_taxonomies = isset( $instance['taxonomies'] ) ? $instance['taxonomies'] : array();
 
 		// Start with the selected taxonomies
 		$tax_list = $selected_taxonomies;
@@ -93,9 +93,9 @@ jQuery(function($){
 		// Display the list
 		$list = '';
 		foreach ( $tax_list as $tax_name ) {
-			$tax_obj = get_taxonomy( $tax_name );
+			$tax_obj = self::test_tax( $tax_name );
 
-			if ( !$tax_obj->public || !$tax_obj->query_var )
+			if ( !$tax_obj )
 				continue;
 
 			$ptypes = sprintf( _n( 'Post type: %s', 'Post types: %s', count( $tax_obj->object_type ), 'query-multiple-taxonomies' ),
@@ -116,6 +116,8 @@ jQuery(function($){
 
 	function content( $instance ) {
 		extract( $instance );
+
+		$taxonomies = array_filter( $taxonomies, array( __CLASS__, 'test_tax' ) );
 
 		$query = qmt_get_query();
 		$common = array_intersect( $taxonomies, array_keys( $query ) );
@@ -256,14 +258,18 @@ jQuery(function($){
 			'class' => 'taxonomy-drilldown-reset',
 		), __( 'Reset', 'query-multiple-taxonomies' ) );
 	}
+
+	static function test_tax( $tax_name ) {
+		$tax_obj = get_taxonomy( $tax_name );
+		
+		if ( $tax_obj && $tax_obj->public && $tax_obj->query_var )
+			return $tax_obj;
+
+		return false;
+	}
 }
 
 function qmt_walk_terms( $taxonomy, $terms, $args = '' ) {
-	if ( !taxonomy_exists( $taxonomy ) ) {
-		trigger_error( "Invalid taxonomy '$taxonomy'", E_USER_WARNING );
-		return '';
-	}
-
 	if ( empty( $terms ) )
 		return '';
 
