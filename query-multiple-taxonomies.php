@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Query Multiple Taxonomies
-Version: 1.4-alpha
-Description: Filter posts through multiple custom taxonomies
+Plugin Name: Taxonomy Drill Down
+Version: 1.4-beta
+Description: Filter posts through multiple custom taxonomies using a widget.
 Author: scribu
 Author URI: http://scribu.net
 Plugin URI: http://scribu.net/wordpress/query-multiple-taxonomies
