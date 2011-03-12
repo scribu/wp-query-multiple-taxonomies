@@ -173,6 +173,8 @@ function qmt_get_query( $taxname = '' ) {
 
 // Deprecated
 function qmt_get_terms( $tax ) {
+	_deprecated_function( __FUNCTION__, '1.4' );
+
 	if ( is_archive() )
 		return QMT_Terms::get( $tax );
 	else
