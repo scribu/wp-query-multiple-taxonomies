@@ -65,8 +65,9 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 
 = 1.4 =
 * WordPress 3.1 compatibility (native taxonomy handling)
+* sortable taxonomy list
 * widget not affected by non-active taxonomies anymore
-* dropdowns displays hierarchical taxonomies correctly
+* dropdowns display hierarchical taxonomies correctly
 * [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-4.html)
 
 = 1.3.2 =
