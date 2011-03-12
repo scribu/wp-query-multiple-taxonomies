@@ -14,6 +14,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 	static function _init() {
 		add_action( 'admin_print_styles', array( __CLASS__, 'add_style' ), 11 );
+		add_action( 'admin_footer', array( __CLASS__, 'add_script' ), 11 );
 	}
 
 	function Taxonomy_Drill_Down_Widget() {
@@ -25,8 +26,24 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 	function add_style() {
 ?>
 <style type="text/css">
-.qmt-taxonomies { margin: -.5em 0 0 .5em }
+.qmt-taxonomies {
+	margin: -.5em 0 0 .5em;
+	cursor: move;
+}
 </style>
+<?php
+	}
+
+	function add_script() {
+?>
+<script type="text/javascript">
+jQuery(function($){
+	$('.qmt-taxonomies').live('mouseenter', function(ev) {
+		$(this).sortable();
+		$(this).disableSelection();
+	});
+});
+</script>
 <?php
 	}
 
@@ -62,14 +79,25 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 
 		echo html( 'p', __( 'Taxonomies:', 'query-multiple-taxonomies' ) );
 
+		$selected_taxonomies = (array) @$instance['taxonomies'];
 
-		$tax_list = array();
-		foreach ( get_taxonomies( '', 'objects' ) as $tax_name => $tax_obj )
-			if ( $tax_obj->public && $tax_obj->query_var )
-				$tax_list[ $tax_name ] = $tax_obj;
+		// Start with the selected taxonomies
+		$tax_list = $selected_taxonomies;
 
+		// Append the other taxonomies
+		foreach ( get_taxonomies() as $tax_name ) {
+			if ( !in_array( $tax_name, $selected_taxonomies ) )
+				$tax_list[] = $tax_name;
+		}
+
+		// Display the list
 		$list = '';
-		foreach ( $tax_list as $tax_name => $tax_obj ) {
+		foreach ( $tax_list as $tax_name ) {
+			$tax_obj = get_taxonomy( $tax_name );
+
+			if ( !$tax_obj->public || !$tax_obj->query_var )
+				continue;
+
 			$ptypes = sprintf( _n( 'Post type: %s', 'Post types: %s', count( $tax_obj->object_type ), 'query-multiple-taxonomies' ),
 				implode( ', ', $tax_obj->object_type )
 			);
@@ -79,7 +107,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 				'type'   => 'checkbox',
 				'name'   => 'taxonomies[]',
 				'value' => $tax_name,
-				'checked' => in_array( $tax_name, (array) @$instance['taxonomies'] ),
+				'checked' => in_array( $tax_name, $selected_taxonomies ),
 				'desc'   => $tax_obj->label,
 			), $instance ) );
 		}
