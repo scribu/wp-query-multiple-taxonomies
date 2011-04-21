@@ -167,22 +167,21 @@ function qmt_get_query( $taxname = '' ) {
 
 	$qmt_query = array();
 
-	if ( is_null( $wp_query->tax_query ) )
-		return $qmt_query;
+	if ( !is_null( $wp_query->tax_query ) ) {
+		foreach ( $wp_query->tax_query->queries as $tax_query ) {
+			if ( 'slug' != $tax_query['field'] )
+				continue;
 
-	foreach ( $wp_query->tax_query->queries as $tax_query ) {
-		if ( 'slug' != $tax_query['field'] )
-			continue;
+			if ( 'AND' == $tax_query['operator'] )
+				$qmt_query[ $tax_query['taxonomy'] ] = (array) $tax_query['terms'];
 
-		if ( 'AND' == $tax_query['operator'] )
-			$qmt_query[ $tax_query['taxonomy'] ] = $tax_query['terms'];
+			if ( 'IN' == $tax_query['operator'] )
+				$qmt_query[ $tax_query['taxonomy'] ][] = implode( ',', $tax_query['terms'] );
+		}
 
-		if ( 'IN' == $tax_query['operator'] )
-			$qmt_query[ $tax_query['taxonomy'] ][] = implode( ',', $tax_query['terms'] );
+		foreach ( $qmt_query as &$value )
+			$value = implode( '+', $value );
 	}
-
-	foreach ( $qmt_query as &$value )
-		$value = implode( '+', $value );
 
 	if ( $taxname ) {
 		if ( isset( $qmt_query[ $taxname ] ) )
