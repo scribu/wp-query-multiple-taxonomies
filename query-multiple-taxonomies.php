@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Taxonomy Drill Down
-Version: 1.4
+Version: 1.4.1-alpha
 Description: Filter posts through multiple custom taxonomies using a widget.
 Author: scribu
 Author URI: http://scribu.net

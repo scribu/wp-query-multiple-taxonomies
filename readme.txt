@@ -63,6 +63,10 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 
 == Changelog ==
 
+= 1.4.1 =
+* bring back wp_title filtering
+* fix qmt_get_query() not working with the 'AND' tax_query operator
+
 = 1.4 =
 * WordPress 3.1 compatibility (native taxonomy handling)
 * sortable taxonomy list
