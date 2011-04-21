@@ -98,24 +98,46 @@ class QMT_Template {
 
 	public function get_title() {
 		$title = array();
+
 		foreach ( qmt_get_query() as $tax => $value ) {
-			$key = get_taxonomy( $tax )->label;
+			$terms = explode( '+', $value );
 
-			if ( is_array( $value ) ) {
-				extract( $value );
+			$out = array();
+			foreach ( $terms as $slug ) {
+				$term_obj = get_term_by( 'slug', $slug, $tax );
 
-				if ( isset( $or ) )
-					$value = implode( ',', $or );
-				elseif ( isset( $and ) )
-					$value = implode( '+', $and );
+				if ( $term_obj )
+					$out[] = $term_obj->name;
 			}
 
-			$title[] .= "$key: $value";
+			$tax_obj = get_taxonomy( $tax );
+			if ( count( $out ) == 1 )
+				$key = $tax_obj->labels->singular_name;
+			else
+				$key = $tax_obj->labels->name;
+
+			$title[] .= $key . ': ' . implode( ' + ', $out );
 		}
 
 		return implode( '; ', $title );
 	}
+
+	function wp_title( $title, $sep, $seplocation ) {
+		$tax_title = QMT_Template::get_title();
+
+		if ( empty( $tax_title ) )
+			return $title;
+
+		if ( 'right' == $seplocation )
+			$title = "$tax_title $sep ";
+		else
+			$title = " $sep $tax_title";
+
+		return $title;
+	}
 }
+
+add_filter( 'wp_title', array( 'QMT_Template', 'wp_title' ), 10, 3 );
 
 /**
  * Wether multiple taxonomies are queried
@@ -149,13 +171,14 @@ function qmt_get_query( $taxname = '' ) {
 		return $qmt_query;
 
 	foreach ( $wp_query->tax_query->queries as $tax_query ) {
-		if ( 'IN' != $tax_query['operator'] )
-			continue;
-
 		if ( 'slug' != $tax_query['field'] )
 			continue;
 
-		$qmt_query[ $tax_query['taxonomy'] ][] = implode( ',', $tax_query['terms'] );
+		if ( 'AND' == $tax_query['operator'] )
+			$qmt_query[ $tax_query['taxonomy'] ] = $tax_query['terms'];
+
+		if ( 'IN' == $tax_query['operator'] )
+			$qmt_query[ $tax_query['taxonomy'] ][] = implode( ',', $tax_query['terms'] );
 	}
 
 	foreach ( $qmt_query as &$value )
