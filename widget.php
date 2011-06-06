@@ -262,7 +262,7 @@ jQuery(function($){
 		return false;
 	}
 
-	private static function mustache_render( $file, $data ) {
+	static function mustache_render( $file, $data ) {
 		if ( !class_exists( 'Mustache' ) )
 			require dirname(__FILE__) . '/mustache/Mustache.php';
 
@@ -304,38 +304,33 @@ class QMT_List_Walker extends Walker_Category {
 	function start_el( &$output, $term, $depth, $args ) {
 		extract( $args );
 
-		$class = 'term-item term-item-' . $term->term_id;
+		$data = array();
+
 		if ( in_array( $term->slug, $this->selected_terms ) )
-			$class .= ' current-term';
+			$data['current-term'] = 'current-term';
 
-		$output .= "\t<li class='$class'>" . $this->get_addremove_link( $term ) . "\n";
-	}
-
-	private function get_addremove_link( $term ) {
 		$tmp = $this->selected_terms;
 		$i = array_search( $term->slug, $tmp );
 
 		if ( false === $i ) {
 			$tmp[] = $term->slug;
-			$new_url = esc_url( QMT_URL::for_tax( $this->taxonomy, $tmp ) );
 
-			$title = __( 'Add term', 'query-multiple-taxonomies' );
-
-			$link = "<a class='add-term' href='$new_url' title='$title'>$term->name (+)</a>";
-
-			$link = apply_filters( 'qmt_add_term_link', $link, $new_url, $term );
+			$data['add'] = array(
+				'url' => QMT_URL::for_tax( $this->taxonomy, $tmp ),
+				'title' => __( 'Add term', 'query-multiple-taxonomies' ),
+				'name' => $term->name
+			);
 		} else {
 			unset( $tmp[$i] );
-			$new_url = esc_url( QMT_URL::for_tax( $this->taxonomy, $tmp ) );
 
-			$title = __( 'Remove term', 'query-multiple-taxonomies' );
-
-			$link = "<a class='remove-term' href='$new_url' title='$title'>$term->name (-)</a>";
-
-			$link = apply_filters( 'qmt_remove_term_link', $link, $new_url, $term );
+			$data['remove'] = array(
+				'url' => QMT_URL::for_tax( $this->taxonomy, $tmp ),
+				'title' => __( 'Remove term', 'query-multiple-taxonomies' ),
+				'name' => $term->name
+			);
 		}
 
-		return $link;
+		$output .= taxonomy_drill_down_widget::mustache_render( 'list-item.html', $data );
 	}
 }
 
