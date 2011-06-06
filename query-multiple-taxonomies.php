@@ -1,7 +1,7 @@
 <?php
 /*
-Plugin Name: Taxonomy Drill Down
-Version: 1.4.1-alpha
+Plugin Name: Query Multiple Taxonomies
+Version: 1.5-alpha
 Description: Filter posts through multiple custom taxonomies using a widget.
 Author: scribu
 Author URI: http://scribu.net
@@ -10,7 +10,7 @@ Text Domain: taxonomy-drill-down
 Domain Path: /lang
 
 
-Copyright (C) 2010 Cristi Burcă (scribu@gmail.com)
+Copyright (C) 2010-2011 Cristi Burcă (scribu@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

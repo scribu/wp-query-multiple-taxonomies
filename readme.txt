@@ -1,4 +1,4 @@
-=== Taxonomy Drill-Down ===
+=== Query Multiple Taxonomies ===
 Contributors: scribu
 Donate link: http://scribu.net/paypal
 Tags: drill-down, query, widget, navigation, taxonomy
@@ -63,7 +63,7 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 
 == Changelog ==
 
-= 1.4.1 =
+= 1.5 =
 * bring back wp_title filtering
 * fix qmt_get_query() not working with the 'AND' tax_query operator
 
