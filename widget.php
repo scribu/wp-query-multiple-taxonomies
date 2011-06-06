@@ -301,10 +301,12 @@ class QMT_List_Walker extends Walker_Category {
 		$this->selected_terms = explode( '+', qmt_get_query( $taxonomy ) );
 	}
 
-	function start_el( &$output, $term, $depth, $args ) {
-		extract( $args );
-
+	function single_el( &$output, $term, $depth, $child_output ) {
 		$data = array();
+
+		if ( !empty( $child_output ) ) {
+			$data['children']['child-list'] = $child_output;
+		}
 
 		if ( in_array( $term->slug, $this->selected_terms ) )
 			$data['current-term'] = 'current-term';
@@ -331,6 +333,30 @@ class QMT_List_Walker extends Walker_Category {
 		}
 
 		$output .= taxonomy_drill_down_widget::mustache_render( 'list-item.html', $data );
+	}
+
+	function display_element( $element, &$children_elements, $max_depth, $depth=0, $args, &$output ) {
+
+		if ( !$element )
+			return;
+
+		$id_field = $this->db_fields['id'];
+
+		$id = $element->$id_field;
+
+		$child_output = '';
+
+		// descend only when the depth is right and there are childrens for this element
+		if ( ($max_depth == 0 || $max_depth > $depth+1 ) && isset( $children_elements[$id]) ) {
+
+			foreach ( $children_elements[ $id ] as $child ) {
+				$this->display_element( $child, $children_elements, $max_depth, $depth + 1, $args, $child_output );
+			}
+
+			unset( $children_elements[ $id ] );
+		}
+
+		$this->single_el( $output, $element, $depth, $child_output );
 	}
 }
 

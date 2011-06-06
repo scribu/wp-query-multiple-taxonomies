@@ -5,4 +5,9 @@
 	{{#remove}}
 	<a class="remove-term" href="{{url}}" title="{{title}}">{{name}} (-)</a>
 	{{/remove}}
-{{! don't close the <li> tag here }}
+	{{#children}}
+	<ul>
+		{{{child-list}}}
+	</ul>
+	{{/children}}
+</li>
