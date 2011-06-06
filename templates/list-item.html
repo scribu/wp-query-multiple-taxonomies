@@ -1,8 +1,8 @@
 <li class="term-item {{current-term}}">
-{{#add}}
-<a class="add-term" href="{{url}}" title="{{title}}">{{name}} (+)</a>
-{{/add}}
-{{#remove}}
-<a class="remove-term" href="{{url}}" title="{{title}}">{{name}} (-)</a>
-{{/remove}}
-</li>
+	{{#add}}
+	<a class="add-term" href="{{url}}" title="{{title}}">{{name}} (+)</a>
+	{{/add}}
+	{{#remove}}
+	<a class="remove-term" href="{{url}}" title="{{title}}">{{name}} (-)</a>
+	{{/remove}}
+{{! don't close the <li> tag here }}
