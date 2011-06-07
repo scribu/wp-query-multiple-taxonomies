@@ -3,7 +3,7 @@ Contributors: scribu
 Donate link: http://scribu.net/paypal
 Tags: drill-down, query, widget, navigation, taxonomy
 Requires at least: 3.1
-Tested up to: 3.1
+Tested up to: 3.2
 Stable tag: 1.4
 
 Filter posts through multiple taxonomies.
@@ -13,6 +13,8 @@ Filter posts through multiple taxonomies.
 This plugin lets you do faceted search using multiple custom taxonomies.
 
 It has a drill-down widget with multiple display modes.
+
+Said widget is easily customizable via template files (no PHP knowledge required).
 
 = Sponsors =
 * [Bill Nanson](http://burgundy-report.com)
@@ -64,8 +66,10 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 == Changelog ==
 
 = 1.5 =
+* easy customization, using Mustache templates
 * bring back wp_title filtering
 * fix qmt_get_query() not working with the 'AND' tax_query operator
+* [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-5.html)
 
 = 1.4 =
 * WordPress 3.1 compatibility (native taxonomy handling)
