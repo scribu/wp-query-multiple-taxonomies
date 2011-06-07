@@ -219,9 +219,12 @@ jQuery(function($){
 		if ( !class_exists( 'Mustache' ) )
 			require dirname(__FILE__) . '/mustache/Mustache.php';
 
-		$template = file_get_contents( dirname(__FILE__) . '/templates/' . $file );
+		$template_path = locate_template( 'qmt-templates/' . $file );
+		if ( !$template_path )
+			$template_path = dirname(__FILE__) . '/templates/' . $file;
+
 		$m = new Mustache;
-		return $m->render( $template, $data );
+		return $m->render( file_get_contents( $template_path ), $data );
 	}
 }
 
