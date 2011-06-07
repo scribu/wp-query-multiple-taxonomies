@@ -1,13 +1,13 @@
-<li class="term-item {{current-term}}">
-	{{#add}}
-	<a class="add-term" href="{{url}}" title="{{title}}">{{name}} (+)</a>
-	{{/add}}
-	{{#remove}}
-	<a class="remove-term" href="{{url}}" title="{{title}}">{{name}} (-)</a>
-	{{/remove}}
+<li class="term-item {{#is-selected}}current-term{{/is-selected}}">
+	{{#is-selected}}
+		<a class="remove-term" href="{{url}}" title="{{title}}">{{name}} (-)</a>
+	{{/is-selected}}
+	{{^is-selected}}
+		<a class="add-term" href="{{url}}" title="{{title}}">{{name}} (+)</a>
+	{{/is-selected}}
 	{{#children}}
-	<ul>
-		{{{child-list}}}
-	</ul>
+		<ul>
+			{{{child-list}}}
+		</ul>
 	{{/children}}
 </li>

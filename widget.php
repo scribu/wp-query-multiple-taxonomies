@@ -302,22 +302,13 @@ class QMT_List_Walker extends Walker_Category {
 	}
 
 	function single_el( &$output, $term, $depth, $child_output ) {
-		$data = array();
-
-		if ( !empty( $child_output ) ) {
-			$data['children']['child-list'] = $child_output;
-		}
-
-		if ( in_array( $term->slug, $this->selected_terms ) )
-			$data['current-term'] = 'current-term';
-
 		$tmp = $this->selected_terms;
 		$i = array_search( $term->slug, $tmp );
 
 		if ( false === $i ) {
 			$tmp[] = $term->slug;
 
-			$data['add'] = array(
+			$data = array(
 				'url' => QMT_URL::for_tax( $this->taxonomy, $tmp ),
 				'title' => __( 'Add term', 'query-multiple-taxonomies' ),
 				'name' => $term->name
@@ -325,11 +316,16 @@ class QMT_List_Walker extends Walker_Category {
 		} else {
 			unset( $tmp[$i] );
 
-			$data['remove'] = array(
+			$data = array(
 				'url' => QMT_URL::for_tax( $this->taxonomy, $tmp ),
 				'title' => __( 'Remove term', 'query-multiple-taxonomies' ),
-				'name' => $term->name
+				'name' => $term->name,
+				'is-selected' => array( true )
 			);
+		}
+
+		if ( !empty( $child_output ) ) {
+			$data['children']['child-list'] = $child_output;
 		}
 
 		$output .= taxonomy_drill_down_widget::mustache_render( 'list-item.html', $data );
