@@ -127,10 +127,7 @@ jQuery(function($){
 			echo
 			html( 'p', __( 'No taxonomies selected!', 'query-multiple-taxonomies' ) );
 		} else {
-			echo
-			html( "div class='taxonomy-drilldown-$mode'",
-				call_user_func( array( __CLASS__, "generate_$mode" ), $taxonomies )
-			);
+			echo call_user_func( array( __CLASS__, "generate_$mode" ), $taxonomies );
 		}
 	}
 
@@ -172,7 +169,10 @@ jQuery(function($){
 	}
 
 	private function generate_dropdowns( $taxonomies ) {
-		$data = array();
+		$data = array_merge( self::get_reset_data(), array(
+			'base-url' => QMT_URL::get_base(),
+			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
+		) );
 
 		foreach ( $taxonomies as $taxonomy ) {
 			$terms = $this->get_terms( $taxonomy );
@@ -193,57 +193,10 @@ jQuery(function($){
 			);
 		}
 
-		$out = self::mustache_render( 'dropdowns.html', $data );
-		return $this->make_form( $out );
-	}
-
-	// TODO: finish
-	private function generate_checkboxes( $taxonomies ) {
-		$query = qmt_get_query();
-
-		$out = '';
-		foreach ( $taxonomies as $taxonomy ) {
-			$terms = $this->get_terms( $taxonomy );
-
-			if ( empty( $terms ) )
-				continue;
-
-			$title = html( 'h4', get_taxonomy( $taxonomy )->label );
-			$title = apply_filters( 'qmt_term_list_title', $title, $taxonomy, $query );
-
-			$list = '';
-			foreach ( $terms as $term ) {
-				$list .=
-				html( 'li', scbForms::input( array(
-					'type' => 'checkbox',
-					'name' => $taxonomy . '[and][]',
-					'value' => $term->slug,
-					'desc' => $term->name,
-					'checked' => in_array( $term->slug, (array) @$query[ $taxonomy ] )
-				)));
-			}
-
-			$out .=
-			html( "div id='term-list-$taxonomy'",
-				 $title
-				.html( "ul class='term-list'", $list )
-			);
-		}
-
-		return $this->make_form( $out );
-	}
-
-	private function make_form( $out ) {
-		if ( empty( $out ) )
+		if ( empty( $data['taxonomy'] ) )
 			return '';
 
-		$data = array_merge( self::get_reset_data(), array(
-			'content' => $out,
-			'base-url' => QMT_URL::get_base(),
-			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
-		) );
-
-		return self::mustache_render( 'form.html', $data );
+		return self::mustache_render( 'dropdowns.html', $data );
 	}
 
 	private function get_reset_data() {
