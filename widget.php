@@ -262,20 +262,21 @@ class QMT_List_Walker extends Walker_Category {
 			$tmp[] = $term->slug;
 
 			$data = array(
-				'url' => QMT_URL::for_tax( $this->taxonomy, $tmp ),
 				'title' => __( 'Add term', 'query-multiple-taxonomies' ),
-				'name' => $term->name
 			);
 		} else {
 			unset( $tmp[$i] );
 
 			$data = array(
-				'url' => QMT_URL::for_tax( $this->taxonomy, $tmp ),
 				'title' => __( 'Remove term', 'query-multiple-taxonomies' ),
-				'name' => $term->name,
 				'is-selected' => array( true )
 			);
 		}
+
+		$data = array_merge( $data, array(
+			'url' => QMT_URL::for_tax( $this->taxonomy, $tmp ),
+			'name' => $term->name,
+		) );
 
 		if ( !empty( $child_output ) ) {
 			$data['children']['child-list'] = $child_output;
