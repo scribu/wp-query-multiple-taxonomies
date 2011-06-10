@@ -39,7 +39,7 @@ class QMT_Terms {
 			'cache_results' => false,
 		) );
 
-		self::$filtered_ids = new WP_Query( $args );
+		self::$filtered_ids = get_posts( $args );
 	}
 }
 
