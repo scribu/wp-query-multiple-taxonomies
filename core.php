@@ -32,27 +32,14 @@ class QMT_Terms {
 		$wp_query->query = wp_parse_args( $wp_query->query );
 
 		$args = array_merge( $wp_query->query, array(
+			'fields' => 'ids',
 			'nopaging' => true,
 			'no_found_rows' => true,
 			'ignore_sticky_post' => true,
 			'cache_results' => false,
 		) );
 
-		add_filter( 'posts_fields', array( __CLASS__, 'posts_fields' ) );
-
-		$query = new WP_Query();
-		$posts = $query->query( $args );
-
-		remove_filter( 'posts_fields', array( __CLASS__, 'posts_fields' ) );
-
-		foreach ( $posts as &$post )
-			$post = $post->ID;
-
-		self::$filtered_ids = $posts;
-	}
-
-	function posts_fields( $fields ) {
-		return 'ID';
+		self::$filtered_ids = new WP_Query( $args );
 	}
 }
 
@@ -186,7 +173,7 @@ function qmt_get_query( $taxname = '' ) {
 	if ( $taxname ) {
 		if ( isset( $qmt_query[ $taxname ] ) )
 			return $qmt_query[ $taxname ];
-		
+
 		return false;
 	}
 
