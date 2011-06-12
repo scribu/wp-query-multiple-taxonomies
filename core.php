@@ -6,8 +6,6 @@ class QMT_Terms {
 
 	// Get a list of all the terms attached to all the posts in the current query
 	public function get( $tax ) {
-		global $wp_query, $wpdb;
-
 		self::set_filtered_ids();
 
 		if ( empty( self::$filtered_ids ) )
