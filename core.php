@@ -27,8 +27,6 @@ class QMT_Terms {
 		if ( isset( self::$filtered_ids ) )
 			return;
 
-		$wp_query->query = wp_parse_args( $wp_query->query );
-
 		$args = array_merge( $wp_query->query, array(
 			'fields' => 'ids',
 			'nopaging' => true,
@@ -37,7 +35,9 @@ class QMT_Terms {
 			'cache_results' => false,
 		) );
 
-		self::$filtered_ids = get_posts( $args );
+		$query = new WP_Query;
+
+		self::$filtered_ids = $query->query( $args );
 	}
 }
 
