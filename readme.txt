@@ -65,6 +65,9 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 
 == Changelog ==
 
+= 1.5.1 =
+* fixed issue with custom post types
+
 = 1.5 =
 * easy customization, using Mustache templates
 * bring back wp_title filtering
