@@ -9,6 +9,9 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 	);
 
 	static function init() {
+		if ( !class_exists( 'Mustache' ) )
+			require dirname(__FILE__) . '/mustache/Mustache.php';
+
 		add_action( 'load-widgets.php', array( __CLASS__, '_init' ) );
 	}
 
@@ -51,33 +54,29 @@ jQuery(function($){
 		if ( empty( $instance ) )
 			$instance = $this->defaults;
 
-		echo
-		html( 'p',
-			$this->input( array(
+		$data = array(
+			'title-input' => $this->input( array(
 				'name'  => 'title',
 				'type'  => 'text',
 				'desc' => __( 'Title:', 'query-multiple-taxonomies' ),
 				'extra' => array( 'class' => 'widefat' )
-			), $instance )
-		);
+			), $instance ),
 
-		echo
-		html( 'p',
-			$this->input( array(
+			'mode-input' => $this->input( array(
 				'type'   => 'select',
 				'name'   => 'mode',
 				'values' => array(
-					'lists' => __( 'lists', 'query-multiple-taxonomies' ),
-//					'checkboxes' => __( 'checkboxes', 'query-multiple-taxonomies' ),
-					'dropdowns' => __( 'dropdowns', 'query-multiple-taxonomies' ),
+					'lists' =>      __( 'lists', 'query-multiple-taxonomies' ),
+					'checkboxes' => __( 'checkboxes', 'query-multiple-taxonomies' ),
+					'dropdowns' =>  __( 'dropdowns', 'query-multiple-taxonomies' ),
 				),
 				'text'   => false,
 				'desc'   => __( 'Mode:', 'query-multiple-taxonomies' ),
 				'extra' => array( 'class' => 'widefat' )
-			), $instance )
-		);
+			), $instance ),
 
-		echo html( 'p', __( 'Taxonomies:', 'query-multiple-taxonomies' ) );
+			'taxonomies-label' => __( 'Taxonomies:', 'query-multiple-taxonomies' )
+		);
 
 		$selected_taxonomies = isset( $instance['taxonomies'] ) ? $instance['taxonomies'] : array();
 
@@ -90,28 +89,26 @@ jQuery(function($){
 				$tax_list[] = $tax_name;
 		}
 
-		// Display the list
-		$list = '';
 		foreach ( $tax_list as $tax_name ) {
 			$tax_obj = self::test_tax( $tax_name );
 
 			if ( !$tax_obj )
 				continue;
 
-			$ptypes = sprintf( _n( 'Post type: %s', 'Post types: %s', count( $tax_obj->object_type ), 'query-multiple-taxonomies' ),
-				implode( ', ', $tax_obj->object_type )
+			$data['taxonomies'][] = array(
+				'title' => sprintf( _n( 'Post type: %s', 'Post types: %s', count( $tax_obj->object_type ), 'query-multiple-taxonomies' ), implode( ', ', $tax_obj->object_type ) ),
+				'input' => $this->input( array(
+					'type'   => 'checkbox',
+					'name'   => 'taxonomies[]',
+					'value'  => $tax_name,
+					'checked'=> in_array( $tax_name, $selected_taxonomies ),
+					'desc'   => $tax_obj->label,
+				) )
 			);
-
-			$list .=
-			html( 'li', array( 'title' => $ptypes ), $this->input( array(
-				'type'   => 'checkbox',
-				'name'   => 'taxonomies[]',
-				'value' => $tax_name,
-				'checked' => in_array( $tax_name, $selected_taxonomies ),
-				'desc'   => $tax_obj->label,
-			), $instance ) );
 		}
-		echo html( 'ul class="qmt-taxonomies"', $list );
+
+		$m = new Mustache;
+		echo $m->render( file_get_contents( dirname(__FILE__) . '/widget.html' ), $data );
 	}
 
 	function content( $instance ) {
@@ -216,9 +213,6 @@ jQuery(function($){
 	}
 
 	static function mustache_render( $file, $data ) {
-		if ( !class_exists( 'Mustache' ) )
-			require dirname(__FILE__) . '/mustache/Mustache.php';
-
 		$template_path = locate_template( 'qmt-templates/' . $file );
 		if ( !$template_path )
 			$template_path = dirname(__FILE__) . '/templates/' . $file;
