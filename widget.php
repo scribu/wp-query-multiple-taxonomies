@@ -171,6 +171,8 @@ jQuery(function($){
 			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
 		) );
 
+		$walker = new QMT_Dropdown_Walker;
+
 		foreach ( $taxonomies as $taxonomy ) {
 			$terms = $this->get_terms( $taxonomy );
 
@@ -180,12 +182,11 @@ jQuery(function($){
 			$data['taxonomy'][] = array(
 				'name' => get_taxonomy( $taxonomy )->query_var,
 				'title' => get_taxonomy( $taxonomy )->label,
-				'options' => walk_category_dropdown_tree( $terms, 0, array(
+				'options' => $walker->walk( $terms, 0, array(
 					'selected' => qmt_get_query( $taxonomy ),
 					'show_count' => false,
 					'show_last_update' => false,
 					'hierarchical' => true,
-					'walker' => new QMT_Dropdown_Walker
 				) )
 			);
 		}
