@@ -32,6 +32,7 @@ function _qmt_init() {
 	load_plugin_textdomain( 'query-multiple-taxonomies', '', basename( dirname( __FILE__ ) ) . '/lang' );
 
 	require dirname( __FILE__ ) . '/core.php';
+	require dirname( __FILE__ ) . '/walkers.php';
 	require dirname( __FILE__ ) . '/widget.php';
 
 	Taxonomy_Drill_Down_Widget::init();

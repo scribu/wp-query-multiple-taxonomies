@@ -129,7 +129,7 @@ jQuery(function($){
 	}
 
 	private function get_terms( $tax ) {
-		if ( $this->all_terms )
+		if ( is_taxonomy_hierarchical( $tax ) || $this->all_terms )
 			return get_terms( $tax );
 		else
 			return QMT_Terms::get( $tax );
@@ -141,7 +141,14 @@ jQuery(function($){
 		$data = self::get_reset_data();
 
 		foreach ( $taxonomies as $taxonomy ) {
-			$list = qmt_walk_terms( $taxonomy, $this->get_terms( $taxonomy ) );
+			$terms = $this->get_terms( $taxonomy );
+
+			if ( empty( $terms ) )
+				continue;
+
+			$walker = new QMT_List_Walker( $taxonomy );
+
+			$list = $walker->walk( $terms, 0, array() );
 
 			if ( empty( $list ) )
 				continue;
@@ -171,10 +178,10 @@ jQuery(function($){
 			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
 		) );
 
-		$walker = new QMT_Dropdown_Walker;
-
 		foreach ( $taxonomies as $taxonomy ) {
-			$terms = $this->get_terms( $taxonomy );
+			$walker = new QMT_Dropdown_Walker( $taxonomy );
+
+			$terms = get_terms( $taxonomy );
 
 			if ( empty( $terms ) )
 				continue;
@@ -183,10 +190,7 @@ jQuery(function($){
 				'name' => get_taxonomy( $taxonomy )->query_var,
 				'title' => get_taxonomy( $taxonomy )->label,
 				'options' => $walker->walk( $terms, 0, array(
-					'selected' => qmt_get_query( $taxonomy ),
 					'show_count' => false,
-					'show_last_update' => false,
-					'hierarchical' => true,
 				) )
 			);
 		}
@@ -195,6 +199,34 @@ jQuery(function($){
 			return '';
 
 		return self::mustache_render( 'dropdowns.html', $data );
+	}
+
+	private function generate_checkboxes( $taxonomies ) {
+		$data = array_merge( self::get_reset_data(), array(
+			'base-url' => QMT_URL::get_base(),
+			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
+		) );
+
+		$walker = new Walker_Category_Checklist;
+
+		foreach ( $taxonomies as $taxonomy ) {
+			$terms = $this->get_terms( $taxonomy );
+
+			$data['taxonomy'][] = array(
+				'name' => get_taxonomy( $taxonomy )->query_var,
+				'title' => get_taxonomy( $taxonomy )->label,
+				'options' => $walker->walk( get_terms( $taxonomy ), 0, array(
+					'taxonomy' => $taxonomy,
+					'checked_ontop' => false,
+					'selected_cats' => $terms
+				) )
+			);
+		}
+
+		if ( empty( $data['taxonomy'] ) )
+			return '';
+
+		return self::mustache_render( 'checkboxes.html', $data );
 	}
 
 	private function get_reset_data() {
@@ -220,112 +252,6 @@ jQuery(function($){
 
 		$m = new Mustache;
 		return $m->render( file_get_contents( $template_path ), $data );
-	}
-}
-
-function qmt_walk_terms( $taxonomy, $terms, $args = '' ) {
-	if ( empty( $terms ) )
-		return '';
-
-	$walker = new QMT_List_Walker( $taxonomy );
-
-	$args = wp_parse_args( $args, array(
-		'style' => 'list',
-		'use_desc_for_title' => false,
-		'addremove' => true,
-	) );
-
-	return $walker->walk( $terms, 0, $args );
-}
-
-
-class QMT_List_Walker extends Walker_Category {
-
-	public $tree_type = 'term';
-
-	private $taxonomy;
-	private $selected_terms = array();
-
-	function __construct( $taxonomy ) {
-		$this->taxonomy = $taxonomy;
-
-		$this->selected_terms = explode( '+', qmt_get_query( $taxonomy ) );
-	}
-
-	function single_el( &$output, $term, $depth, $child_output ) {
-		$tmp = $this->selected_terms;
-		$i = array_search( $term->slug, $tmp );
-
-		if ( false === $i ) {
-			$tmp[] = $term->slug;
-
-			$data = array(
-				'title' => __( 'Add term', 'query-multiple-taxonomies' ),
-			);
-		} else {
-			unset( $tmp[$i] );
-
-			$data = array(
-				'title' => __( 'Remove term', 'query-multiple-taxonomies' ),
-				'is-selected' => array( true )
-			);
-		}
-
-		$data = array_merge( $data, array(
-			'url' => QMT_URL::for_tax( $this->taxonomy, $tmp ),
-			'name' => $term->name,
-		) );
-
-		if ( !empty( $child_output ) ) {
-			$data['children']['child-list'] = $child_output;
-		}
-
-		$output .= taxonomy_drill_down_widget::mustache_render( 'list-item.html', $data );
-	}
-
-	function display_element( $element, &$children_elements, $max_depth, $depth=0, $args, &$output ) {
-
-		if ( !$element )
-			return;
-
-		$id_field = $this->db_fields['id'];
-
-		$id = $element->$id_field;
-
-		$child_output = '';
-
-		// descend only when the depth is right and there are childrens for this element
-		if ( ($max_depth == 0 || $max_depth > $depth+1 ) && isset( $children_elements[$id]) ) {
-
-			foreach ( $children_elements[ $id ] as $child ) {
-				$this->display_element( $child, $children_elements, $max_depth, $depth + 1, $args, $child_output );
-			}
-
-			unset( $children_elements[ $id ] );
-		}
-
-		$this->single_el( $output, $element, $depth, $child_output );
-	}
-}
-
-class QMT_Dropdown_Walker extends Walker_CategoryDropdown {
-
-	function start_el(&$output, $category, $depth, $args) {
-		$pad = str_repeat('&nbsp;', $depth * 3);
-
-		$cat_name = apply_filters( 'list_cats', $category->name, $category );
-		$output .= "\t<option class=\"level-$depth\" value=\"".$category->slug."\"";
-		if ( $category->slug == $args['selected'] )
-			$output .= ' selected="selected"';
-		$output .= '>';
-		$output .= $pad.$cat_name;
-		if ( $args['show_count'] )
-			$output .= '&nbsp;&nbsp;('. $category->count .')';
-		if ( $args['show_last_update'] ) {
-			$format = 'Y-m-d';
-			$output .= '&nbsp;&nbsp;' . gmdate($format, $category->last_update_timestamp);
-		}
-		$output .= "</option>\n";
 	}
 }
 
