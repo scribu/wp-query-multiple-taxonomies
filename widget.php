@@ -124,7 +124,10 @@ jQuery(function($){
 			echo
 			html( 'p', __( 'No taxonomies selected!', 'query-multiple-taxonomies' ) );
 		} else {
-			echo call_user_func( array( __CLASS__, "generate_$mode" ), $taxonomies );
+			echo call_user_func( array( __CLASS__, "generate_$mode" ), $taxonomies, array(
+				'reset-text' => __( 'Reset', 'query-multiple-taxonomies' ),
+				'reset-url' => QMT_URL::get(),
+			) );
 		}
 	}
 
@@ -135,10 +138,8 @@ jQuery(function($){
 			return QMT_Terms::get( $tax );
 	}
 
-	private function generate_lists( $taxonomies ) {
+	private function generate_lists( $taxonomies, $data ) {
 		$query = qmt_get_query();
-
-		$data = self::get_reset_data();
 
 		foreach ( $taxonomies as $taxonomy ) {
 			$terms = $this->get_terms( $taxonomy );
@@ -167,8 +168,8 @@ jQuery(function($){
 		return self::mustache_render( 'lists.html', $data );
 	}
 
-	private function generate_dropdowns( $taxonomies ) {
-		$data = array_merge( self::get_reset_data(), array(
+	private function generate_dropdowns( $taxonomies, $data ) {
+		$data = array_merge( $data, array(
 			'base-url' => QMT_URL::get_base(),
 			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
 		) );
@@ -194,8 +195,8 @@ jQuery(function($){
 		return self::mustache_render( 'dropdowns.html', $data );
 	}
 
-	private function generate_checkboxes( $taxonomies ) {
-		$data = array_merge( self::get_reset_data(), array(
+	private function generate_checkboxes( $taxonomies, $data ) {
+		$data = array_merge( $data, array(
 			'base-url' => QMT_URL::get_base(),
 			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
 		) );
@@ -216,13 +217,6 @@ jQuery(function($){
 		}
 
 		return self::mustache_render( 'checkboxes.html', $data );
-	}
-
-	private function get_reset_data() {
-		return array(
-			'reset-text' => __( 'Reset', 'query-multiple-taxonomies' ),
-			'reset-url' => QMT_URL::get(),
-		);
 	}
 
 	static function test_tax( $tax_name ) {
