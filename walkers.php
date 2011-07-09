@@ -70,16 +70,11 @@ class QMT_List_Walker extends QMT_Walker {
 		if ( false === $i ) {
 			$tmp[] = $term->slug;
 
-			$data = array(
-				'title' => __( 'Add term', 'query-multiple-taxonomies' ),
-			);
+			$data['title'] = __( 'Add term', 'query-multiple-taxonomies' );
 		} else {
 			unset( $tmp[$i] );
 
-			$data = array(
-				'title' => __( 'Remove term', 'query-multiple-taxonomies' ),
-				'is-selected' => array( true )
-			);
+			$data['title'] = __( 'Remove term', 'query-multiple-taxonomies' );
 		}
 
 		$data['url'] = QMT_URL::for_tax( $this->taxonomy, $tmp );
@@ -94,7 +89,7 @@ class QMT_Dropdown_Walker extends QMT_Walker {
 	function specific_data( $term, $depth ) {
 		return array(
 			'pad' => str_repeat('&nbsp;', $depth * 3),
-			'slug' => $term->slug,
+			'value' => $term->slug,
 		);
 	}
 }
