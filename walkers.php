@@ -97,3 +97,25 @@ class QMT_Dropdown_Walker extends QMT_Walker {
 	}
 }
 
+
+class QMT_Checkboxes_Walker extends QMT_Walker {
+
+	function single_el( &$output, $term, $depth, $child_output ) {
+		$tmp = $this->selected_terms;
+		$i = array_search( $term->slug, $tmp );
+
+		$data = array(
+			'title' => $term->name,
+			'value' => $term->term_id,
+			'is-selected' => ( false === $i ) ? false : array(true),
+			'name' => "qmt[$this->taxonomy][]"
+		);
+
+		if ( !empty( $child_output ) ) {
+			$data['children']['child-list'] = $child_output;
+		}
+
+		$output .= Taxonomy_Drill_Down_Widget::mustache_render( 'checkbox-item.html', $data );
+	}
+}
+

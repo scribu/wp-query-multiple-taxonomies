@@ -1,4 +1,4 @@
-<div class="taxonomy-drilldown-lists">
+<form method="get" action="{{base-url}}" class="taxonomy-drilldown-checkboxes">
 	{{#taxonomy}}
 	<div id="terms-{{taxonomy}}">
 		<h4>
@@ -10,5 +10,6 @@
 		</ul>
 	</div>
 	{{/taxonomy}}
+	<input type="submit" value="{{submit-text}}" />
 	<a class="taxonomy-drilldown-reset" href="{{reset-url}}">{{reset-text}}</a>
-</div>
+</form>

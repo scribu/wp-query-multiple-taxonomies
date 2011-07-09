@@ -148,15 +148,10 @@ jQuery(function($){
 
 			$walker = new QMT_List_Walker( $taxonomy );
 
-			$list = $walker->walk( $terms, 0, array() );
-
-			if ( empty( $list ) )
-				continue;
-
 			$data_tax = array(
 				'taxonomy' => $taxonomy,
 				'title' => get_taxonomy( $taxonomy )->label,
-				'list' => $list
+				'terms' => $walker->walk( $terms, 0, array() )
 			);
 
 			if ( isset( $query[$taxonomy] ) ) {
@@ -179,12 +174,12 @@ jQuery(function($){
 		) );
 
 		foreach ( $taxonomies as $taxonomy ) {
-			$walker = new QMT_Dropdown_Walker( $taxonomy );
-
 			$terms = get_terms( $taxonomy );
 
 			if ( empty( $terms ) )
 				continue;
+
+			$walker = new QMT_Dropdown_Walker( $taxonomy );
 
 			$data['taxonomy'][] = array(
 				'name' => get_taxonomy( $taxonomy )->query_var,
@@ -207,24 +202,20 @@ jQuery(function($){
 			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
 		) );
 
-		$walker = new Walker_Category_Checklist;
-
 		foreach ( $taxonomies as $taxonomy ) {
 			$terms = $this->get_terms( $taxonomy );
 
+			if ( empty( $terms ) )
+				continue;
+
+			$walker = new QMT_Checkboxes_Walker( $taxonomy );
+
 			$data['taxonomy'][] = array(
-				'name' => get_taxonomy( $taxonomy )->query_var,
+				'taxonomy' => $taxonomy,
 				'title' => get_taxonomy( $taxonomy )->label,
-				'options' => $walker->walk( get_terms( $taxonomy ), 0, array(
-					'taxonomy' => $taxonomy,
-					'checked_ontop' => false,
-					'selected_cats' => $terms
-				) )
+				'terms' => $walker->walk( $terms, 0, array() )
 			);
 		}
-
-		if ( empty( $data['taxonomy'] ) )
-			return '';
 
 		return self::mustache_render( 'checkboxes.html', $data );
 	}

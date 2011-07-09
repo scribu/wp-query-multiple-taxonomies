@@ -1,0 +1,11 @@
+<li class="term-item {{#is-selected}}current-term{{/is-selected}}">
+	<label>
+		<input type="checkbox" name="{{name}}" value="{{value}}" {{#is-selected}}checked="checked"{{/is-selected}} />
+		{{title}}
+	</label>
+	{{#children}}
+		<ul>
+			{{{child-list}}}
+		</ul>
+	{{/children}}
+</li>
