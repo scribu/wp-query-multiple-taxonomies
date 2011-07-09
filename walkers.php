@@ -45,6 +45,7 @@ abstract class QMT_Walker extends Walker {
 		$data = $this->specific_data( $term, $depth );
 
 		$data = array_merge( $data, array(
+			'term-name' => $term->name,
 			'is-selected' => in_array( $term->slug, $this->selected_terms ) ? array(true) : false,
 			'depth' => $depth,
 		) );
@@ -81,10 +82,9 @@ class QMT_List_Walker extends QMT_Walker {
 			);
 		}
 
-		return array_merge( $data, array(
-			'url' => QMT_URL::for_tax( $this->taxonomy, $tmp ),
-			'name' => $term->name,
-		) );
+		$data['url'] = QMT_URL::for_tax( $this->taxonomy, $tmp );
+
+		return $data;
 	}
 }
 
@@ -95,7 +95,6 @@ class QMT_Dropdown_Walker extends QMT_Walker {
 		return array(
 			'pad' => str_repeat('&nbsp;', $depth * 3),
 			'slug' => $term->slug,
-			'name' => apply_filters( 'list_cats', $term->name, $term ),
 		);
 	}
 }
@@ -107,7 +106,6 @@ class QMT_Checkboxes_Walker extends QMT_Walker {
 		return array(
 			'name' => "qmt[$this->taxonomy][]",
 			'value' => $term->term_id,
-			'title' => $term->name,
 		);
 	}
 }
