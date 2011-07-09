@@ -151,7 +151,7 @@ jQuery(function($){
 			$data_tax = array(
 				'taxonomy' => $taxonomy,
 				'title' => get_taxonomy( $taxonomy )->label,
-				'terms' => $walker->walk( $terms, 0, array() )
+				'term-list' => $walker->walk( $terms, 0 )
 			);
 
 			if ( isset( $query[$taxonomy] ) ) {
@@ -184,9 +184,7 @@ jQuery(function($){
 			$data['taxonomy'][] = array(
 				'name' => get_taxonomy( $taxonomy )->query_var,
 				'title' => get_taxonomy( $taxonomy )->label,
-				'options' => $walker->walk( $terms, 0, array(
-					'show_count' => false,
-				) )
+				'term-list' => $walker->walk( $terms, 0 )
 			);
 		}
 
@@ -213,7 +211,7 @@ jQuery(function($){
 			$data['taxonomy'][] = array(
 				'taxonomy' => $taxonomy,
 				'title' => get_taxonomy( $taxonomy )->label,
-				'terms' => $walker->walk( $terms, 0, array() )
+				'term-list' => $walker->walk( $terms, 0 )
 			);
 		}
 

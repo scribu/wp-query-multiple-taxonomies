@@ -86,9 +86,6 @@ class QMT_Dropdown_Walker extends QMT_Walker {
 			'name' => apply_filters( 'list_cats', $term->name, $term ),
 		);
 
-#		if ( $args['show_count'] )
-#			$output .= '&nbsp;&nbsp;('. $term->count .')';
-
 		if ( !empty( $child_output ) ) {
 			$data['children']['child-list'] = $child_output;
 		}
