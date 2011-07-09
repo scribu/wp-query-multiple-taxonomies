@@ -147,7 +147,7 @@ jQuery(function($){
 			if ( empty( $terms ) )
 				continue;
 
-			$walker = new QMT_List_Walker( $taxonomy );
+			$walker = new QMT_List_Walker( $taxonomy, 'list' );
 
 			$data_tax = array(
 				'taxonomy' => $taxonomy,
@@ -180,7 +180,7 @@ jQuery(function($){
 			if ( empty( $terms ) )
 				continue;
 
-			$walker = new QMT_Dropdown_Walker( $taxonomy );
+			$walker = new QMT_Dropdown_Walker( $taxonomy, 'dropdown' );
 
 			$data['taxonomy'][] = array(
 				'name' => get_taxonomy( $taxonomy )->query_var,
@@ -207,7 +207,7 @@ jQuery(function($){
 			if ( empty( $terms ) )
 				continue;
 
-			$walker = new QMT_Checkboxes_Walker( $taxonomy );
+			$walker = new QMT_Checkboxes_Walker( $taxonomy, 'checkbox' );
 
 			$data['taxonomy'][] = array(
 				'taxonomy' => $taxonomy,

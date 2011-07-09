@@ -1,16 +1,19 @@
 <?php
 
-class QMT_Walker extends Walker {
+abstract class QMT_Walker extends Walker {
 	public $tree_type = 'term';
-
 	public $db_fields = array( 'parent' => 'parent', 'id' => 'term_id' );
 
 	protected $taxonomy;
 	protected $selected_terms = array();
 
-	function __construct( $taxonomy ) {
+	protected $walker_type;
+
+	function __construct( $taxonomy, $walker_type ) {
 		$this->taxonomy = $taxonomy;
 		$this->selected_terms = explode( '+', qmt_get_query( $taxonomy ) );
+
+		$this->walker_type = $walker_type;
 	}
 
 	// Make start_el() and end_el() unnecessary
@@ -37,12 +40,29 @@ class QMT_Walker extends Walker {
 
 		$this->single_el( $output, $element, $depth, $child_output );
 	}
+
+	function single_el( &$output, $term, $depth, $child_output ) {
+		$data = $this->specific_data( $term, $depth );
+
+		$data = array_merge( $data, array(
+			'is-selected' => in_array( $term->slug, $this->selected_terms ) ? array(true) : false,
+			'depth' => $depth,
+		) );
+
+		if ( !empty( $child_output ) ) {
+			$data['children']['child-list'] = $child_output;
+		}
+
+		$output .= Taxonomy_Drill_Down_Widget::mustache_render( $this->walker_type . '-item.html', $data );
+	}
+
+	abstract function specific_data( $term, $depth );
 }
 
 
 class QMT_List_Walker extends QMT_Walker {
 
-	function single_el( &$output, $term, $depth, $child_output ) {
+	function specific_data( $term, $depth ) {
 		$tmp = $this->selected_terms;
 		$i = array_search( $term->slug, $tmp );
 
@@ -61,58 +81,34 @@ class QMT_List_Walker extends QMT_Walker {
 			);
 		}
 
-		$data = array_merge( $data, array(
+		return array_merge( $data, array(
 			'url' => QMT_URL::for_tax( $this->taxonomy, $tmp ),
 			'name' => $term->name,
 		) );
-
-		if ( !empty( $child_output ) ) {
-			$data['children']['child-list'] = $child_output;
-		}
-
-		$output .= Taxonomy_Drill_Down_Widget::mustache_render( 'list-item.html', $data );
 	}
 }
 
 
 class QMT_Dropdown_Walker extends QMT_Walker {
 
-	function single_el( &$output, $term, $depth, $child_output ) {
-		$data = array(
+	function specific_data( $term, $depth ) {
+		return array(
 			'pad' => str_repeat('&nbsp;', $depth * 3),
-			'depth' => $depth,
-			'is-selected' => in_array( $term->slug, $this->selected_terms ) ? array(true) : false,
 			'slug' => $term->slug,
 			'name' => apply_filters( 'list_cats', $term->name, $term ),
 		);
-
-		if ( !empty( $child_output ) ) {
-			$data['children']['child-list'] = $child_output;
-		}
-
-		$output .= Taxonomy_Drill_Down_Widget::mustache_render( 'dropdown-item.html', $data );
 	}
 }
 
 
 class QMT_Checkboxes_Walker extends QMT_Walker {
 
-	function single_el( &$output, $term, $depth, $child_output ) {
-		$tmp = $this->selected_terms;
-		$i = array_search( $term->slug, $tmp );
-
-		$data = array(
-			'title' => $term->name,
+	function specific_data( $term, $depth ) {
+		return array(
+			'name' => "qmt[$this->taxonomy][]",
 			'value' => $term->term_id,
-			'is-selected' => ( false === $i ) ? false : array(true),
-			'name' => "qmt[$this->taxonomy][]"
+			'title' => $term->name,
 		);
-
-		if ( !empty( $child_output ) ) {
-			$data['children']['child-list'] = $child_output;
-		}
-
-		$output .= Taxonomy_Drill_Down_Widget::mustache_render( 'checkbox-item.html', $data );
 	}
 }
 
