@@ -75,7 +75,7 @@ class QMT_URL {
 		if ( empty( $base_url ) )
 			$base_url = apply_filters( 'qmt_base_url', get_bloginfo( 'url' ) );
 
-		return $base_url;
+		return trailingslashit( $base_url );
 	}
 }
 
