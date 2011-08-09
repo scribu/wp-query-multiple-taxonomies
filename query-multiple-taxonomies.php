@@ -35,8 +35,7 @@ function _qmt_init() {
 	require dirname( __FILE__ ) . '/walkers.php';
 	require dirname( __FILE__ ) . '/widget.php';
 
-	Taxonomy_Drill_Down_Widget::init();
-	scbWidget::init( 'Taxonomy_Drill_Down_Widget', __FILE__, 'query-multiple-taxonomies' );
+	Taxonomy_Drill_Down_Widget::init( __FILE__ );
 }
 scb_init( '_qmt_init' );
 
