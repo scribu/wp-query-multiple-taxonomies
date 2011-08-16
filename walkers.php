@@ -41,6 +41,26 @@ abstract class QMT_Walker extends Walker {
 		$this->single_el( $output, $element, $depth, $child_output );
 	}
 
+	/**
+	 * Calculate how many posts exists for each term
+	 */
+	function get_results_count($term) {
+		$old_query = qmt_get_query();
+
+		// Considering previous choices
+		if ( array_key_exists( $this->taxonomy, $old_query ) ) {
+			$query = $old_query;
+			$query[$this->taxonomy] = $query[$this->taxonomy] . "+" . $term->slug;
+		} else {
+			$query = array_merge( $old_query, array( $this->taxonomy => $term->slug ) );
+		}
+		$query['posts_per_page'] = '-1';
+		$wp_query = new WP_Query( $query );
+		$count = $wp_query->post_count;
+
+		return $count;
+	}
+
 	function single_el( &$output, $term, $depth, $child_output ) {
 		$data = $this->specific_data( $term, $depth );
 
@@ -48,6 +68,7 @@ abstract class QMT_Walker extends Walker {
 			'term-name' => $term->name,
 			'is-selected' => in_array( $term->slug, $this->selected_terms ) ? array(true) : false,
 			'depth' => $depth,
+			'count' => $this->get_results_count($term)
 		) );
 
 		if ( !empty( $child_output ) ) {
