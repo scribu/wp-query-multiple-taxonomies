@@ -24,8 +24,12 @@ class QMT_Data_Container {
 	function count() {
 		$old_query = qmt_get_query();
 
+		if ( $this->data['is-selected'] ) {
+			return $GLOBALS['wp_query']->post_count;
+		}
+
 		// Considering previous choices
-		if ( array_key_exists( $this->taxonomy, $old_query ) ) {
+		if ( isset( $old_query[ $this->taxonomy ] ) ) {
 			$query = $old_query;
 			$query[$this->taxonomy] = $query[$this->taxonomy] . "+" . $this->term->slug;
 		} else {
