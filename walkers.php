@@ -54,6 +54,7 @@ abstract class QMT_Walker extends Walker {
 		} else {
 			$query = array_merge( $old_query, array( $this->taxonomy => $term->slug ) );
 		}
+		$query['posts_per_page'] = '-1';
 		$wp_query = new WP_Query( $query );
 		$count = $wp_query->post_count;
 
