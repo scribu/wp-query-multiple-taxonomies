@@ -1,5 +1,45 @@
 <?php
 
+class QMT_Data_Container {
+	private $taxonomy;
+	private $term;
+
+	private $data = array();
+
+	function __construct( $taxonomy, $term, $data ) {
+		$this->taxonomy = $taxonomy;
+		$this->term = $term;
+
+		$this->data = $data;
+	}
+
+	function __get( $key ) {
+		return $this->data[ $key ];
+	}
+
+	function __isset( $key ) {
+		return isset( $this->data[ $key ] );
+	}
+
+	function count() {
+		$old_query = qmt_get_query();
+
+		// Considering previous choices
+		if ( array_key_exists( $this->taxonomy, $old_query ) ) {
+			$query = $old_query;
+			$query[$this->taxonomy] = $query[$this->taxonomy] . "+" . $this->term->slug;
+		} else {
+			$query = array_merge( $old_query, array( $this->taxonomy => $this->term->slug ) );
+		}
+
+		$wp_query = new WP_Query( $query );
+		$count = $wp_query->post_count;
+
+		return $count;
+	}
+}
+
+
 abstract class QMT_Walker extends Walker {
 	public $tree_type = 'term';
 	public $db_fields = array( 'parent' => 'parent', 'id' => 'term_id' );
@@ -41,26 +81,6 @@ abstract class QMT_Walker extends Walker {
 		$this->single_el( $output, $element, $depth, $child_output );
 	}
 
-	/**
-	 * Calculate how many posts exists for each term
-	 */
-	function get_results_count($term) {
-		$old_query = qmt_get_query();
-
-		// Considering previous choices
-		if ( array_key_exists( $this->taxonomy, $old_query ) ) {
-			$query = $old_query;
-			$query[$this->taxonomy] = $query[$this->taxonomy] . "+" . $term->slug;
-		} else {
-			$query = array_merge( $old_query, array( $this->taxonomy => $term->slug ) );
-		}
-		$query['posts_per_page'] = '-1';
-		$wp_query = new WP_Query( $query );
-		$count = $wp_query->post_count;
-
-		return $count;
-	}
-
 	function single_el( &$output, $term, $depth, $child_output ) {
 		$data = $this->specific_data( $term, $depth );
 
@@ -68,14 +88,15 @@ abstract class QMT_Walker extends Walker {
 			'term-name' => $term->name,
 			'is-selected' => in_array( $term->slug, $this->selected_terms ) ? array(true) : false,
 			'depth' => $depth,
-			'count' => $this->get_results_count($term)
 		) );
 
 		if ( !empty( $child_output ) ) {
 			$data['children']['child-list'] = $child_output;
 		}
 
-		$output .= Taxonomy_Drill_Down_Widget::mustache_render( $this->walker_type . '-item.html', $data );
+		$full_data = new QMT_Data_Container( $this->taxonomy, $term, $data );
+
+		$output .= Taxonomy_Drill_Down_Widget::mustache_render( $this->walker_type . '-item.html', $full_data );
 	}
 
 	abstract function specific_data( $term, $depth );
