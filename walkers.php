@@ -32,10 +32,7 @@ class QMT_Data_Container {
 			$query = array_merge( $old_query, array( $this->taxonomy => $this->term->slug ) );
 		}
 
-		$wp_query = new WP_Query( $query );
-		$count = $wp_query->post_count;
-
-		return $count;
+		return QMT_Count::get( $query );
 	}
 }
 

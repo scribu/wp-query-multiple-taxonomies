@@ -42,6 +42,42 @@ class QMT_Terms {
 }
 
 
+class QMT_Count {
+
+	// Count posts, without getting them
+	public function get( $query_vars ) {
+		$query_vars = array_merge( $query_vars, array(
+			'fields' => 'ids',
+			'qmt_count' => true,
+			'nopaging' => true
+		) );
+
+		$query = new WP_Query( $query_vars );
+
+		if ( !empty( $query->posts ) )
+			return $query->posts[0];
+
+		return 0;
+	}
+
+	function posts_clauses( $bits, $wp_query ) {
+		if ( $wp_query->get( 'qmt_count' ) ) {
+			if ( empty( $bits['groupby'] ) ) {
+				$what = '*';
+			} else {
+				$what = 'DISTINCT ' . $bits['groupby'];
+				$bits['groupby'] = '';
+			}
+
+			$bits['fields'] = "COUNT($what)";
+		}
+
+		return $bits;
+	}
+}
+add_filter( 'posts_clauses', array( 'QMT_Count', 'posts_clauses' ), 10, 2 );
+
+
 class QMT_URL {
 
 	public function for_tax( $taxonomy, $value ) {
@@ -121,7 +157,6 @@ class QMT_Template {
 		return $title;
 	}
 }
-
 add_filter( 'wp_title', array( 'QMT_Template', 'wp_title' ), 10, 3 );
 
 /**
