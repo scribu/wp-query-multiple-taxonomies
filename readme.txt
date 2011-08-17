@@ -20,7 +20,7 @@ Said widget is easily customizable via template files (no PHP knowledge required
 * [Bill Nanson](http://burgundy-report.com)
 * [Matthew Porter](http://porterinnovative.com)
 
-Links: [**Wiki**](http://github.com/scribu/wp-query-multiple-taxonomies/wiki) | [Plugin News](http://scribu.net/wordpress/query-multiple-taxonomies) | [Author's Site](http://scribu.net)
+Links: [**Documentation**](http://github.com/scribu/wp-query-multiple-taxonomies/wiki) | [Plugin News](http://scribu.net/wordpress/query-multiple-taxonomies) | [Author's Site](http://scribu.net)
 
 == Screenshots ==
 
@@ -64,6 +64,9 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 `is_multitax( array('tax_a', 'tax_b') )` -> true if both tax_a and tax_b were queried
 
 == Changelog ==
+
+= 1.6 =
+* added {{count}} tag
 
 = 1.5.1 =
 * fixed issue with custom post types
