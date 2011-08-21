@@ -1,0 +1,81 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Query Multiple Taxonomies\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/qmt\n"
+"POT-Creation-Date: 2011-06-07 12:03:39+00:00\n"
+"PO-Revision-Date: \n"
+"Last-Translator: scribu <scribu@gmail.com>\n"
+"Language-Team: UA Wordpress <skinik@wordpress.co.ua>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Ukrainian\n"
+"X-Poedit-Country: UKRAINE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11) ? 0 : ((n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20)) ? 1 : 2);\n"
+
+#: widget.php:59
+msgid "Title:"
+msgstr "Заголовок: "
+
+#: widget.php:70
+msgid "lists"
+msgstr "списки"
+
+#: widget.php:72
+msgid "dropdowns"
+msgstr "випадаючий список"
+
+#: widget.php:75
+msgid "Mode:"
+msgstr "Режим: "
+
+#: widget.php:80
+msgid "Taxonomies:"
+msgstr "Таксономії: "
+
+#: widget.php:101
+msgid "Post type: %s"
+msgid_plural "Post types: %s"
+msgstr[0] "Тип контенту: %s"
+msgstr[1] "Типи контенту: %s"
+msgstr[2] "Типів контенту: %s"
+
+#: widget.php:128
+msgid "No taxonomies selected!"
+msgstr "Не обрано таксономій!"
+
+#: widget.php:161
+msgid "Remove selected terms in group"
+msgstr ""
+
+#: widget.php:174
+msgid "Submit"
+msgstr "Надіслати"
+
+#: widget.php:204
+msgid "Reset"
+msgstr "Скинути"
+
+#: widget.php:268
+msgid "Add term"
+msgstr "Додати термін"
+
+#: widget.php:274
+msgid "Remove term"
+msgstr "Видалити термін"
+
+#: scb/AdminPage.php:165
+msgid "Settings <strong>saved</strong>."
+msgstr "Налаштування <strong>збережено</strong>."
+
+#: scb/AdminPage.php:177
+#: scb/AdminPage.php:187
+msgid "Save Changes"
+msgstr "Зберегти зміни"
+
+#: scb/AdminPage.php:369
+msgid "Settings"
+msgstr "Налаштування"
+
