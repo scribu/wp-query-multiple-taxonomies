@@ -80,7 +80,7 @@ jQuery(function($){
 			'taxonomies-label' => __( 'Taxonomies:', 'query-multiple-taxonomies' )
 		);
 
-		$selected_taxonomies = isset( $instance['taxonomies'] ) ? $instance['taxonomies'] : array();
+		$selected_taxonomies = $instance['taxonomies'];
 
 		// Start with the selected taxonomies
 		$tax_list = $selected_taxonomies;
