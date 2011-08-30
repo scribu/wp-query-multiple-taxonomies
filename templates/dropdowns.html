@@ -2,12 +2,11 @@
 	<ul>
 		{{#taxonomy}}
 		<li>
-		<label>{{title}}:
+			<label for="{{name}}">{{title}}:</label>
 			<select name="{{name}}">
-				<option></option>
+				<option>{{{any-text}}}</option>
 				{{{term-list}}}
 			</select>
-		</label>
 		</li>
 		{{/taxonomy}}
 	</ul>

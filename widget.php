@@ -174,6 +174,7 @@ jQuery(function($){
 		$data = array_merge( $data, array(
 			'base-url' => QMT_URL::get_base(),
 			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
+			'any-text' => '&mdash; ' . __( 'any', 'query-multiple-taxonomies' ) . ' &mdash;',
 		) );
 
 		foreach ( $taxonomies as $taxonomy ) {
@@ -182,7 +183,7 @@ jQuery(function($){
 			if ( empty( $terms ) )
 				continue;
 
-			$walker = new QMT_Dropdown_Walker( $taxonomy, 'dropdown' );
+			$walker = new qmt_dropdown_walker( $taxonomy, 'dropdown' );
 
 			$data['taxonomy'][] = array(
 				'name' => get_taxonomy( $taxonomy )->query_var,
