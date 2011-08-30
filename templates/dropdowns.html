@@ -2,8 +2,8 @@
 	<ul>
 		{{#taxonomy}}
 		<li>
-			<label for="{{name}}">{{title}}:</label>
-			<select name="{{name}}">
+			<label for="qmt-{{name}}">{{title}}:</label>
+			<select id="qmt-{{name}}" name="{{name}}">
 				<option>{{{any-text}}}</option>
 				{{{term-list}}}
 			</select>
