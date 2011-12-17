@@ -43,7 +43,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 ?>
 <script type="text/javascript">
 jQuery(function($){
-	$('.qmt-taxonomies').live('mouseenter', function(ev) {
+	$(document).delegate('.qmt-taxonomies', 'mouseenter', function(ev) {
 		$(this).sortable();
 		$(this).disableSelection();
 	});
