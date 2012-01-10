@@ -1,6 +1,6 @@
-<form method="get" action="{{base-url}}" class="taxonomy-drilldown-checkboxes">
+<div id="taxonomy-terms-list">
 	{{#taxonomy}}
-	<div id="terms-{{taxonomy}}">
+	<div id="terms-{{taxonomy}}" class="terms-family">
 		<h4>
 			{{title}}
 			{{#clear}} <a href="{{url}}" title="title">(-)</a>{{/clear}}
@@ -10,6 +10,36 @@
 		</ul>
 	</div>
 	{{/taxonomy}}
+</div>
+<form method="get" action="{{base-url}}" id="taxonomy-form" class="taxonomy-drilldown-checkboxes">
 	<input type="submit" value="{{submit-text}}" />
 	<a class="taxonomy-drilldown-reset" href="{{reset-url}}">{{reset-text}}</a>
 </form>
+<script type="text/javascript">
+var taxform = document.getElementById('taxonomy-form');
+function transCheckboxes () {
+	// Get an array of all of the checkboxes
+	var els = document.getElementById('taxonomy-terms-list').getElementsByTagName('input');
+	
+	// Go through the array and construct a new array of key/value pairs with ,'s in between the values
+	var terms = [];
+	for (var i=0, j=els.length; i<j; i++) {
+		if (els[i].checked) {
+			if (els[i].name in terms)
+				terms[els[i].name] += (',' + els[i].value);
+			else 
+				terms[els[i].name] = els[i].value;
+		}
+	}
+
+	// Insert new hidden field elements into the form with those key/values
+	for (i in terms) { 
+		var newEl = document.createElement('input');
+		newEl.type = 'hidden';
+		newEl.name = i;
+		newEl.value = terms[i];
+		taxform.appendChild(newEl);
+	};
+}
+if (taxform.addEventListener) taxform.addEventListener('submit', transCheckboxes);
+</script>

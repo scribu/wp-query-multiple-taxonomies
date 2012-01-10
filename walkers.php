@@ -52,7 +52,7 @@ abstract class QMT_Walker extends Walker {
 
 	function __construct( $taxonomy, $walker_type ) {
 		$this->taxonomy = $taxonomy;
-		$this->selected_terms = explode( '+', qmt_get_query( $taxonomy ) );
+		$this->selected_terms = explode( '+', str_replace( ',', '+', qmt_get_query( $taxonomy ) ) );
 
 		$this->walker_type = $walker_type;
 	}
@@ -142,8 +142,8 @@ class QMT_Checkboxes_Walker extends QMT_Walker {
 
 	function specific_data( $term, $depth ) {
 		return array(
-			'name' => "qmt[$this->taxonomy][]",
-			'value' => $term->term_id,
+			'name' => "$term->taxonomy",
+			'value' => $term->slug,
 		);
 	}
 }
