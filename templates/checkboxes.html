@@ -22,10 +22,10 @@ function transCheckboxes () {
 	var els = document.getElementById('taxonomy-terms-list').getElementsByTagName('input');
 	
 	// Go through the array and construct a new array of key/value pairs with ,'s in between the values
-	var terms = [];
+	var terms = {};
 	for (var i=0, j=els.length; i<j; i++) {
 		if (els[i].checked) {
-			if (els[i].name in terms)
+			if (terms.hasOwnProperty(els[i].name))
 				terms[els[i].name] += (',' + els[i].value);
 			else 
 				terms[els[i].name] = els[i].value;
@@ -33,13 +33,15 @@ function transCheckboxes () {
 	}
 
 	// Insert new hidden field elements into the form with those key/values
-	for (i in terms) { 
-		var newEl = document.createElement('input');
-		newEl.type = 'hidden';
-		newEl.name = i;
-		newEl.value = terms[i];
-		taxform.appendChild(newEl);
-	};
+	for (i in terms) {
+		if (terms.hasOwnProperty(i)) {
+			var newEl = document.createElement('input');
+			newEl.type = 'hidden';
+			newEl.name = i;
+			newEl.value = terms[i];
+			taxform.appendChild(newEl);
+		}
+	}
 }
 if (taxform.addEventListener) taxform.addEventListener('submit', transCheckboxes);
 </script>
