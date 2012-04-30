@@ -71,6 +71,7 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 
 = 1.6 =
 * added {{count}} tag
+* added checkbox style lists (small amount of code contributed by Joshua Lyman - http://www.joshualyman.com)
 
 = 1.5.1 =
 * fixed issue with custom post types
