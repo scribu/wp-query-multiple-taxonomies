@@ -8,8 +8,6 @@ Author URI: http://scribu.net
 Plugin URI: http://scribu.net/wordpress/query-multiple-taxonomies
 Text Domain: query-multiple-taxonomies
 Domain Path: /lang
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 require dirname( __FILE__ ) . '/scb/load.php';
