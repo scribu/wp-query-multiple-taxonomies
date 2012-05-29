@@ -21,8 +21,8 @@ Said widget is easily customizable via template files (no PHP knowledge required
 * [Bill Nanson](http://burgundy-report.com)
 * [Matthew Porter](http://porterinnovative.com)
 
-= Support =
-I do not offer any support for this plugin (free or paid). If it works for you, great. If it doesn't, send in a patch or find another plugin.
+= No Support =
+I do not offer any support for this plugin (free or paid).
 
 Links: [**Documentation**](http://github.com/scribu/wp-query-multiple-taxonomies/wiki) | [Plugin News](http://scribu.net/wordpress/query-multiple-taxonomies) | [Author's Site](http://scribu.net)
 
