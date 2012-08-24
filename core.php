@@ -1,5 +1,9 @@
 <?php
 
+add_filter( 'posts_clauses', array( 'QMT_Count', 'posts_clauses' ), 10, 2 );
+add_filter( 'wp_title', array( 'QMT_Template', 'wp_title' ), 10, 3 );
+
+
 class QMT_Terms {
 
 	private static $filtered_ids;
@@ -75,7 +79,6 @@ class QMT_Count {
 		return $bits;
 	}
 }
-add_filter( 'posts_clauses', array( 'QMT_Count', 'posts_clauses' ), 10, 2 );
 
 
 class QMT_URL {
@@ -114,6 +117,7 @@ class QMT_URL {
 		return trailingslashit( $base_url );
 	}
 }
+
 
 class QMT_Template {
 
@@ -157,7 +161,6 @@ class QMT_Template {
 		return $title;
 	}
 }
-add_filter( 'wp_title', array( 'QMT_Template', 'wp_title' ), 10, 3 );
 
 /**
  * Wether multiple taxonomies are queried
