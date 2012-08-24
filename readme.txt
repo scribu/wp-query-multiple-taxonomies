@@ -28,8 +28,10 @@ Links: [**Documentation**](http://github.com/scribu/wp-query-multiple-taxonomies
 
 == Screenshots ==
 
-1. Drill-down navigation widgets
-2. Drill-down widgets in the admin
+1. Lists mode
+2. Checkboxes mode
+3. Dropdowns mode
+4. Widget configuration
 
 == Frequently Asked Questions ==
 
@@ -73,6 +75,7 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 * added checkbox mode
 * added {{count}} tag. props khakulov
 * added Ukranian translation. props Jurko Chervony
+* [more info](http://scribu.net/wordpress/query-multiple-taxonomies/qmt-1-6.html)
 
 = 1.5.1 =
 * fixed issue with custom post types
