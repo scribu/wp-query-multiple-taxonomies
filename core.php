@@ -1,7 +1,39 @@
 <?php
 
-add_filter( 'posts_clauses', array( 'QMT_Count', 'posts_clauses' ), 10, 2 );
-add_filter( 'wp_title', array( 'QMT_Template', 'wp_title' ), 10, 3 );
+add_filter( 'request', 'qmt_checkboxes_request', 10, 2 );
+add_filter( 'wp_title', 'qmt_wp_title', 10, 3 );
+
+// Transform ?qmt[category][]=5&qmt[category][]=6 into something usable
+function qmt_checkboxes_request( $request ) {
+	if ( !isset( $_GET['qmt'] ) )
+		return $request;
+
+	foreach ( $_GET['qmt'] as $taxonomy => $terms ) {
+		$request['tax_query'][] = array(
+			'taxonomy' => $taxonomy,
+			'terms' => $terms,
+			'field' => 'term_id',
+			'operator' => 'IN'
+		);
+	}
+
+	return $request;
+}
+
+// Add the selected terms to the title
+function qmt_wp_title( $title, $sep, $seplocation ) {
+	$tax_title = QMT_Template::get_title();
+
+	if ( empty( $tax_title ) )
+		return $title;
+
+	if ( 'right' == $seplocation )
+		$title = "$tax_title $sep ";
+	else
+		$title = " $sep $tax_title";
+
+	return $title;
+}
 
 
 class QMT_Terms {
@@ -79,6 +111,7 @@ class QMT_Count {
 		return $bits;
 	}
 }
+add_filter( 'posts_clauses', array( 'QMT_Count', 'posts_clauses' ), 10, 2 );
 
 
 class QMT_URL {
@@ -145,20 +178,6 @@ class QMT_Template {
 		}
 
 		return implode( '; ', $title );
-	}
-
-	function wp_title( $title, $sep, $seplocation ) {
-		$tax_title = QMT_Template::get_title();
-
-		if ( empty( $tax_title ) )
-			return $title;
-
-		if ( 'right' == $seplocation )
-			$title = "$tax_title $sep ";
-		else
-			$title = " $sep $tax_title";
-
-		return $title;
 	}
 }
 
