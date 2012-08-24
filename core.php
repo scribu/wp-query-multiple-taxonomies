@@ -210,15 +210,14 @@ function qmt_get_query( $taxname = '' ) {
 	$qmt_query = array();
 
 	if ( !is_null( $wp_query->tax_query ) ) {
-		foreach ( $wp_query->tax_query->queries as $tax_query ) {
-			if ( 'slug' != $tax_query['field'] )
-				continue;
+		foreach ( $wp_query->tax_query->queries as &$tax_query ) {
+			$terms = _qmt_get_term_slugs( &$tax_query );
 
 			if ( 'AND' == $tax_query['operator'] )
-				$qmt_query[ $tax_query['taxonomy'] ] = (array) $tax_query['terms'];
+				$qmt_query[ $tax_query['taxonomy'] ] = $terms;
 
 			if ( 'IN' == $tax_query['operator'] )
-				$qmt_query[ $tax_query['taxonomy'] ][] = implode( ',', $tax_query['terms'] );
+				$qmt_query[ $tax_query['taxonomy'] ][] = implode( ',', $terms );
 		}
 
 		foreach ( $qmt_query as &$value )
@@ -233,6 +232,25 @@ function qmt_get_query( $taxname = '' ) {
 	}
 
 	return $qmt_query;
+}
+
+// https://core.trac.wordpress.org/ticket/21684
+function _qmt_get_term_slugs( &$tax_query ) {
+	if ( 'slug' == $tax_query['field'] )
+		return $tax_query['terms'];
+
+	$terms = array();
+
+	foreach ( $tax_query['terms'] as $field ) {
+		$term = get_term_by( $tax_query['field'], $field, $tax_query['taxonomy'] );
+		if ( $term )
+			$terms[] = $term->slug;
+	}
+
+	$tax_query['field'] = 'slug';
+	$tax_query['terms'] = $terms;
+
+	return $terms;
 }
 
 // Deprecated
