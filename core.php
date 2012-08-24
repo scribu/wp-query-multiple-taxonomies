@@ -33,6 +33,27 @@ class QMT_Hooks {
 
 		return $title;
 	}
+
+	function wp_head() {
+?>
+<style type="text/css">
+.taxonomy-drilldown-lists p,
+.taxonomy-drilldown-checkboxes p,
+.taxonomy-drilldown-dropdowns p {
+	margin-top: 1em;
+}
+
+.taxonomy-drilldown-checkboxes li,
+.taxonomy-drilldown-dropdowns li {
+	list-style: none;
+}
+
+.taxonomy-drilldown-dropdowns select {
+	display: block;
+}
+</style>
+<?php
+	}
 }
 scbHooks::add( 'QMT_Hooks' );
 

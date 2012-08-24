@@ -2,7 +2,7 @@
 	<ul>
 		{{#taxonomy}}
 		<li>
-			<label for="qmt-{{name}}">{{title}}:</label>
+			<label for="qmt-{{name}}">{{title}}</label>
 			<select id="qmt-{{name}}" name="{{name}}">
 				<option value=''>{{{any-text}}}</option>
 				{{{term-list}}}
@@ -10,6 +10,9 @@
 		</li>
 		{{/taxonomy}}
 	</ul>
-	<input type="submit" value="{{submit-text}}" />
-	<a class="taxonomy-drilldown-reset" href="{{reset-url}}">{{reset-text}}</a>
+
+	<p>
+		<input type="submit" value="{{submit-text}}" />
+		<a class="taxonomy-drilldown-reset" href="{{reset-url}}">{{reset-text}}</a>
+	</p>
 </form>
