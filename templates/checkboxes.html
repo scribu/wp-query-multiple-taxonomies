@@ -1,10 +1,7 @@
 <form method="get" action="{{base-url}}" class="taxonomy-drilldown-checkboxes">
 	{{#taxonomy}}
 	<div id="terms-{{taxonomy}}">
-		<h4>
-			{{title}}
-			{{#clear}} <a href="{{url}}" title="title">(-)</a>{{/clear}}
-		</h4>
+		<h4>{{title}}</h4>
 		<ul>
 			{{{term-list}}}
 		</ul>
