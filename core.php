@@ -158,7 +158,7 @@ class QMT_Template {
 		$title = array();
 
 		foreach ( qmt_get_query() as $tax => $value ) {
-			$terms = explode( '+', $value );
+			$terms = preg_split( '/[+,]+/', $value );
 
 			$out = array();
 			foreach ( $terms as $slug ) {
