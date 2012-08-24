@@ -1,39 +1,40 @@
 <?php
 
-add_filter( 'request', 'qmt_checkboxes_request', 10, 2 );
-add_filter( 'wp_title', 'qmt_wp_title', 10, 3 );
+class QMT_Hooks {
 
-// Transform ?qmt[category][]=5&qmt[category][]=6 into something usable
-function qmt_checkboxes_request( $request ) {
-	if ( !isset( $_GET['qmt'] ) )
+	// Transform ?qmt[category][]=5&qmt[category][]=6 into something usable
+	function request( $request ) {
+		if ( !isset( $_GET['qmt'] ) )
+			return $request;
+
+		foreach ( $_GET['qmt'] as $taxonomy => $terms ) {
+			$request['tax_query'][] = array(
+				'taxonomy' => $taxonomy,
+				'terms' => $terms,
+				'field' => 'term_id',
+				'operator' => 'IN'
+			);
+		}
+
 		return $request;
-
-	foreach ( $_GET['qmt'] as $taxonomy => $terms ) {
-		$request['tax_query'][] = array(
-			'taxonomy' => $taxonomy,
-			'terms' => $terms,
-			'field' => 'term_id',
-			'operator' => 'IN'
-		);
 	}
 
-	return $request;
-}
+	// Add the selected terms to the title
+	function wp_title( $title, $sep, $seplocation ) {
+		$tax_title = QMT_Template::get_title();
 
-// Add the selected terms to the title
-function qmt_wp_title( $title, $sep, $seplocation ) {
-	$tax_title = QMT_Template::get_title();
+		if ( empty( $tax_title ) )
+			return $title;
 
-	if ( empty( $tax_title ) )
+		if ( 'right' == $seplocation )
+			$title = "$tax_title $sep ";
+		else
+			$title = " $sep $tax_title";
+
 		return $title;
-
-	if ( 'right' == $seplocation )
-		$title = "$tax_title $sep ";
-	else
-		$title = " $sep $tax_title";
-
-	return $title;
+	}
 }
+scbHooks::add( 'QMT_Hooks' );
 
 
 class QMT_Terms {
