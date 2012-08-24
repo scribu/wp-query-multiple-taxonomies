@@ -33,6 +33,10 @@ Links: [**Documentation**](http://github.com/scribu/wp-query-multiple-taxonomies
 3. Dropdowns mode
 4. Widget configuration
 
+= How can I order the taxonomies in the widget? =
+
+Just drag them around.
+
 = How do I define a custom taxonomy? =
 
 Try the [Simple Taxonomies](http://wordpress.org/extend/plugins/simple-taxonomies) plugin.
@@ -60,6 +64,23 @@ If you need to get specific, you can use the `is_multitax()` conditional tag, wh
 `is_multitax()` -> true if more than one taxonomy was queried
 
 `is_multitax( array('tax_a', 'tax_b') )` -> true if both tax_a and tax_b were queried
+
+= How can I customize the display even further? =
+
+Copy any file from the `templates` directory into a directory called `qmt` in
+your theme and modify it at will.
+
+For example to change the checkbox mode display,
+
+copy
+
+`wp-content/plugins/query-multiple-taxonomies/templates/checkboxes.html`
+
+to
+
+`wp-content/themes/YOUR-THEME/qmt/checkboxes.html`
+
+and change it however you want.
 
 == Changelog ==
 
