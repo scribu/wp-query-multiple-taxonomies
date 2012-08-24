@@ -23,9 +23,13 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 	}
 
 	function __construct() {
-		parent::__construct( 'taxonomy-drill-down', __( 'Taxonomy Drill-Down', 'query-multiple-taxonomies' ), array(
-			'description' => __( 'Display a drill-down navigation based on custom taxonomies', 'query-multiple-taxonomies' )
-		) );
+		parent::__construct(
+			'taxonomy-drill-down',
+			__( 'Taxonomy Drill-Down', 'query-multiple-taxonomies' ),
+			array(
+				'description' => __( 'Display a drill-down navigation based on custom taxonomies', 'query-multiple-taxonomies' )
+			)
+		);
 	}
 
 	function add_style() {
