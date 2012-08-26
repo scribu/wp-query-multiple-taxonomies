@@ -233,7 +233,7 @@ function qmt_get_query( $taxname = '' ) {
 
 	if ( !is_null( $wp_query->tax_query ) ) {
 		foreach ( $wp_query->tax_query->queries as &$tax_query ) {
-			$terms = _qmt_get_term_slugs( &$tax_query );
+			$terms = _qmt_get_term_slugs( $tax_query );
 
 			if ( 'AND' == $tax_query['operator'] )
 				$qmt_query[ $tax_query['taxonomy'] ] = $terms;
