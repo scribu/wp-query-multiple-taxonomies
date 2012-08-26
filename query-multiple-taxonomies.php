@@ -15,9 +15,9 @@ require dirname( __FILE__ ) . '/scb/load.php';
 function _qmt_init() {
 	load_plugin_textdomain( 'query-multiple-taxonomies', '', basename( dirname( __FILE__ ) ) . '/lang' );
 
-	require dirname( __FILE__ ) . '/core.php';
-	require dirname( __FILE__ ) . '/walkers.php';
-	require dirname( __FILE__ ) . '/widget.php';
+	require_once dirname( __FILE__ ) . '/core.php';
+	require_once dirname( __FILE__ ) . '/walkers.php';
+	require_once dirname( __FILE__ ) . '/widget.php';
 
 	Taxonomy_Drill_Down_Widget::init( __FILE__ );
 }
