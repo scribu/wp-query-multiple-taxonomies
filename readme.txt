@@ -84,6 +84,9 @@ and change it however you want.
 
 == Changelog ==
 
+= 1.6.1 =
+* fixed activation error
+
 = 1.6 =
 * added checkbox mode
 * added {{count}} tag. props khakulov
