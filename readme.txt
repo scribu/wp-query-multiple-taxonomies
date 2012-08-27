@@ -61,9 +61,10 @@ The template hierarchy for multitax queries is taxonomy.php -> archive.php -> in
 
 If you need to get specific, you can use the `is_multitax()` conditional tag, which works similarly to `is_tax()`:
 
-`is_multitax()` -> true if more than one taxonomy was queried
+`is_multitax()` -> true if more than one taxonomy was queried.
 
-`is_multitax( array('tax_a', 'tax_b') )` -> true if both tax_a and tax_b were queried
+`is_multitax( array('tax_a', 'tax_b') )` -> true if both tax_a and tax_b were
+queried.
 
 = How can I customize the display even further? =
 
