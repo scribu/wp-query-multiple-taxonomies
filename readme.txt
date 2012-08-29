@@ -85,6 +85,9 @@ and change it however you want.
 
 == Changelog ==
 
+= 1.6.2 =
+* fixed {{count}} tag. props tiagoalves83
+
 = 1.6.1 =
 * fixed activation error
 * fixed error in PHP 5.4

@@ -28,13 +28,27 @@ class QMT_Data_Container {
 			return $GLOBALS['wp_query']->post_count;
 		}
 
+		$query = array(
+			'tax_query' => array(
+				'relation' => 'AND'
+			)
+		);
+
 		// Considering previous choices
 		if ( isset( $old_query[ $this->taxonomy ] ) ) {
-			$query = $old_query;
-			$query[$this->taxonomy] = $query[$this->taxonomy] . "+" . $this->term->slug;
+			$terms = explode('+', $old_query[ $this->taxonomy ]);
+			$terms[] = $this->term->slug;
 		} else {
-			$query = array_merge( $old_query, array( $this->taxonomy => $this->term->slug ) );
+			$terms = $this->term->slug;
 		}
+
+		$query['tax_query'][] = array (
+			'taxonomy' => $this->taxonomy,
+			'field' => 'slug',
+			'terms' => $terms,
+			'include_children' => 0,
+			'operator' => 'AND'
+		);
 
 		return QMT_Count::get( $query );
 	}
