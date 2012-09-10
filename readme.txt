@@ -87,6 +87,7 @@ and change it however you want.
 
 = 1.6.2 =
 * fixed {{count}} tag. props tiagoalves83
+* updated to Mustache 1.0.0
 
 = 1.6.1 =
 * fixed activation error
