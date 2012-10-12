@@ -86,7 +86,8 @@ and change it however you want.
 == Changelog ==
 
 = 1.6.2 =
-* fixed {{count}} tag. props tiagoalves83
+* {{count}} tag improvements. props tiagoalves83 and jprberlin
+* added {{any-text}} tag. props jprberlin
 * updated to Mustache 1.0.0
 
 = 1.6.1 =
