@@ -158,7 +158,8 @@ jQuery(function($){
 			$data_tax = array(
 				'taxonomy' => $taxonomy,
 				'title' => get_taxonomy( $taxonomy )->label,
-				'term-list' => $walker->walk( $terms, 0 )
+				'term-list' => $walker->walk( $terms, 0 ),
+				'any-text' =>  __( 'any', 'query-multiple-taxonomies' )
 			);
 
 			if ( isset( $query[$taxonomy] ) ) {

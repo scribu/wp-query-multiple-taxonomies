@@ -1,81 +1,157 @@
-# Copyright (C) 2010 
-# This file is distributed under the same license as the  package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Query Multiple Taxonomies 1.1-beta\n"
+"Project-Id-Version: Query Multiple Taxonomies v1.6.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/qmt\n"
 "POT-Creation-Date: 2011-06-07 12:03:39+00:00\n"
+"PO-Revision-Date: 2012-10-12 11:34:06+0000\n"
+"Last-Translator: André Bonhôte <andre@bonhote.org>\n"
+"Language-Team: Andre Bonhote <andre@bonhote.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2011-12-01 16:24+0100\n"
-"Last-Translator: André Bonhôte <andre@bonhote.org>\n"
-"Language-Team: Andre Bonhote <andre@bonhote.org>\n"
-"Plural-Forms: nplurals=2; plural=(n>1 || n==0)\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: Germany\n"
 "X-Poedit-SourceCharset: utf8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: \n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
 
-#: widget.php:59
+#: widget.php:67
+#@ query-multiple-taxonomies
 msgid "Title:"
 msgstr "Titel:"
 
-#: widget.php:70
+#: widget.php:75
+#@ query-multiple-taxonomies
 msgid "lists"
 msgstr "Listen"
 
-#: widget.php:72
+#: widget.php:77
+#@ query-multiple-taxonomies
 msgid "dropdowns"
 msgstr "Dropdowns"
 
-#: widget.php:75
+#: widget.php:80
+#@ query-multiple-taxonomies
 msgid "Mode:"
 msgstr "Modus:"
 
-#: widget.php:80
+#: widget.php:84
+#@ query-multiple-taxonomies
 msgid "Taxonomies:"
 msgstr "Taxonomien:"
 
-#: widget.php:101
+#: widget.php:105
+#, php-format
+#@ query-multiple-taxonomies
 msgid "Post type: %s"
 msgid_plural "Post types: %s"
 msgstr[0] "Post-Typ: %s"
 msgstr[1] "Post-Typen: %s"
 
-#: widget.php:128
+#: widget.php:131
+#@ query-multiple-taxonomies
 msgid "No taxonomies selected!"
 msgstr "Keine Taxonomie ausgewählt!"
 
-#: widget.php:161
+#: widget.php:167
+#@ query-multiple-taxonomies
 msgid "Remove selected terms in group"
 msgstr "Ausgewählte Schlagworte entfernen"
 
-#: widget.php:174
+#: widget.php:180
+#: widget.php:208
+#@ query-multiple-taxonomies
 msgid "Submit"
 msgstr "Absenden"
 
-#: widget.php:204
+#: widget.php:134
+#@ query-multiple-taxonomies
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: widget.php:268
+#: walkers.php:120
+#@ query-multiple-taxonomies
 msgid "Add term"
 msgstr "Schlagwort hinzufügen"
 
-#: widget.php:274
+#: walkers.php:124
+#@ query-multiple-taxonomies
 msgid "Remove term"
 msgstr "Schlagwort entfernen"
 
-#: scb/AdminPage.php:165
+#: scb/AdminPage.php:172
+#@ query-multiple-taxonomies
 msgid "Settings <strong>saved</strong>."
 msgstr "Einstellungen <strong>gespeichert</strong>."
 
-#: scb/AdminPage.php:177
-#: scb/AdminPage.php:187
+#: scb/AdminPage.php:185
+#: scb/AdminPage.php:196
+#@ query-multiple-taxonomies
 msgid "Save Changes"
 msgstr "Änderungen speichern"
 
-#: scb/AdminPage.php:369
+#: scb/AdminPage.php:346
+#@ query-multiple-taxonomies
 msgid "Settings"
 msgstr "Einstellungen"
+
+#. translators: plugin header field 'Name'
+#: query-multiple-taxonomies.php:0
+#@ query-multiple-taxonomies
+msgid "Query Multiple Taxonomies"
+msgstr ""
+
+#. translators: plugin header field 'PluginURI'
+#: query-multiple-taxonomies.php:0
+#@ query-multiple-taxonomies
+msgid "http://scribu.net/wordpress/query-multiple-taxonomies"
+msgstr ""
+
+#. translators: plugin header field 'Description'
+#: query-multiple-taxonomies.php:0
+#@ query-multiple-taxonomies
+msgid "Filter posts through multiple custom taxonomies using a widget."
+msgstr ""
+
+#. translators: plugin header field 'Author'
+#: query-multiple-taxonomies.php:0
+#@ query-multiple-taxonomies
+msgid "scribu"
+msgstr ""
+
+#. translators: plugin header field 'AuthorURI'
+#: query-multiple-taxonomies.php:0
+#@ query-multiple-taxonomies
+msgid "http://scribu.net"
+msgstr ""
+
+#. translators: plugin header field 'Version'
+#: query-multiple-taxonomies.php:0
+#@ query-multiple-taxonomies
+msgid "1.6.1"
+msgstr ""
+
+#: widget.php:28
+#@ query-multiple-taxonomies
+msgid "Taxonomy Drill-Down"
+msgstr ""
+
+#: widget.php:30
+#@ query-multiple-taxonomies
+msgid "Display a drill-down navigation based on custom taxonomies"
+msgstr ""
+
+#: widget.php:76
+#@ query-multiple-taxonomies
+msgid "checkboxes"
+msgstr ""
+
+#: widget.php:181
+#@ query-multiple-taxonomies
+msgid "any"
+msgstr "Alle"
 
