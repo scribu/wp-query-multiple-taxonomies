@@ -104,6 +104,9 @@ class QMT_Count {
 
 	// Count posts, without getting them
 	public function get( $query_vars ) {
+	    //respect global $wp_query
+		global $wp_query;
+		$query_vars = array_merge( $query_vars, $wp_query->query);
 		$query_vars = array_merge( $query_vars, array(
 			'fields' => 'ids',
 			'qmt_count' => true,
