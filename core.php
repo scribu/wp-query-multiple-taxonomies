@@ -104,6 +104,7 @@ class QMT_Count {
 
 	// Count posts, without getting them
 	public function get( $query_vars ) {
+		
 		$query_vars = array_merge( $query_vars, array(
 			'fields' => 'ids',
 			'qmt_count' => true,
