@@ -34,7 +34,7 @@ class QMT_Data_Container {
         );
         //respect global $wp_query
         global $wp_query;
-        $query_vars = array_merge( $query_vars, $wp_query->query);
+        $query = array_merge( $query, $wp_query->query);
         $count_filter = array();
         //add info from current item
         $count_filter[$this->taxonomy] = array($this->term->slug);
