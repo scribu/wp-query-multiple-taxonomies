@@ -27,6 +27,7 @@ class QMT_Data_Container {
         if ( $this->data['is-selected'] ) {
             return $GLOBALS['wp_query']->post_count;
         }
+        
         $query = array(
             'tax_query' => array(
                 'relation' => 'AND'
