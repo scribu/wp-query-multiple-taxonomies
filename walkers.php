@@ -27,12 +27,14 @@ class QMT_Data_Container {
         if ( $this->data['is-selected'] ) {
             return $GLOBALS['wp_query']->post_count;
         }
-
         $query = array(
             'tax_query' => array(
                 'relation' => 'AND'
             )
         );
+        //respect global $wp_query
+        global $wp_query;
+        $query_vars = array_merge( $query_vars, $wp_query->query);
         $count_filter = array();
         //add info from current item
         $count_filter[$this->taxonomy] = array($this->term->slug);
