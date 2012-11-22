@@ -55,8 +55,8 @@ class QMT_Data_Container {
                 'taxonomy' => $tax,
                 'field' => 'slug',
                 'terms' => $terms,
-                'include_children' => 0,
-                'operator' => 'AND'
+                'include_children' => true,
+                'operator' => 'IN'
             );
         }
 
