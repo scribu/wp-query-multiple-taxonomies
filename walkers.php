@@ -33,23 +33,24 @@ class QMT_Data_Container {
                 'relation' => 'AND'
             )
         );
+
         $count_filter = array();
-        //add info from current item
-        $count_filter[$this->taxonomy] = array($this->term->slug);
-        // Considering previous choices
-        foreach ($old_query as $old_taxonomy => $old_terms){
-            $terms = explode('+', $old_terms);
-            //put it into the count_filter array which we will use to generate our count query
-            if (!isset($count_filter[$old_taxonomy])){
-                //Assure we have this array
+
+        $count_filter[ $this->taxonomy ] = array( $this->term->slug );
+
+        // considering previous choices
+        foreach ( $old_query as $old_taxonomy => $old_terms ) {
+            $terms = explode( '+', $old_terms );
+
+            if ( !isset( $count_filter[$old_taxonomy] ) ) {
                 $count_filter[$old_taxonomy] = $terms;
-            }else{
-                $count_filter[$old_taxonomy] = array_merge ($count_filter[$old_taxonomy] , $terms);
+            } else {
+                $count_filter[$old_taxonomy] = array_merge( $count_filter[$old_taxonomy], $terms );
             }
         }
-        // now use all this for the query
 
-        foreach ($count_filter as $tax => $terms){
+        // now use all this for the query
+        foreach ( $count_filter as $tax => $terms ) {
             $query['tax_query'][] = array (
                 'taxonomy' => $tax,
                 'field' => 'slug',
