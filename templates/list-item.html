@@ -1,9 +1,9 @@
 <li class="term-item {{#is-selected}}current-term{{/is-selected}}">
 	{{#is-selected}}
-		<a class="remove-term" href="{{url}}" title="{{title}}">{{term-name}} ({{count}}) (-)</a>
+		<a class="remove-term" href="{{url}}" title="{{title}}">{{{term-name}}} ({{count}}) (-)</a>
 	{{/is-selected}}
 	{{^is-selected}}
-		<a class="add-term" href="{{url}}" title="{{title}}">{{term-name}} ({{count}}) (+)</a>
+		<a class="add-term" href="{{url}}" title="{{title}}">{{{term-name}}} ({{count}}) (+)</a>
 	{{/is-selected}}
 	{{#children}}
 		<ul>
