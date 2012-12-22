@@ -87,6 +87,7 @@ and change it however you want.
 
 = 1.6.3 =
 * fixed parent term post count. props wxyjp
+* fixed enconding issue in dropdowns mode
 
 = 1.6.2 =
 * {{count}} tag improvements. props tiagoalves83 and jprberlin
