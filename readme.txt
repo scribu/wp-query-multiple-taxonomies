@@ -79,7 +79,7 @@ copy
 
 to
 
-`wp-content/themes/YOUR-THEME/qmt/checkboxes.html`
+`wp-content/themes/YOUR-THEME/qmt-templates/checkboxes.html`
 
 and change it however you want.
 
