@@ -81,6 +81,13 @@ jQuery(function($){
 				'extra' => array( 'class' => 'widefat' )
 			), $instance ),
 
+			'suffix-input' => $this->input( array(
+				'name' => 'suffix',
+				'type' => 'text',
+				'desc' => __( 'Template Suffix (optional):', 'query-multiple-taxonomies' ),
+				'extra' => array( 'class' => 'widefat' )
+			), $instance ),
+
 			'taxonomies-label' => __( 'Taxonomies:', 'query-multiple-taxonomies' )
 		);
 
@@ -133,6 +140,7 @@ jQuery(function($){
 			echo call_user_func( array( __CLASS__, "generate_$mode" ), $taxonomies, array(
 				'reset-text' => __( 'Reset', 'query-multiple-taxonomies' ),
 				'reset-url' => QMT_URL::get(),
+				'suffix' => $suffix ?: '',
 			) );
 		}
 	}
@@ -237,7 +245,26 @@ jQuery(function($){
 	}
 
 	static function mustache_render( $file, $data ) {
-		$template_path = locate_template( 'qmt-templates/' . $file );
+		$templates = array( 'qmt-templates/' . $file );
+
+		// use template suffix if available
+		if ( is_array($data) && !empty($data['suffix']) ) {
+			// split the base template into its components and throw away the
+			// dirname if it is '/' or '.'
+			$parts = pathinfo($templates[0]);
+			$dir = in_array($parts['dirname'], array('.', '/')) ? '' :
+					$parts['dirname'] . '/';
+
+			// reassemble a new template name and unshift it as a priority over
+			// the base template
+			array_unshift( $templates, implode( array(
+				$dir, $parts['filename'],
+				'-', ltrim( $data['suffix'], '-' ),
+				'.', $parts['extension']
+			) ) );
+		}
+
+		$template_path = locate_template( $templates );
 		if ( !$template_path )
 			$template_path = dirname(__FILE__) . '/templates/' . $file;
 
@@ -245,4 +272,3 @@ jQuery(function($){
 		return $m->render( file_get_contents( $template_path ), $data );
 	}
 }
-
