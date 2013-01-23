@@ -245,21 +245,18 @@ jQuery(function($){
 	}
 
 	static function mustache_render( $file, $data ) {
-		$templates = array( 'qmt-templates/' . $file );
+		$tpl_base = 'qmt-templates';
+		$templates = array();
 
-        // use template suffix if available
-        if ( is_array( $data ) && !empty( $data['suffix'] ) ) {
-            // split the base template into its components and throw away the
-            // dirname if it is '/' or '.'
-            extract( pathinfo( $templates[0] ) );
-            $dir = ( trim( $dirname, './' ) ) ? $dirname . '/' : '';
-            $suffix = ltrim( $data['suffix'], '-' );
+		// use template suffix if available
+		if ( is_array( $data ) && !empty( $data['suffix'] ) ) {
+			// build potential template filename from base template name
+			extract( pathinfo( $file ) );
+			$suffix = sanitize_file_name( $data['suffix'] );
+			$templates[] = $tpl_base . '/' . "{$filename}-{$suffix}.{$extension}";
+		}
 
-            // add new template name to the beginning of the templates list
-            array_unshift( $templates, "{$dir}{$filename}-{$suffix}.{$extension}" );
-        }
-
-
+		$templates[] = $tpl_base . '/' . $file;
 		$template_path = locate_template( $templates );
 		if ( !$template_path )
 			$template_path = dirname( __FILE__ ) . '/templates/' . $file;
