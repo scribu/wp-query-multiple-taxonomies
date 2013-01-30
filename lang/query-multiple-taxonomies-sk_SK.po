@@ -1,0 +1,92 @@
+# Copyright (C) 2012 
+# This file is distributed under the same license as the  package.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/qmt\n"
+"POT-Creation-Date: 2012-10-12 16:12:10+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-01-21 23:02+0300\n"
+"Last-Translator: Serg\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: scb/AdminPage.php:172
+msgid "Settings <strong>saved</strong>."
+msgstr "Nastavenia <strong>uložené</strong>."
+
+#: scb/AdminPage.php:185 scb/AdminPage.php:196
+msgid "Save Changes"
+msgstr "Uložiť zmeny"
+
+#: scb/AdminPage.php:346
+msgid "Settings"
+msgstr "Nastavenia"
+
+#: walkers.php:134
+msgid "Add term"
+msgstr "Pridať výraz"
+
+#: walkers.php:138
+msgid "Remove term"
+msgstr "Odstráni výraz"
+
+#: widget.php:28
+msgid "Taxonomy Drill-Down"
+msgstr "Taxonómia Drill-Down"
+
+#: widget.php:30
+msgid "Display a drill-down navigation based on custom taxonomies"
+msgstr "Zobrazenie drill-down navigácia na základe vlastnej taxonómie"
+
+#: widget.php:67
+msgid "Title:"
+msgstr "Názov:"
+
+#: widget.php:75
+msgid "lists"
+msgstr "zoznamy"
+
+#: widget.php:76
+msgid "checkboxes"
+msgstr "začiarkavacie políčka"
+
+#: widget.php:77
+msgid "dropdowns"
+msgstr "rozbaľovacích ponukách"
+
+#: widget.php:80
+msgid "Mode:"
+msgstr "Režim:"
+
+#: widget.php:84
+msgid "Taxonomies:"
+msgstr "Taxonómie:"
+
+#: widget.php:105
+msgid "Post type: %s"
+msgid_plural "Post types: %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: widget.php:131
+msgid "No taxonomies selected!"
+msgstr "Žiadne taxonómie vybrané!"
+
+#: widget.php:134
+msgid "Reset"
+msgstr "Reset"
+
+#: widget.php:167
+msgid "Remove selected terms in group"
+msgstr "Odstrániť vybraté podmienky v skupine"
+
+#: widget.php:180 widget.php:208
+msgid "Submit"
+msgstr "Predložiť"
+
+#: widget.php:181
+msgid "any"
+msgstr "akékoľvek"
