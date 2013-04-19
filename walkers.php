@@ -169,7 +169,13 @@ class QMT_Dropdown_Walker extends QMT_Walker {
 class QMT_Checkboxes_Walker extends QMT_Walker {
 
 	protected function set_selected_terms() {
-		$this->selected_terms = explode( ',', qmt_get_query( $this->taxonomy ) );
+		
+		$terms = qmt_get_query( $this->taxonomy );
+		if ( strpos( $terms, '+'  ) > 0 )
+			$this->selected_terms = explode( '+', $terms );
+		else
+			$this->selected_terms = explode( ',', $terms );
+		
 	}
 
 	function specific_data( $term, $depth ) {

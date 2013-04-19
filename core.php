@@ -7,12 +7,15 @@ class QMT_Hooks {
 		if ( !isset( $_GET['qmt'] ) )
 			return $request;
 
+		$operator = strtoupper( $_GET['qmt_operator'] );
+		
 		foreach ( $_GET['qmt'] as $taxonomy => $terms ) {
+			
 			$request['tax_query'][] = array(
 				'taxonomy' => $taxonomy,
 				'terms' => $terms,
 				'field' => 'term_id',
-				'operator' => 'IN'
+				'operator' => $operator
 			);
 		}
 
@@ -230,7 +233,7 @@ function qmt_get_query( $taxname = '' ) {
 	global $wp_query;
 
 	$qmt_query = array();
-
+	
 	if ( !is_null( $wp_query->tax_query ) ) {
 		foreach ( $wp_query->tax_query->queries as &$tax_query ) {
 			$terms = _qmt_get_term_slugs( $tax_query );
