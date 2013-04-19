@@ -78,14 +78,14 @@ jQuery(function($){
 					'dropdowns' =>  __( 'dropdowns', 'query-multiple-taxonomies' ),
 				),
 				'text'   => false,
-				'desc'   => __( 'Mode1:', 'query-multiple-taxonomies' ),
+				'desc'   => __( 'Mode:', 'query-multiple-taxonomies' ),
 				'extra' => array( 'class' => 'widefat' )
 			), $instance ),
 			'operator-input' => $this->input( array(
 				'type'   => 'select',
 				'name'   => 'operator',
 				'values' => array(
-					'AND' =>      __( 'And', 'query-multiple-taxonomies' ),
+					'AND' =>  __( 'And', 'query-multiple-taxonomies' ),
 					'IN' => __( 'Or', 'query-multiple-taxonomies' )
 				),
 				'text'   => false,
@@ -145,7 +145,8 @@ jQuery(function($){
 		} else {
 			echo call_user_func( array( __CLASS__, "generate_$mode" ), $taxonomies, array(
 				'reset-text' => __( 'Reset', 'query-multiple-taxonomies' ),
-				'reset-url' => QMT_URL::get(),'operator'=>$operator
+				'reset-url' => QMT_URL::get(),
+				'operator'=>$operator
 			) );
 		}
 	}

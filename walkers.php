@@ -170,11 +170,9 @@ class QMT_Checkboxes_Walker extends QMT_Walker {
 
 	protected function set_selected_terms() {
 		
-		$terms = qmt_get_query( $this->taxonomy );
-		if ( strpos( $terms, '+'  ) > 0 )
-			$this->selected_terms = explode( '+', $terms );
-		else
-			$this->selected_terms = explode( ',', $terms );
+		$terms = qmt_get_query( $this->taxonomy, ',');
+		 
+		$this->selected_terms = explode( ',', $terms );
 		
 	}
 

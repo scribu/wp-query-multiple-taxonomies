@@ -229,7 +229,7 @@ function is_multitax( $taxonomies = array() ) {
  *
  * @return array( taxonomy => query )
  */
-function qmt_get_query( $taxname = '' ) {
+function qmt_get_query( $taxname = '', $glue = '+' ) {
 	global $wp_query;
 
 	$qmt_query = array();
@@ -246,7 +246,7 @@ function qmt_get_query( $taxname = '' ) {
 		}
 
 		foreach ( $qmt_query as &$value )
-			$value = implode( '+', $value );
+			$value = implode( $glue, $value );
 	}
 
 	if ( $taxname ) {
