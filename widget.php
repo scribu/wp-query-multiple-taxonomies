@@ -89,7 +89,7 @@ jQuery(function($){
 					'IN' => __( 'Or', 'query-multiple-taxonomies' )
 				),
 				'text'   => false,
-				'desc'   => __( 'Operator:', 'query-multiple-taxonomies' ),
+				'desc'   => __( 'Operator between terms:', 'query-multiple-taxonomies' ),
 				'extra' => array( 'class' => 'widefat' )
 			), $instance ),
 
