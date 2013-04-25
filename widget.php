@@ -52,6 +52,17 @@ jQuery(function($){
 		$(this).sortable();
 		$(this).disableSelection();
 	});
+	
+	$('#qmt_types').change(function(){
+		console.log($('#qmt_types').val());
+		if ( $('#qmt_types').val() != 'checkboxes' ) 
+			$('.operator').parent().hide();
+		else{
+			$('.operator').parent().show();
+		}
+
+	});
+		
 });
 </script>
 <?php
@@ -66,7 +77,7 @@ jQuery(function($){
 				'name'  => 'title',
 				'type'  => 'text',
 				'desc' => __( 'Title:', 'query-multiple-taxonomies' ),
-				'extra' => array( 'class' => 'widefat' )
+				'extra' => array( 'class' => 'widefat', 'id'=>'prueba' )
 			), $instance ),
 
 			'mode-input' => $this->input( array(
@@ -79,7 +90,7 @@ jQuery(function($){
 				),
 				'text'   => false,
 				'desc'   => __( 'Mode:', 'query-multiple-taxonomies' ),
-				'extra' => array( 'class' => 'widefat' )
+				'extra' => array( 'class' => 'widefat types', 'id'=>'qmt_types' )
 			), $instance ),
 			'operator-input' => $this->input( array(
 				'type'   => 'select',
@@ -90,7 +101,7 @@ jQuery(function($){
 				),
 				'text'   => false,
 				'desc'   => __( 'Operator between terms:', 'query-multiple-taxonomies' ),
-				'extra' => array( 'class' => 'widefat' )
+				'extra' => array( 'class' => 'widefat operator' )
 			), $instance ),
 
 			'taxonomies-label' => __( 'Taxonomies:', 'query-multiple-taxonomies' )
