@@ -24,6 +24,8 @@ Said widget is easily customizable via template files (no PHP knowledge required
 ### No Support 
 I do not offer any support for this plugin (free or paid).
 
+Please consider using an [alternative plugin](https://github.com/scribu/wp-query-multiple-taxonomies/wiki/Similar-plugins).
+
 Links: [**Documentation**](http://github.com/scribu/wp-query-multiple-taxonomies/wiki) | [Plugin News](http://scribu.net/wordpress/query-multiple-taxonomies) | [Author's Site](http://scribu.net)
 
 ## Screenshots 
