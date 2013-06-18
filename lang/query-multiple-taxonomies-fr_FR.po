@@ -1,0 +1,78 @@
+# Copyright (C) 2010 
+# This file is distributed under the same license as the  package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Query Multiple Taxonomies 1.1-beta\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/qmt\n"
+"POT-Creation-Date: 2011-06-07 12:03:39+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2012-08-16 15:47+0100\n"
+"Last-Translator: \n"
+"Language-Team: Joris Krawczyk <joris@sjcom.fr>\n"
+"Plural-Forms: nplurals=2; plural=(n>1 || n==0)\n"
+"Language: Français\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: widget.php:59
+msgid "Title:"
+msgstr "Titre :"
+
+#: widget.php:70
+msgid "lists"
+msgstr "Listes"
+
+#: widget.php:72
+msgid "dropdowns"
+msgstr "Déroulants"
+
+#: widget.php:75
+msgid "Mode:"
+msgstr "Mode :"
+
+#: widget.php:80
+msgid "Taxonomies:"
+msgstr "Taxonomies :"
+
+#: widget.php:101
+msgid "Post type: %s"
+msgid_plural "Post types: %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: widget.php:128
+msgid "No taxonomies selected!"
+msgstr "Aucune taxonomie sélectionnée"
+
+#: widget.php:161
+msgid "Remove selected terms in group"
+msgstr "Effacer les termes sélectionnés"
+
+#: widget.php:174
+msgid "Submit"
+msgstr "Envoyer"
+
+#: widget.php:204
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#: widget.php:268
+msgid "Add term"
+msgstr "Ajouter des termes"
+
+#: widget.php:274
+msgid "Remove term"
+msgstr "Effacer des termes"
+
+#: scb/AdminPage.php:165
+msgid "Settings <strong>saved</strong>."
+msgstr "Paramètres"
+
+#: scb/AdminPage.php:177 scb/AdminPage.php:187
+msgid "Save Changes"
+msgstr "Enregistrer les modifications"
+
+#: scb/AdminPage.php:369
+msgid "Settings"
+msgstr "Paramètres"
