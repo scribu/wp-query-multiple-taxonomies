@@ -87,9 +87,10 @@ and change it however you want.
 
 ## Changelog 
 
-### 1.6.3 
+### 1.6.3 (next)
 * fixed parent term post count. props wxyjp
 * fixed term name enconding issue
+* added French translation. props flameboy
 
 ### 1.6.2 
 * {{count}} tag improvements. props tiagoalves83 and jprberlin
