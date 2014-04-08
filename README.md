@@ -70,7 +70,7 @@ queried.
 
 ### How can I customize the display even further? 
 
-Copy any file from the `templates` directory into a directory called `qmt` in
+Copy any file from the `templates` directory into a directory called `qmt-templates` in
 your theme and modify it at will.
 
 For example to change the checkbox mode display,
