@@ -114,6 +114,7 @@ abstract class QMT_Walker extends Walker {
 		$data = $this->specific_data( $term, $depth );
 
 		$data = array_merge( $data, array(
+			'term-slug' => $term->slug,
 			'term-name' => $term->name,
 			'is-selected' => in_array( $term->slug, $this->selected_terms ) ? array(true) : false,
 			'depth' => $depth,
