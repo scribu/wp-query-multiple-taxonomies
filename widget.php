@@ -8,7 +8,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		'taxonomies' => array(),
 	);
 
-	static function init( $file ) {
+	static function init( $class, $file = '', $base = '' ) {
 		parent::init( __CLASS__, $file, 'taxonomy-drill-down' );
 
 		if ( !class_exists( 'Mustache' ) )

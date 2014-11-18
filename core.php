@@ -3,7 +3,7 @@
 class QMT_Hooks {
 
 	// Transform ?qmt[category][]=5&qmt[category][]=6 into something usable
-	function request( $request ) {
+	static function request( $request ) {
 		if ( !isset( $_GET['qmt'] ) )
 			return $request;
 
@@ -20,7 +20,7 @@ class QMT_Hooks {
 	}
 
 	// Add the selected terms to the title
-	function wp_title( $title, $sep, $seplocation ) {
+	static function wp_title( $title, $sep, $seplocation ) {
 		$tax_title = QMT_Template::get_title();
 
 		if ( empty( $tax_title ) )
@@ -34,7 +34,7 @@ class QMT_Hooks {
 		return $title;
 	}
 
-	function wp_head() {
+	static function wp_head() {
 ?>
 <style type="text/css">
 .taxonomy-drilldown-lists p,
@@ -103,7 +103,7 @@ class QMT_Terms {
 class QMT_Count {
 
 	// Count posts, without getting them
-	public function get( $query_vars ) {
+	public static function get( $query_vars ) {
 		$query_vars = array_merge( $query_vars, array(
 			'fields' => 'ids',
 			'qmt_count' => true,
@@ -118,7 +118,7 @@ class QMT_Count {
 		return 0;
 	}
 
-	function posts_clauses( $bits, $wp_query ) {
+	public static function posts_clauses( $bits, $wp_query ) {
 		if ( $wp_query->get( 'qmt_count' ) ) {
 			if ( empty( $bits['groupby'] ) ) {
 				$what = '*';
@@ -138,7 +138,7 @@ add_filter( 'posts_clauses', array( 'QMT_Count', 'posts_clauses' ), 10, 2 );
 
 class QMT_URL {
 
-	public function for_tax( $taxonomy, $value ) {
+	public static function for_tax( $taxonomy, $value ) {
 		$query = qmt_get_query();
 
 		if ( empty( $value ) )
@@ -149,7 +149,7 @@ class QMT_URL {
 		return self::get( $query );
 	}
 
-	public function get( $query = array() ) {
+	public static function get( $query = array() ) {
 		$url = self::get_base();
 
 		if ( empty($query) )
@@ -163,7 +163,7 @@ class QMT_URL {
 		return apply_filters( 'qmt_url', $url, $query );
 	}
 
-	public function get_base() {
+	public static function get_base() {
 		static $base_url;
 
 		if ( empty( $base_url ) )
@@ -176,7 +176,7 @@ class QMT_URL {
 
 class QMT_Template {
 
-	public function get_title() {
+	public static function get_title() {
 		$title = array();
 
 		foreach ( qmt_get_query() as $tax => $value ) {

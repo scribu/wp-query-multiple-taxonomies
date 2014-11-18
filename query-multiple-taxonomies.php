@@ -19,7 +19,7 @@ function _qmt_init() {
 	require_once dirname( __FILE__ ) . '/walkers.php';
 	require_once dirname( __FILE__ ) . '/widget.php';
 
-	Taxonomy_Drill_Down_Widget::init( __FILE__ );
+	Taxonomy_Drill_Down_Widget::init( '', __FILE__ );
 }
 scb_init( '_qmt_init' );
 
