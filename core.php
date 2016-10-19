@@ -63,7 +63,7 @@ class QMT_Terms {
 	private static $filtered_ids;
 
 	// Get a list of all the terms attached to all the posts in the current query
-	public function get( $tax ) {
+	public static function get( $tax ) {
 		self::set_filtered_ids();
 
 		if ( empty( self::$filtered_ids ) )
@@ -79,7 +79,7 @@ class QMT_Terms {
 		return $terms;
 	}
 
-	private function set_filtered_ids() {
+	private static function set_filtered_ids() {
 		global $wp_query;
 
 		if ( isset( self::$filtered_ids ) )
@@ -284,4 +284,3 @@ function qmt_get_terms( $tax ) {
 	else
 		return get_terms( $tax );
 }
-
