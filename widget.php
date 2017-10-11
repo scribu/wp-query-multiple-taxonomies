@@ -6,6 +6,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		'title' => '',
 		'mode' => 'lists',
 		'taxonomies' => array(),
+		'operator' => ''
 	);
 
 	static function init( $class, $file = '', $base = '' ) {
@@ -51,6 +52,17 @@ jQuery(function($){
 		$(this).sortable();
 		$(this).disableSelection();
 	});
+	
+	$('#qmt_types').change(function(){
+		console.log($('#qmt_types').val());
+		if ( $('#qmt_types').val() != 'checkboxes' ) 
+			$('.operator').parent().hide();
+		else{
+			$('.operator').parent().show();
+		}
+
+	});
+		
 });
 </script>
 <?php
@@ -65,7 +77,7 @@ jQuery(function($){
 				'name'  => 'title',
 				'type'  => 'text',
 				'desc' => __( 'Title:', 'query-multiple-taxonomies' ),
-				'extra' => array( 'class' => 'widefat' )
+				'extra' => array( 'class' => 'widefat', 'id'=>'prueba' )
 			), $instance ),
 
 			'mode-input' => $this->input( array(
@@ -78,11 +90,23 @@ jQuery(function($){
 				),
 				'text'   => false,
 				'desc'   => __( 'Mode:', 'query-multiple-taxonomies' ),
-				'extra' => array( 'class' => 'widefat' )
+				'extra' => array( 'class' => 'widefat types', 'id'=>'qmt_types' )
+			), $instance ),
+			'operator-input' => $this->input( array(
+				'type'   => 'select',
+				'name'   => 'operator',
+				'values' => array(
+					'AND' =>  __( 'And', 'query-multiple-taxonomies' ),
+					'IN' => __( 'Or', 'query-multiple-taxonomies' )
+				),
+				'text'   => false,
+				'desc'   => __( 'Operator between terms:', 'query-multiple-taxonomies' ),
+				'extra' => array( 'class' => 'widefat operator' )
 			), $instance ),
 
 			'taxonomies-label' => __( 'Taxonomies:', 'query-multiple-taxonomies' )
 		);
+
 
 		$selected_taxonomies = $instance['taxonomies'];
 
@@ -119,7 +143,7 @@ jQuery(function($){
 
 	function content( $instance ) {
 		extract( $instance );
-
+ 
 		$taxonomies = array_filter( $taxonomies, array( __CLASS__, 'test_tax' ) );
 
 		$query = qmt_get_query();
@@ -133,6 +157,7 @@ jQuery(function($){
 			echo call_user_func( array( __CLASS__, "generate_$mode" ), $taxonomies, array(
 				'reset-text' => __( 'Reset', 'query-multiple-taxonomies' ),
 				'reset-url' => QMT_URL::get(),
+				'operator'=>$operator
 			) );
 		}
 	}
@@ -204,6 +229,7 @@ jQuery(function($){
 	}
 
 	private function generate_checkboxes( $taxonomies, $data ) {
+		
 		$data = array_merge( $data, array(
 			'base-url' => QMT_URL::get_base(),
 			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),

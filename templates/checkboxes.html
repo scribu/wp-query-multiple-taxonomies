@@ -1,5 +1,6 @@
 <form method="get" action="{{base-url}}" class="taxonomy-drilldown-checkboxes">
-	{{#taxonomy}}
+	<input type="hidden" name="qmt_operator" value="{{operator}}"  />
+	{{#taxonomy}} 
 	<div id="terms-{{taxonomy}}">
 		<h4>{{title}}</h4>
 		<ul>

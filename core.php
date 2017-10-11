@@ -7,12 +7,15 @@ class QMT_Hooks {
 		if ( !isset( $_GET['qmt'] ) )
 			return $request;
 
+		$operator = strtoupper( $_GET['qmt_operator'] );
+		
 		foreach ( $_GET['qmt'] as $taxonomy => $terms ) {
+			
 			$request['tax_query'][] = array(
 				'taxonomy' => $taxonomy,
 				'terms' => $terms,
 				'field' => 'term_id',
-				'operator' => 'IN'
+				'operator' => $operator
 			);
 		}
 
@@ -226,11 +229,11 @@ function is_multitax( $taxonomies = array() ) {
  *
  * @return array( taxonomy => query )
  */
-function qmt_get_query( $taxname = '' ) {
+function qmt_get_query( $taxname = '', $glue = '+' ) {
 	global $wp_query;
 
 	$qmt_query = array();
-
+	
 	if ( !is_null( $wp_query->tax_query ) ) {
 		foreach ( $wp_query->tax_query->queries as &$tax_query ) {
 			$terms = _qmt_get_term_slugs( $tax_query );
@@ -243,7 +246,7 @@ function qmt_get_query( $taxname = '' ) {
 		}
 
 		foreach ( $qmt_query as &$value )
-			$value = implode( '+', $value );
+			$value = implode( $glue, $value );
 	}
 
 	if ( $taxname ) {
