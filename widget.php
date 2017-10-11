@@ -12,7 +12,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		parent::init( __CLASS__, $file, 'taxonomy-drill-down' );
 
 		if ( !class_exists( 'Mustache' ) )
-			require dirname(__FILE__) . '/mustache/Mustache.php';
+			require dirname( __FILE__ ) . '/mustache/Mustache.php';
 
 		add_action( 'load-widgets.php', array( __CLASS__, '_init' ) );
 	}
@@ -62,24 +62,31 @@ jQuery(function($){
 
 		$data = array(
 			'title-input' => $this->input( array(
-				'name'  => 'title',
-				'type'  => 'text',
-				'desc' => __( 'Title:', 'query-multiple-taxonomies' ),
-				'extra' => array( 'class' => 'widefat' )
-			), $instance ),
+					'name'  => 'title',
+					'type'  => 'text',
+					'desc' => __( 'Title:', 'query-multiple-taxonomies' ),
+					'extra' => array( 'class' => 'widefat' )
+				), $instance ),
 
 			'mode-input' => $this->input( array(
-				'type'   => 'select',
-				'name'   => 'mode',
-				'values' => array(
-					'lists' =>      __( 'lists', 'query-multiple-taxonomies' ),
-					'checkboxes' => __( 'checkboxes', 'query-multiple-taxonomies' ),
-					'dropdowns' =>  __( 'dropdowns', 'query-multiple-taxonomies' ),
-				),
-				'text'   => false,
-				'desc'   => __( 'Mode:', 'query-multiple-taxonomies' ),
-				'extra' => array( 'class' => 'widefat' )
-			), $instance ),
+					'type'   => 'select',
+					'name'   => 'mode',
+					'values' => array(
+						'lists' =>      __( 'lists', 'query-multiple-taxonomies' ),
+						'checkboxes' => __( 'checkboxes', 'query-multiple-taxonomies' ),
+						'dropdowns' =>  __( 'dropdowns', 'query-multiple-taxonomies' ),
+					),
+					'text'   => false,
+					'desc'   => __( 'Mode:', 'query-multiple-taxonomies' ),
+					'extra' => array( 'class' => 'widefat' )
+				), $instance ),
+
+			'suffix-input' => $this->input( array(
+					'name' => 'suffix',
+					'type' => 'text',
+					'desc' => __( 'Template Suffix (optional):', 'query-multiple-taxonomies' ),
+					'extra' => array( 'class' => 'widefat' )
+				), $instance ),
 
 			'taxonomies-label' => __( 'Taxonomies:', 'query-multiple-taxonomies' )
 		);
@@ -104,17 +111,17 @@ jQuery(function($){
 			$data['taxonomies'][] = array(
 				'title' => sprintf( _n( 'Post type: %s', 'Post types: %s', count( $tax_obj->object_type ), 'query-multiple-taxonomies' ), implode( ', ', $tax_obj->object_type ) ),
 				'input' => $this->input( array(
-					'type'   => 'checkbox',
-					'name'   => 'taxonomies[]',
-					'value'  => $tax_name,
-					'checked'=> in_array( $tax_name, $selected_taxonomies ),
-					'desc'   => $tax_obj->label,
-				) )
+						'type'   => 'checkbox',
+						'name'   => 'taxonomies[]',
+						'value'  => $tax_name,
+						'checked'=> in_array( $tax_name, $selected_taxonomies ),
+						'desc'   => $tax_obj->label,
+					) )
 			);
 		}
 
 		$m = new Mustache;
-		echo $m->render( file_get_contents( dirname(__FILE__) . '/widget.html' ), $data );
+		echo $m->render( file_get_contents( dirname( __FILE__ ) . '/widget.html' ), $data );
 	}
 
 	function content( $instance ) {
@@ -131,9 +138,10 @@ jQuery(function($){
 			html( 'p', __( 'No taxonomies selected!', 'query-multiple-taxonomies' ) );
 		} else {
 			echo call_user_func( array( __CLASS__, "generate_$mode" ), $taxonomies, array(
-				'reset-text' => __( 'Reset', 'query-multiple-taxonomies' ),
-				'reset-url' => QMT_URL::get(),
-			) );
+					'reset-text' => __( 'Reset', 'query-multiple-taxonomies' ),
+					'reset-url' => QMT_URL::get(),
+					'suffix' => $suffix,
+				) );
 		}
 	}
 
@@ -177,10 +185,10 @@ jQuery(function($){
 
 	private function generate_dropdowns( $taxonomies, $data ) {
 		$data = array_merge( $data, array(
-			'base-url' => QMT_URL::get_base(),
-			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
-			'any-text' => '&mdash; ' . __( 'any', 'query-multiple-taxonomies' ) . ' &mdash;',
-		) );
+				'base-url' => QMT_URL::get_base(),
+				'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
+				'any-text' => '&mdash; ' . __( 'any', 'query-multiple-taxonomies' ) . ' &mdash;',
+			) );
 
 		foreach ( $taxonomies as $taxonomy ) {
 			$terms = get_terms( $taxonomy );
@@ -205,9 +213,9 @@ jQuery(function($){
 
 	private function generate_checkboxes( $taxonomies, $data ) {
 		$data = array_merge( $data, array(
-			'base-url' => QMT_URL::get_base(),
-			'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
-		) );
+				'base-url' => QMT_URL::get_base(),
+				'submit-text' => __( 'Submit', 'query-multiple-taxonomies' ),
+			) );
 
 		foreach ( $taxonomies as $taxonomy ) {
 			$terms = $this->get_terms( $taxonomy );
@@ -237,12 +245,23 @@ jQuery(function($){
 	}
 
 	static function mustache_render( $file, $data ) {
-		$template_path = locate_template( 'qmt-templates/' . $file );
+		$tpl_base = 'qmt-templates';
+		$templates = array();
+
+		// use template suffix if available
+		if ( is_array( $data ) && !empty( $data['suffix'] ) ) {
+			// build potential template filename from base template name
+			extract( pathinfo( $file ) );
+			$suffix = sanitize_file_name( $data['suffix'] );
+			$templates[] = $tpl_base . '/' . "{$filename}-{$suffix}.{$extension}";
+		}
+
+		$templates[] = $tpl_base . '/' . $file;
+		$template_path = locate_template( $templates );
 		if ( !$template_path )
-			$template_path = dirname(__FILE__) . '/templates/' . $file;
+			$template_path = dirname( __FILE__ ) . '/templates/' . $file;
 
 		$m = new Mustache;
 		return $m->render( file_get_contents( $template_path ), $data );
 	}
 }
-
